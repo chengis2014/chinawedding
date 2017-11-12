@@ -17,72 +17,117 @@ protected final Log logger = LogFactory.getLog(getClass());
 
 	@Resource(name = "daoSupportImpl")
 
-	private DaoSupportImpl daoSupport; 
+	private DaoSupportImpl daoSupport;
 
-	public int addUserinfo(PageData pageData) {
-	 logger.info("增加Userinfo");
-	 int iFlag =0; 
-	 try { 
-		iFlag = (int) daoSupport.insert("UserinfoMapper.addUserinfo",pageData);
-	 }catch (Exception e){ 
-	 e.printStackTrace(); 
-	 iFlag=0; 
+	/**
+	 * 添加代理用户信息
+	 * @param pageData
+	 * @return
+	 */
+	public int addUser(PageData pageData){
+		int iFlag =0;
+		try {
+			iFlag = (int)daoSupport.insert("UserinfoMapper.addUser",pageData);
+		}catch (Exception e){
+			e.printStackTrace();
+			iFlag=0;
+		}
+		return iFlag;
 	}
-	 return iFlag; 
+
+	/**
+	 * 更新代理用户信息
+	 * @param pageData
+	 * @return
+	 */
+	public int updateUser(PageData pageData){
+		int iFlag =0;
+		try {
+			iFlag = (int)daoSupport.update("UserinfoMapper.updateUser",pageData);
+		}catch (Exception e){
+			e.printStackTrace();
+			iFlag=0;
+		}
+		return iFlag;
 	}
-	public int delUserinfoByFid(String fid) {
-	 logger.info("删除Userinfo");
-	 int iFlag =0; 
-	 try { 
-		iFlag = (int) daoSupport.delete("UserinfoMapper.deleteUserinfoByFid",fid);
-	 }catch (Exception e){ 
-	 e.printStackTrace(); 
-	 iFlag=0; 
+
+	/**
+	 * 删除指定的代理用户信息
+	 * @param fid
+	 * @return
+	 */
+	public int deleteUserByFid(String fid){
+		int iFlag =0;
+		try {
+			iFlag = (int)daoSupport.delete("UserinfoMapper.deleteUserByFid",fid);
+		}catch (Exception e){
+			e.printStackTrace();
+			iFlag=0;
+		}
+		return iFlag;
 	}
-	 return iFlag; 
+
+	/**
+	 * 根据产品ID查询用户信息
+	 * @param fid
+	 * @return
+	 */
+	public Userinfo selectUserByFid(String fid){
+		Userinfo user =null;
+		try {
+			user = (Userinfo) daoSupport.findForObject("UserinfoMapper.selectUserByFid",fid);
+		}catch (Exception e){
+			e.printStackTrace();
+			user =null;
+		}
+		return user;
 	}
-	public int updateUserinfo(PageData pageData) {
-	 logger.info("修改Userinfo");
-	 int iFlag =0; 
-	 try { 
-		iFlag = (int) daoSupport.update("UserinfoMapper.updateUserinfo",pageData);
-	 }catch (Exception e){ 
-	 e.printStackTrace(); 
-	 iFlag=0; 
+
+	/**
+	 * 查询所有的用户信息
+	 * @return
+	 */
+	public List<Userinfo> selectUserList(){
+		List<Userinfo> userList =null;
+		try {
+			userList = (List<Userinfo>) daoSupport.findForList("UserinfoMapper.selectUserList",null);
+		}catch (Exception e){
+			e.printStackTrace();
+			userList =null;
+		}
+		return userList;
 	}
-	 return iFlag; 
+
+	public Userinfo getUser(PageData pageData) {
+		Userinfo user = null;
+		try {
+			user = (Userinfo)  daoSupport.findForObject("UserinfoMapper.selectUser",pageData);
+		}catch (Exception e){
+			e.printStackTrace();
+			user =null;
+		}
+		return user;
 	}
-	public Userinfo getUserinfoforId(String fid) {
-	 logger.info("通过ID查询Userinfo");
-	Userinfo	userinfo=null;
-	 try { 
-		userinfo = (Userinfo) daoSupport.findForObject("UserinfoMapper.getUserinfoForId",fid);
-	 }catch (Exception e){ 
-	 e.printStackTrace(); 
-	 userinfo=null; 
+	//根据部门获取用户
+	public List<Userinfo> getAllUserByUid(String unitId) {
+		List<Userinfo> userList =null;
+		try {
+			userList = (List<Userinfo>) daoSupport.findForList("UserinfoMapper.getUnitUser",unitId);
+		}catch (Exception e){
+			e.printStackTrace();
+			userList =null;
+		}
+		return userList;
 	}
-	 return userinfo; 
-	}
-	public List<Userinfo> getAllUserinfo(PageData pageData) {
-	 logger.info("分页查询Userinfo");
-	List<Userinfo>	userinfoList=null;
-	 try { 
-		userinfoList = (List<Userinfo>) daoSupport.findForList("UserinfoMapper.getAllUserinfo",pageData);
-	 }catch (Exception e){ 
-	 e.printStackTrace(); 
-	 userinfoList=null; 
-	}
-	 return userinfoList; 
-	}
-	public List<Userinfo> selectUserinfoList() {
-	 logger.info("查询所有Userinfo");
-	List<Userinfo>	userinfoList=null;
-	 try { 
-		userinfoList = (List<Userinfo>) daoSupport.findForList("UserinfoMapper.selectUserinfoList",null);
-	 }catch (Exception e){ 
-	 e.printStackTrace(); 
-	 userinfoList=null; 
-	}
-	 return userinfoList; 
+	//获取所有用户数据
+	public List<Userinfo> getAllUser(PageData pageData) {
+		List<Userinfo> userList =null;
+		try {
+			userList = (List<Userinfo>) daoSupport.findForList("UserinfoMapper.getAllUser",pageData);
+		}catch (Exception e){
+			e.printStackTrace();
+			userList =null;
+		}
+		return userList;
 	}
 }

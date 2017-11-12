@@ -17,72 +17,103 @@ protected final Log logger = LogFactory.getLog(getClass());
 
 	@Resource(name = "daoSupportImpl")
 
-	private DaoSupportImpl daoSupport; 
+	private DaoSupportImpl daoSupport;
 
-	public int addAccount(PageData pageData) {
-	 logger.info("增加Account");
-	 int iFlag =0; 
-	 try { 
-		iFlag = (int) daoSupport.insert("AccountMapper.addAccount",pageData);
-	 }catch (Exception e){ 
-	 e.printStackTrace(); 
-	 iFlag=0; 
+	/**
+	 * 添加
+	 * @param pageData
+	 * @return
+	 */
+	public int addAccount(PageData pageData){
+		int iFlag =0;
+		try {
+			iFlag = (int)daoSupport.insert("AccountMapper.addAccount",pageData);
+		}catch (Exception e){
+			e.printStackTrace();
+			iFlag=0;
+		}
+		return iFlag;
 	}
-	 return iFlag; 
+
+	/**
+	 * 更新
+	 * @param pageData
+	 * @return
+	 */
+	public int updateAccount(PageData pageData){
+		int iFlag =0;
+		try {
+			iFlag = (int)daoSupport.update("AccountMapper.updateAccount",pageData);
+		}catch (Exception e){
+			e.printStackTrace();
+			iFlag=0;
+		}
+		return iFlag;
 	}
-	public int delAccountByFid(String fid) {
-	 logger.info("删除Account");
-	 int iFlag =0; 
-	 try { 
-		iFlag = (int) daoSupport.delete("AccountMapper.deleteAccountByFid",fid);
-	 }catch (Exception e){ 
-	 e.printStackTrace(); 
-	 iFlag=0; 
+
+	/**
+	 * 删除指定信息
+	 * 删除用户时设置帐号不可用
+	 * @param fid
+	 * @return
+	 */
+	public int deleteAccountByFid(String fid){
+		int iFlag =0;
+		try {
+			iFlag = (int)daoSupport.delete("AccountMapper.deleteAccountByFid",fid);
+		}catch (Exception e){
+			e.printStackTrace();
+			iFlag=0;
+		}
+		return iFlag;
 	}
-	 return iFlag; 
+
+	/**
+	 * 查询所有信息
+	 * @return
+	 */
+	public List<Account> selectAccountList(){
+		List<Account> accountList =null;
+		try {
+			accountList = (List<Account>) daoSupport.findForList("AccountMapper.selectAccountList",null);
+		}catch (Exception e){
+			e.printStackTrace();
+			accountList =null;
+		}
+		return accountList;
 	}
-	public int updateAccount(PageData pageData) {
-	 logger.info("修改Account");
-	 int iFlag =0; 
-	 try { 
-		iFlag = (int) daoSupport.update("AccountMapper.updateAccount",pageData);
-	 }catch (Exception e){ 
-	 e.printStackTrace(); 
-	 iFlag=0; 
+
+	public Account getAccountforUserId(String fid) {
+		Account account = null;
+		try {
+			account =(Account) daoSupport.findForObject("AccountMapper.getAccountforUserId",fid);
+		}catch (Exception e){
+			e.printStackTrace();
+			account =null;
+		}
+		return account;
 	}
-	 return iFlag; 
+
+	//查询信息
+	public List<Account> getAllAccounts(PageData pageData) {
+		List<Account> accountList =null;
+		try {
+			accountList = (List<Account>) daoSupport.findForList("AccountMapper.getAllAccounts",pageData);
+		}catch (Exception e){
+			e.printStackTrace();
+			accountList =null;
+		}
+		return accountList;
 	}
-	public Account getAccountforId(String fid) {
-	 logger.info("通过ID查询Account");
-	Account	account=null;
-	 try { 
-		account = (Account) daoSupport.findForObject("AccountMapper.getAccountForId",fid);
-	 }catch (Exception e){ 
-	 e.printStackTrace(); 
-	 account=null; 
-	}
-	 return account; 
-	}
-	public List<Account> getAllAccount(PageData pageData) {
-	 logger.info("分页查询Account");
-	List<Account>	accountList=null;
-	 try { 
-		accountList = (List<Account>) daoSupport.findForList("AccountMapper.getAllAccount",pageData);
-	 }catch (Exception e){ 
-	 e.printStackTrace(); 
-	 accountList=null; 
-	}
-	 return accountList; 
-	}
-	public List<Account> selectAccountList() {
-	 logger.info("查询所有Account");
-	List<Account>	accountList=null;
-	 try { 
-		accountList = (List<Account>) daoSupport.findForList("AccountMapper.selectAccountList",null);
-	 }catch (Exception e){ 
-	 e.printStackTrace(); 
-	 accountList=null; 
-	}
-	 return accountList; 
+	//重置密码
+	public int resetPasswd(PageData pageData) {
+		int iFlag =0;
+		try {
+			iFlag = (int)daoSupport.update("AccountMapper.resetPasswd",pageData);
+		}catch (Exception e){
+			e.printStackTrace();
+			iFlag=0;
+		}
+		return iFlag;
 	}
 }

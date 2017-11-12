@@ -17,72 +17,104 @@ protected final Log logger = LogFactory.getLog(getClass());
 
 	@Resource(name = "daoSupportImpl")
 
-	private DaoSupportImpl daoSupport; 
+	private DaoSupportImpl daoSupport;
 
-	public int addModules(PageData pageData) {
-	 logger.info("增加Modules");
-	 int iFlag =0; 
-	 try { 
-		iFlag = (int) daoSupport.insert("ModulesMapper.addModules",pageData);
-	 }catch (Exception e){ 
-	 e.printStackTrace(); 
-	 iFlag=0; 
+	/**
+	 * 添加
+	 * @param pageData
+	 * @return
+	 */
+	public int addModule(PageData pageData){
+		int iFlag =0;
+		try {
+			iFlag = (int)daoSupport.insert("ModuleMapper.addModule",pageData);
+		}catch (Exception e){
+			e.printStackTrace();
+			iFlag=0;
+		}
+		return iFlag;
 	}
-	 return iFlag; 
+
+	/**
+	 * 更新
+	 * @param pageData
+	 * @return
+	 */
+	public int updateModule(PageData pageData){
+		int iFlag =0;
+		try {
+			iFlag = (int)daoSupport.update("ModuleMapper.updateModule",pageData);
+		}catch (Exception e){
+			e.printStackTrace();
+			iFlag=0;
+		}
+		return iFlag;
 	}
-	public int delModulesByFid(String fid) {
-	 logger.info("删除Modules");
-	 int iFlag =0; 
-	 try { 
-		iFlag = (int) daoSupport.delete("ModulesMapper.deleteModulesByFid",fid);
-	 }catch (Exception e){ 
-	 e.printStackTrace(); 
-	 iFlag=0; 
+
+	/**
+	 * 删除指定信息
+	 * @param fid
+	 * @return
+	 */
+	public int deleteModuleByFid(String fid){
+		int iFlag =0;
+		try {
+			iFlag = (int)daoSupport.delete("ModuleMapper.deleteModuleByFid",fid);
+		}catch (Exception e){
+			e.printStackTrace();
+			iFlag=0;
+		}
+		return iFlag;
 	}
-	 return iFlag; 
+	/**
+	 * 根据产品ID查询信息
+	 * @param fid
+	 * @return
+	 */
+	public Modules selectModuleByFid(String fid){
+		Modules module =null;
+		try {
+			module = (Modules) daoSupport.findForObject("ModuleMapper.selectModuleByFid",fid);
+		}catch (Exception e){
+			e.printStackTrace();
+			module =null;
+		}
+		return module;
 	}
-	public int updateModules(PageData pageData) {
-	 logger.info("修改Modules");
-	 int iFlag =0; 
-	 try { 
-		iFlag = (int) daoSupport.update("ModulesMapper.updateModules",pageData);
-	 }catch (Exception e){ 
-	 e.printStackTrace(); 
-	 iFlag=0; 
+	/**
+	 * 查询所有信息
+	 * @return
+	 */
+	public List<Modules> selectModuleList(){
+		List<Modules> moduleList =null;
+		try {
+			moduleList = (List<Modules>) daoSupport.findForList("ModuleMapper.selectModuleList",null);
+		}catch (Exception e){
+			e.printStackTrace();
+			moduleList =null;
+		}
+		return moduleList;
 	}
-	 return iFlag; 
+	//查询信息
+	public List<Modules> getAllModule(PageData pageData) {
+		List<Modules> moduleList =null;
+		try {
+			moduleList = (List<Modules>) daoSupport.findForList("ModuleMapper.getAllModule",pageData);
+		}catch (Exception e){
+			e.printStackTrace();
+			moduleList =null;
+		}
+		return moduleList;
 	}
-	public Modules getModulesforId(String fid) {
-	 logger.info("通过ID查询Modules");
-	Modules	modules=null;
-	 try { 
-		modules = (Modules) daoSupport.findForObject("ModulesMapper.getModulesForId",fid);
-	 }catch (Exception e){ 
-	 e.printStackTrace(); 
-	 modules=null; 
-	}
-	 return modules; 
-	}
-	public List<Modules> getAllModules(PageData pageData) {
-	 logger.info("分页查询Modules");
-	List<Modules>	modulesList=null;
-	 try { 
-		modulesList = (List<Modules>) daoSupport.findForList("ModulesMapper.getAllModules",pageData);
-	 }catch (Exception e){ 
-	 e.printStackTrace(); 
-	 modulesList=null; 
-	}
-	 return modulesList; 
-	}
-	public List<Modules> selectModulesList() {
-	 logger.info("查询所有Modules");
-	List<Modules>	modulesList=null;
-	 try { 
-		modulesList = (List<Modules>) daoSupport.findForList("ModulesMapper.selectModulesList",null);
-	 }catch (Exception e){ 
-	 e.printStackTrace(); 
-	 modulesList=null; 
-	}
-	 return modulesList; 
+	//是否包含子菜单
+	public List<Modules> getParentModule(){
+		List<Modules> moduleList =null;
+		try {
+			moduleList = (List<Modules>) daoSupport.findForList("ModuleMapper.getParentModule",null);
+		}catch (Exception e){
+			e.printStackTrace();
+			moduleList =null;
+		}
+		return moduleList;
 	}
 }

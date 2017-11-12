@@ -107,7 +107,7 @@
 
 	<!--9.AOP处理 -->
 	<aop:config>
-		<aop:pointcut id="pc" expression="execution(* com.hnqj.service..*(..))" />
+		<aop:pointcut id="pc" expression="execution(* com.hnqj.services..*(..))" />
 		<aop:advisor pointcut-ref="pc" advice-ref="txAdvice" />
 	</aop:config>
 </beans>

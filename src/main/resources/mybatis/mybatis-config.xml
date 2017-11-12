@@ -21,7 +21,7 @@
         <typeAlias type="com.hnqj.model.Cashrecord" alias="Cashrecord"/>
         <typeAlias type="com.hnqj.model.Changelog" alias="Changelog"/>
         <typeAlias type="com.hnqj.model.Client" alias="Client"/>
-        <typeAlias type="com.hnqj.model.Collection" alias="Collection"/>
+        <typeAlias type="com.hnqj.model.Collection" alias="Collections"/>
         <typeAlias type="com.hnqj.model.Comment" alias="Comment"/>
         <typeAlias type="com.hnqj.model.Dealrecord" alias="Dealrecord"/>
         <typeAlias type="com.hnqj.model.Dict" alias="Dict"/>
