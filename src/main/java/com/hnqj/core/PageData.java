@@ -8,6 +8,12 @@ import java.util.Map;
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
+
+/**
+ * 数据操作通用类
+ * chenyufeng
+ * 2017-11-11 add
+ */
 public class PageData extends HashMap<Object, Object> implements Map<Object, Object> {
 
     private static final long serialVersionUID = 1L;
