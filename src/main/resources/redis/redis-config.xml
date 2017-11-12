@@ -19,10 +19,10 @@
         <property name="testOnBorrow" value="${redis.testOnBorrow}"/>
     </bean>
     <bean id="connectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory"
-          p:host-name="${redis.host}"
+          p:hostName="${redis.host}"
           p:port="${redis.port}"
           p:password="${redis.pass}"
-          p:pool-config-ref="poolConfig"/>
+          p:poolConfig-ref="poolConfig"/>
 
     <bean id="redisTemplate" class="org.springframework.data.redis.core.StringRedisTemplate">
         <property name="connectionFactory"   ref="connectionFactory" />
