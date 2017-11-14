@@ -129,14 +129,14 @@ public class loginController extends BaseController{
                 for (Modules module : list) {
                     if (module.getPmId().equalsIgnoreCase("0")) {//是否为子节点
                         MenuTree menu = new MenuTree();
-                        menu.setFid(module.getFid());
+                        menu.setFid(module.getUid());
                         menu.setTitle(module.getMdName());
                         menu.setUrl(module.getMdAddress());
                         menu.setIcon(module.getMdImg());
                         for (Modules moduleBean2 : list2) {
-                            if (moduleBean2.getPmId().equalsIgnoreCase(module.getFid())) {
+                            if (moduleBean2.getPmId().equalsIgnoreCase(module.getUid())) {
                                 MenuTree childmenu = new MenuTree();
-                                childmenu.setFid(moduleBean2.getFid());
+                                childmenu.setFid(moduleBean2.getUid());
                                 childmenu.setTitle(moduleBean2.getMdName());
                                 childmenu.setUrl(moduleBean2.getMdAddress());
                                 childmenu.setIcon(moduleBean2.getMdImg());
@@ -170,7 +170,7 @@ public class loginController extends BaseController{
         String passd = requestJson.containsKey("password") == true ? requestJson.getString("password") : "";
         Account account=accountServices.getAccountforUserId(userid);
         PageData pageData = new PageData();
-        pageData.put("fid",account.getFid());
+        pageData.put("fid",account.getUid());
         pageData.put("passwd",encodeMD5(passd));
         accountServices.updateAccount(pageData);
         return null;

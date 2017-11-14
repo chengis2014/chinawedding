@@ -46,6 +46,21 @@
           <bean class="com.yutu.interceptor.LoginHandlerInterceptor"/>
        </mvc:interceptor>
     </mvc:interceptors>-->
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/**"/>
+			<mvc:exclude-mapping path="/**/fonts/*"/>
+			<mvc:exclude-mapping path="/**/*.css"/>
+			<mvc:exclude-mapping path="/**/*.js"/>
+			<mvc:exclude-mapping path="/**/*.png"/>
+			<mvc:exclude-mapping path="/**/*.gif"/>
+			<mvc:exclude-mapping path="/**/*.jpg"/>
+			<mvc:exclude-mapping path="/**/*.jpeg"/>
+			<mvc:exclude-mapping path="/**/*login*"/>
+			<mvc:exclude-mapping path="/**/*Login*"/>
+			<bean class="com.hnqj.interceptor.LoginInterceptor"/>
+		</mvc:interceptor>
+	</mvc:interceptors>
 
 	<!-- 配置SpringMVC的视图解析器 -->
 	<bean

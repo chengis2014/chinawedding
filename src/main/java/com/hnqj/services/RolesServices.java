@@ -114,7 +114,7 @@ protected final Log logger = LogFactory.getLog(getClass());
 	}
 	public List<Modules> getModuleListByRoleId(Roles role) {
 		List<Modules> moduleList =null;
-		String role_id = role.getFid();
+		String role_id = role.getUid();
 		try {
 			moduleList = (List<Modules>) daoSupport.findForList("ModuleMapper.getModuleListByRoleId",role_id);
 		}catch (Exception e){

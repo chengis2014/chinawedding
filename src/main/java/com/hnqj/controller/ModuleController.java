@@ -49,7 +49,7 @@ public class ModuleController extends BaseController{
         pageData.put("limit",limit);
         List<Modules> glist=modulesServices.getAllModule(pageData);
         for (Modules module:glist){
-            module.setPmId(modulesServices.selectModuleByFid(module.getFid()).getMdName());
+            module.setPmId(modulesServices.selectModuleByFid(module.getUid()).getMdName());
         }
         tablereturn.setRows(glist);
         tablereturn.setTotal(glist.size());
@@ -202,7 +202,7 @@ public class ModuleController extends BaseController{
         List<TreeReturn> Trees= new ArrayList<TreeReturn>();
         for(Modules moudle:moudles){
             TreeReturn tree=new TreeReturn();
-            tree.setId(moudle.getFid());
+            tree.setId(moudle.getUid());
             tree.setpId(moudle.getPmId());
             tree.setName(moudle.getMdName());
             tree.setOpen(StringUtils.equalsIgnoreCase(moudle.getPmId(),"-1"));

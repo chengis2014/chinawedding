@@ -56,7 +56,7 @@ public class AccountController extends  BaseController{
         for(Account account:list){
             Userinfo user=userinfoServices.selectUserByFid(account.getUserid());
             Map<String, String> map = new HashMap<>();
-            map.put("fid",account.getFid());
+            map.put("fid",account.getUid());
             map.put("account",account.getAccount());
             map.put("fname",user.getFristname());
             if(account.getUsemobile()==(short) 1){
@@ -160,7 +160,7 @@ public class AccountController extends  BaseController{
         String newPassword = request.getParameter("newPassword") == null ? "" : request.getParameter("newPassword");
         Account account=accountService.getAccountforUserId(getUser().getUid());
         PageData pageData = new PageData();
-        pageData.put("fid",account.getFid());
+        pageData.put("fid",account.getUid());
         pageData.put("passwd",encodeMD5(newPassword));
         try {
             accountService.updateAccount(pageData);
