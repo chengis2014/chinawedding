@@ -11,8 +11,8 @@ import org.springframework.stereotype.Service;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import java.util.List;
+
 @Service("userinfo")
-@Cacheable
 public class UserinfoServices {
 
 protected final Log logger = LogFactory.getLog(getClass());
