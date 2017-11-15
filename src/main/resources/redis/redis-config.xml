@@ -28,7 +28,6 @@
     <bean id="jedisConnectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory"
           p:hostName="${redis.host}"
           p:port="${redis.port}"
-          p:password="${redis.pass}"
           p:poolConfig-ref="poolConfig"/>
 
     <!-- redisTemplate模板 -->

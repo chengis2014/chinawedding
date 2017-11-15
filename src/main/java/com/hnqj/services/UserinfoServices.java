@@ -6,11 +6,13 @@ import com.hnqj.model.Userinfo;
 
 import javax.annotation.Resource;
 import com.hnqj.dao.DaoSupportImpl;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import java.util.List;
 @Service("userinfo")
+@Cacheable
 public class UserinfoServices {
 
 protected final Log logger = LogFactory.getLog(getClass());
@@ -98,6 +100,7 @@ protected final Log logger = LogFactory.getLog(getClass());
 		return userList;
 	}
 
+	@Cacheable(value="remote",key="'getUser'")
 	public Userinfo getUser(PageData pageData) {
 		Userinfo user = null;
 		try {
