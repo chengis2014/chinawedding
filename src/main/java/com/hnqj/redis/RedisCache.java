@@ -4,6 +4,7 @@ package com.hnqj.redis;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import com.hnqj.core.SerializeUtil;
 import org.apache.ibatis.cache.Cache;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
@@ -57,8 +58,13 @@ public class RedisCache implements Cache {
         RedisConnection connection = null;
         try {
             connection = jedisConnectionFactory.getConnection();
-            RedisSerializer<Object> serializer = new JdkSerializationRedisSerializer();
-            result = serializer.deserialize(connection.get(serializer.serialize(key)));
+
+
+            result = SerializeUtil.unserialize(connection.get(SerializeUtil
+                    .serialize(key.toString())));
+
+            //RedisSerializer<Object> serializer = new JdkSerializationRedisSerializer();
+            //result = serializer.deserialize(connection.get(serializer.serialize(key)));
         } catch (Exception e) {
             e.printStackTrace();
         }finally{
@@ -98,9 +104,9 @@ public class RedisCache implements Cache {
         RedisConnection connection = null;
         try {
             connection = jedisConnectionFactory.getConnection();
-            RedisSerializer<Object> serializer = new JdkSerializationRedisSerializer();
-            System.out.println("**"+serializer.serialize(key));
-            connection.set(serializer.serialize(key), serializer.serialize(value));
+            System.out.println("**"+SerializeUtil.serialize(key.toString()));
+            connection.set(SerializeUtil.serialize(key.toString()), SerializeUtil
+                    .serialize(value));
         } catch (Exception e) {
             e.printStackTrace();
         }finally{
@@ -117,8 +123,7 @@ public class RedisCache implements Cache {
         Object result = null;
         try {
             connection = jedisConnectionFactory.getConnection();
-            RedisSerializer<Object> serializer = new JdkSerializationRedisSerializer();
-            result = connection.expireAt(serializer.serialize(key), 0);
+            result = connection.expireAt(SerializeUtil.serialize(key.toString()), 0);
         } catch (Exception e) {
             e.printStackTrace();
         }finally{
