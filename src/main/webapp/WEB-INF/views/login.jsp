@@ -25,8 +25,8 @@
     <!-- 基础CSS类库可随意更改 -->
     <link rel="stylesheet" type="text/css" href="<%=basePath%>/static/css/less.css">
     <link rel="stylesheet" type="text/css" href="<%=basePath%>/static/css/basic.css">
-    <link rel="icon" href="<%=basePath%>/static/img/my1.ico" type="image/x-icon" />
-    <title>婚秀中国网后台管理系统</title>
+    <link rel="icon" href="<%=basePath%>/static/img/ico.ico" type="image/x-icon"/>
+    <title>后台管理系统</title>
     <script type="text/javascript" src="<%=basePath%>/static/js/jquery-2.2.0.min.js"></script>
     <script type="text/javascript" src="<%=basePath%>/static/js/cookie.min.js"></script>
     <%--提示框--%>
@@ -262,7 +262,7 @@
     </style>
 </head>
 <body>
-<div class="title-text">婚秀中国网后台管理系统</div>
+<div class="title-text">后台管理系统</div>
 <div class="login-topStyle5" ></div>
 <div class="login-topStyle3" id="loginStyle" style="background-color: #ffffff">
     <h3 style="color: darkgray">用户登录</h3>

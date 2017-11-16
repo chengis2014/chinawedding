@@ -67,7 +67,7 @@
 <body>
 
 <div class="bac_bac"></div>
-<div class="bac_text">欢迎登录<br>婚秀中国网后台管理系统</div>
+<div class="bac_text">欢迎登录<br>后台管理系统</div>
 
 </div>
 </body>

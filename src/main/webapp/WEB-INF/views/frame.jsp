@@ -17,7 +17,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
-    <title>婚秀中国网后台管理系统</title>
+    <title>后台管理系统</title>
     <!-- Bootstrap core CSS -->
     <!-- Bootstrap 3.3.6 -->
     <link rel="stylesheet" href="<%=basePath%>/static/bootstrap/css/bootstrap.min.css">
@@ -226,7 +226,7 @@
         <%--</div>--%>
         <!--logo start-->
         <div style="float: left;">
-            <img style="height: 50px; width: 180px" src="<%=basePath%>/static/img/logo.gif">
+            <!--<img style="height: 50px; width: 180px" src="<%=basePath%>/static/img/logo.gif">-->
         </div>
         <!--<a href="javascript:;" class="logo" style="color: white">婚秀中国网后台管理系统</a>-->
         <!--logo end-->
@@ -362,11 +362,11 @@
                         <div class="form-group">
                             <label>姓名</label>
                             <input class="form-control" readonly id="fname" name="fname"
-                                   placeholder="" type="text">
+                                   placeholder="${user.getFristname()}" type="text">
                         </div>
                         <div class="form-group">
                             <label>电话</label>
-                            <input class="form-control" readonly placeholder="" id="mobilephone"
+                            <input class="form-control" readonly placeholder="${user.getTelephone()}" id="mobilephone"
                                    name="mobilephone" type="text"/>
                         </div>
                         <!-- /.form-group -->

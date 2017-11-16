@@ -73,7 +73,7 @@ public class loginController extends BaseController{
             tokenPageData.put("invalid_date",new Date(System.currentTimeMillis()+30*60*1000));
             tokenService.addToken(tokenPageData);
             */
-            this.getSession().setAttribute("User", user);
+            this.getSession().setAttribute("user", user);
             map.put("state", "true");
             map.put("msg", "登录成功");
             //map.put("token", token.getFid());
