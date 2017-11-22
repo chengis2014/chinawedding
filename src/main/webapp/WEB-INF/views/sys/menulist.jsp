@@ -46,10 +46,11 @@
             font-weight: normal;
         }
         #toolbar>button.btn-info{
-            background-color:#58ABD1;
+            background-color:#337ab7;
+            border-color: #2e6da4;
         }
         #toolbar>button.btn-info:hover{
-            background-color: #3092B8;
+            background-color: #286090;
         }
     </style>
 </head>
@@ -69,13 +70,13 @@
             toolbar:"#toolbar",
             showRefresh: true,
             //showExport:true,
-           // height:400,
+            // height:400,
             pageSize: 10,  //每页显示的记录数
             pageNumber:1, //当前第几页
             exportDataType : "all",
             clickToSelect:true,
             //search:true,
-            idField:"fid",
+            idField:"uid",
             //showFooter:true,
             sidePagination: "server", //表示服务端请求
             //设置为undefined可以获取pageNumber，pageSize，searchText，sortName，sortOrder
@@ -97,7 +98,7 @@
             }
         });
     }
-   // var $table = $('#cusTable');
+    // var $table = $('#cusTable');
 
     /**
      * 初始化
@@ -118,7 +119,7 @@
                 var val=$("input[name='mdOrdernum']").val();
                 var val=$("input[name='mdAddress']").val();
                 var val=$("input[name='mdImg']").val();
-              //  saveModule();
+                //  saveModule();
                 submit();
             }else{
                 alert("请按照要求填写");
@@ -129,7 +130,7 @@
     });
 
 
-//显示新建窗口
+    //显示新建窗口
     function newModule(){
         initNewModule();
         $('#newModal').modal('show');
@@ -143,7 +144,7 @@
                 if(data!=="failed"){
                     var msg = eval("(" + data + ")");
                     $.each(msg, function(name, value) {
-                        var varItem2 = new Option(value.mdName,value.fid);
+                        var varItem2 = new Option(value.mdName,value.uid);
                         $("#pmId").append(varItem2);
                     });
                 }else{
@@ -153,7 +154,7 @@
             }
         });
     }
-//初始化父菜单
+    //初始化父菜单
     function initParentModule(pm_id){
         $.ajax({
             type: "post",
@@ -164,7 +165,7 @@
                 if(data!=="failed"){
                     var msg = eval("(" + data + ")");
                     $.each(msg, function(name, value) {
-                        var varItem2 = new Option(value.mdName,value.fid);
+                        var varItem2 = new Option(value.mdName,value.uid);
                         if(pm_id==value.fid){
                             $(varItem2).attr("selected","selected");
                         }
@@ -246,12 +247,12 @@
         });
     }
     /*
-    * 是否有子节点
-    * */
+     * 是否有子节点
+     * */
     function ischecked(obj){
 
     }
-//提交保存
+    //提交保存
     function saveModule(){
         var obj =document.getElementById("mdIschild");
         var pmId="";
@@ -263,7 +264,7 @@
             pmId=0;
         }
 
-       // var opurl=$('#fid').val()==""?"/module/addModule.do":"/module/updateModule.do";
+        // var opurl=$('#fid').val()==""?"/module/addModule.do":"/module/updateModule.do";
         $.ajax({
             type:"post",
             url: "<%=basePath%>/module/addModule.do",
@@ -292,7 +293,7 @@
         });
         $('#newModal').modal('hide');
     }
-//编辑
+    //编辑
     function editModule(){
         var arr = $('#cusTable').bootstrapTable('getSelections');
         if(arr.length>0){
@@ -309,7 +310,7 @@
                             $('#newModal').modal('show');
                             $("#myModalLabel").html("修改菜单");
                             var msg = eval("(" + data + ")");
-                            $('#fid').val(msg.fid);
+                            $('#fid').val(msg.uid);
                             $('#mdName').val(msg.mdName);
                             $('#mdCode').val(msg.mdCode);
                             initParentModule(msg.pmId);
@@ -368,67 +369,67 @@
         $('#newModal').modal('hide');
     }
 
-function delRow(){
-    var arr = $('#cusTable').bootstrapTable('getSelections');
-    if(arr.length>0){
-        (confirmInfo("确认删除当前记录?")).then(function (status) {
-            if (status==true) {
-                deleteModule();
+    function delRow(){
+        var arr = $('#cusTable').bootstrapTable('getSelections');
+        if(arr.length>0){
+            (confirmInfo("确认删除当前记录?")).then(function (status) {
+                if (status==true) {
+                    deleteModule();
+                }
+            });
+        } else{
+            warningInfo("请选择要删除的记录");
+        }
+    }
+    //删除菜单
+    function deleteModule(){
+        console.info("deleteModule");
+        var ids = getIdSelections();
+        $.ajax({
+            type: "POST",
+            url: "<%=basePath%>/module/delModulefIds.do",
+            data: {
+                ids:getCheckFid()
+            },
+            beforeSend : function() {
+                submitWait();
+            },
+            error : function() {
+                hideWait();
+                errorInfo("删除记录失败");
+            },
+            success: function(data){
+                hideWait();
+                if(data!=="failed"){
+                    $('#cusTable').bootstrapTable('remove', {
+                        field: 'uid',
+                        values: ids
+                    });
+                    successInfo("删除成功!")
+                    $('#cusTable').bootstrapTable('refresh');//初始化数据
+                }else{
+                    errorInfo("删除记录失败");
+                    $('#cusTable').bootstrapTable('refresh');//初始化数据
+                }
             }
         });
-    } else{
-        warningInfo("请选择要删除的记录");
+        $('#newModal').modal('hide');
     }
-}
-    //删除菜单
-function deleteModule(){
-    console.info("deleteModule");
-    var ids = getIdSelections();
-     $.ajax({
-        type: "POST",
-        url: "<%=basePath%>/module/delModulefIds.do",
-        data: {
-            ids:getCheckFid()
-        },
-         beforeSend : function() {
-             submitWait();
-         },
-         error : function() {
-             hideWait();
-             errorInfo("删除记录失败");
-         },
-        success: function(data){
-            hideWait();
-            if(data!=="failed"){
-                $('#cusTable').bootstrapTable('remove', {
-                    field: 'fid',
-                    values: ids
-                });
-                successInfo("删除成功!")
-                $('#cusTable').bootstrapTable('refresh');//初始化数据
-            }else{
-                errorInfo("删除记录失败");
-                $('#cusTable').bootstrapTable('refresh');//初始化数据
-            }
-        }
-    });
-    $('#newModal').modal('hide');
-}
 
     //取表格行数用于表格行的移除
-function getIdSelections() {
-    return $.map($('#cusTable').bootstrapTable('getAllSelections'), function (row) {
-        return row.fid;
-    });
-}
+    function getIdSelections() {
+        return $.map($('#cusTable').bootstrapTable('getAllSelections'), function (row) {
+            return row.uid;
+        });
+    }
     //获取FID用于后台操作
-function getCheckFid(){
-    var fids="";
-    $('#cusTable').find('input[name="btSelectItem"]:checked').each(function(){
-        fids += $(this).val()+',';
-    });
-    return fids;
-}
+    function getCheckFid(){
+        var fids="";
+        $('#cusTable').find('input[name="btSelectItem"]:checked').each(function(){
+            fids += $(this).val()+',';
+        });
+        return fids;
+    }
     function resetForm(){
         $('#defaultForm').data('bootstrapValidator').resetForm(true);
     }
@@ -454,7 +455,7 @@ function getCheckFid(){
         <table id="cusTable" class="table" >
             <thead>
             <tr>
-                <th data-field="fid" data-checkbox="true" align="center"></th>
+                <th data-field="uid" data-checkbox="true" align="center"></th>
                 <th data-field="mdName" data-editable="false"  align="center" >菜单名称</th>
                 <th data-field="mdCode"  data-editable="false" align="center">模块代码</th>
                 <th data-field="mdImg"  data-editable="false" align="center">图标</th>
@@ -470,7 +471,7 @@ function getCheckFid(){
 
 </div>
 
-    <div class="modal fade" id="newModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal fade" id="newModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -480,54 +481,54 @@ function getCheckFid(){
             <div class="modal-body" id="defaultForm" method="post">
                 <div class="row">
                     <input type="hidden" name="fid" id="fid"/>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label>菜单名称</label>
-                                    <input class="form-control" id="mdName" name="mdName" placeholder="菜单名称" type="text">
-                                </div>
-                                <!-- /.form-group -->
-                                <div class="form-group">
-                                    <label>模块代码</label>
-                                    <input class="form-control" id="mdCode"  name="mdCode" placeholder="模块代码"  type="text">
-                                </div>
-                                <div class="form-group">
-                                    <label>父菜单</label>
-                                    <select class="form-control" id="pmId" >
-                                       <option>option 1</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label>显示顺序</label>
-                                    <input class="form-control" id="mdOrdernum"  name="mdOrdernum" placeholder="显示顺序" type="text">
-                                </div>
-                                <!-- /.form-group -->
-                            </div>
-                            <!-- /.col -->
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label>模块地址</label>
-                                    <input class="form-control" id="mdAddress"  name="mdAddress" placeholder="模块地址" type="text">
-                                </div>
-                                <!-- /.form-group -->
-                                <div class="form-group">
-                                    <label>图标</label>
-                                    <input class="form-control" id="mdImg"  name="mdImg" placeholder="图标样式" type="text">
-                                </div>
-
-                                <div class="form-group">
-                                    <label>打开方式</label>
-                                    <select class="form-control" id="mdMethod" >
-                                        <option value="0">默认</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label>
-                                        <input type="checkbox" class="minimal" id="mdIschild"> 是否为子模块</label>
-                                </div>
-                                <!-- /.form-group -->
-                            </div>
-                            <!-- /.col -->
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>菜单名称</label>
+                            <input class="form-control" id="mdName" name="mdName" placeholder="菜单名称" type="text">
                         </div>
+                        <!-- /.form-group -->
+                        <div class="form-group">
+                            <label>模块代码</label>
+                            <input class="form-control" id="mdCode"  name="mdCode" placeholder="模块代码"  type="text">
+                        </div>
+                        <div class="form-group">
+                            <label>父菜单</label>
+                            <select class="form-control" id="pmId" >
+                                <option>option 1</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>显示顺序</label>
+                            <input class="form-control" id="mdOrdernum"  name="mdOrdernum" placeholder="显示顺序" type="text">
+                        </div>
+                        <!-- /.form-group -->
+                    </div>
+                    <!-- /.col -->
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>模块地址</label>
+                            <input class="form-control" id="mdAddress"  name="mdAddress" placeholder="模块地址" type="text">
+                        </div>
+                        <!-- /.form-group -->
+                        <div class="form-group">
+                            <label>图标</label>
+                            <input class="form-control" id="mdImg"  name="mdImg" placeholder="图标样式" type="text">
+                        </div>
+
+                        <div class="form-group">
+                            <label>打开方式</label>
+                            <select class="form-control" id="mdMethod" >
+                                <option value="0">默认</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" class="minimal" id="mdIschild"> 是否为子模块</label>
+                        </div>
+                        <!-- /.form-group -->
+                    </div>
+                    <!-- /.col -->
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" onclick="resetForm()" data-dismiss="modal">关闭</button>

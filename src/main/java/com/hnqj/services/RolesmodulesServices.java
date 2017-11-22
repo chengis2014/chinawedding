@@ -110,10 +110,10 @@ protected final Log logger = LogFactory.getLog(getClass());
 		return rolesModulesList;
 	}
 
-	public int delRolesModulesByMdId(String mdId) {
+	public int delRolesModulesByMdId(PageData pageData) {
 		int iFlag =0;
 		try {
-			iFlag = (int)daoSupport.delete("RolesModulesMapper.delRolesModulesByMdId",mdId);
+			iFlag = (int)daoSupport.delete("RolesModulesMapper.delRolesModulesByMdId",pageData);
 		}catch (Exception e){
 			e.printStackTrace();
 			iFlag=0;

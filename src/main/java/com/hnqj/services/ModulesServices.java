@@ -68,13 +68,13 @@ protected final Log logger = LogFactory.getLog(getClass());
 	}
 	/**
 	 * 根据产品ID查询信息
-	 * @param fid
+	 * @param uid
 	 * @return
 	 */
-	public Modules selectModuleByFid(String fid){
+	public Modules selectModuleByFid(String uid){
 		Modules module =null;
 		try {
-			module = (Modules) daoSupport.findForObject("ModuleMapper.selectModuleByFid",fid);
+			module = (Modules) daoSupport.findForObject("ModuleMapper.selectModuleByFid",uid);
 		}catch (Exception e){
 			e.printStackTrace();
 			module =null;

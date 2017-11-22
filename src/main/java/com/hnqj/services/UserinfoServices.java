@@ -22,14 +22,14 @@ protected final Log logger = LogFactory.getLog(getClass());
 	private DaoSupportImpl daoSupport;
 
 	/**
-	 * 添加代理用户信息
+	 * 会员用户注册
 	 * @param pageData
 	 * @return
 	 */
-	public int addUser(PageData pageData){
+	public int userInfoRegister(PageData pageData){
 		int iFlag =0;
 		try {
-			iFlag = (int)daoSupport.insert("UserinfoMapper.addUser",pageData);
+			iFlag = (int)daoSupport.insert("UserinfoMapper.userInfoRegister",pageData);
 		}catch (Exception e){
 			e.printStackTrace();
 			iFlag=0;
@@ -38,14 +38,14 @@ protected final Log logger = LogFactory.getLog(getClass());
 	}
 
 	/**
-	 * 更新代理用户信息
+	 * 修改会员信息
 	 * @param pageData
 	 * @return
 	 */
-	public int updateUser(PageData pageData){
+	public int updateUserInfo(PageData pageData){
 		int iFlag =0;
 		try {
-			iFlag = (int)daoSupport.update("UserinfoMapper.updateUser",pageData);
+			iFlag = (int)daoSupport.update("UserinfoMapper.updateUserInfo",pageData);
 		}catch (Exception e){
 			e.printStackTrace();
 			iFlag=0;
@@ -54,30 +54,14 @@ protected final Log logger = LogFactory.getLog(getClass());
 	}
 
 	/**
-	 * 删除指定的代理用户信息
+	 * 根据会员ID查询用户信息
 	 * @param fid
 	 * @return
 	 */
-	public int deleteUserByFid(String fid){
-		int iFlag =0;
-		try {
-			iFlag = (int)daoSupport.delete("UserinfoMapper.deleteUserByFid",fid);
-		}catch (Exception e){
-			e.printStackTrace();
-			iFlag=0;
-		}
-		return iFlag;
-	}
-
-	/**
-	 * 根据产品ID查询用户信息
-	 * @param fid
-	 * @return
-	 */
-	public Userinfo selectUserByFid(String fid){
+	public Userinfo getUserInfoByUid(String fid){
 		Userinfo user =null;
 		try {
-			user = (Userinfo) daoSupport.findForObject("UserinfoMapper.selectUserByFid",fid);
+			user = (Userinfo) daoSupport.findForObject("UserinfoMapper.getUserInfoByUid",fid);
 		}catch (Exception e){
 			e.printStackTrace();
 			user =null;
@@ -89,10 +73,10 @@ protected final Log logger = LogFactory.getLog(getClass());
 	 * 查询所有的用户信息
 	 * @return
 	 */
-	public List<Userinfo> selectUserList(){
+	public List<Userinfo> selectUserInfoList(){
 		List<Userinfo> userList =null;
 		try {
-			userList = (List<Userinfo>) daoSupport.findForList("UserinfoMapper.selectUserList",null);
+			userList = (List<Userinfo>) daoSupport.findForList("UserinfoMapper.selectUserInfoList",null);
 		}catch (Exception e){
 			e.printStackTrace();
 			userList =null;
@@ -100,6 +84,11 @@ protected final Log logger = LogFactory.getLog(getClass());
 		return userList;
 	}
 
+	/**
+	 * 获取登录用户信息
+	 * @param pageData
+     * @return
+     */
 	@Cacheable(value="remote",key="'getUser'")
 	public Userinfo getUser(PageData pageData) {
 		Userinfo user = null;
@@ -111,22 +100,11 @@ protected final Log logger = LogFactory.getLog(getClass());
 		}
 		return user;
 	}
-	//根据部门获取用户
-	public List<Userinfo> getAllUserByUid(String unitId) {
+	//分页获取所有用户数据
+	public List<Userinfo> getAllUserInfo(PageData pageData) {
 		List<Userinfo> userList =null;
 		try {
-			userList = (List<Userinfo>) daoSupport.findForList("UserinfoMapper.getUnitUser",unitId);
-		}catch (Exception e){
-			e.printStackTrace();
-			userList =null;
-		}
-		return userList;
-	}
-	//获取所有用户数据
-	public List<Userinfo> getAllUser(PageData pageData) {
-		List<Userinfo> userList =null;
-		try {
-			userList = (List<Userinfo>) daoSupport.findForList("UserinfoMapper.getAllUser",pageData);
+			userList = (List<Userinfo>) daoSupport.findForList("UserinfoMapper.getAllUserInfo",pageData);
 		}catch (Exception e){
 			e.printStackTrace();
 			userList =null;

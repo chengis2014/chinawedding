@@ -43,7 +43,6 @@
         <typeAlias type="com.hnqj.model.Train" alias="Train"/>
         <typeAlias type="com.hnqj.model.Unsubscribe" alias="Unsubscribe"/>
         <typeAlias type="com.hnqj.model.Userinfo" alias="Userinfo"/>
-        <typeAlias type="com.hnqj.model.UserinfoWithBLOBs" alias="UserinfoWithBLOBs"/>
         <typeAlias type="com.hnqj.model.Works" alias="Works"/>
     </typeAliases>
 </configuration>

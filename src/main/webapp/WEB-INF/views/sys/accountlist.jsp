@@ -348,7 +348,7 @@
                 <th data-field="fid" data-checkbox="true" align="center"></th>
                 <th data-field="account" data-editable="false"  align="center">帐号</th>
                 <th data-field="fname"  data-editable="false" align="center">用户</th>
-                <th data-field="usemobile"  data-editable="false" align="center">使用手机</th>
+                <th data-field="usertype"  data-editable="false" align="center">用户类型</th>
             </tr>
             </thead>
         </table>

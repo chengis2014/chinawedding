@@ -6,7 +6,7 @@
     String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path;
 %>
 <head>
-    <title>用户管理</title>
+    <title>字典管理</title>
     <meta charset="utf-8">
     <script src="<%=basePath%>/static/js/jquery-2.2.0.min.js"></script>
     <link rel="stylesheet" href="<%=basePath%>/static/css/trip.css">
@@ -15,21 +15,13 @@
     <%--表格样式--%>
     <link rel="stylesheet" href="<%=basePath%>/static/bootstrap/bootstrap-table/bootstrap-table.css">
     <link rel="stylesheet" href="<%=basePath%>/static/font-awesome/css/font-awesome.min.css">
-    <%--<script src="<%=basePath%>/bootstrap/js/bootstrap.min.js"></script>--%>
     <%--表格JS--%>
     <script src="<%=basePath%>/static/bootstrap/bootstrap-table/bootstrap-table.js"></script>
-    <%--表格导出--%>
-    <script src="<%=basePath%>/static/bootstrap/bootstrap-table/extensions/export/bootstrap-table-export.js"></script>
-    <script src="<%=basePath%>/static/js/tableExport.js"></script>
     <%--语言包--%>
     <script src="<%=basePath%>/static/bootstrap/bootstrap-table/locale/bootstrap-table-zh-CN.js"></script>
     <%--提示框--%>
     <script src="<%=basePath%>/static/js/jquery.noty.packaged.min.js"></script>
     <script src="<%=basePath%>/static/js/showinfo.js"></script>
-    <!--树-->
-    <script type="text/javascript" src="<%=basePath%>/static/js/ztree3d5/js/jquery.ztree.all.js"></script>
-    <link rel="stylesheet" href="<%=basePath%>/static/js/ztree3d5/css/zTreeStyle/zTreeStyle.css" type="text/css" />
-    <link rel="stylesheet" href="<%=basePath%>/static/js/ztree3d5/css/demo.css" type="text/css" />
     <!--校验-->
     <link rel="stylesheet" href="<%=basePath%>/static/bootstrap/validate/css/bootstrapValidator.min.css"/>
     <script type="text/javascript" src="<%=basePath%>/static/bootstrap/validate/js/bootstrapValidator.js"></script>
@@ -76,7 +68,7 @@
         $("#cusTable").bootstrapTable({
             method: "get",  //使用get请求到服务器获取数据
             contentType: "application/x-www-form-urlencoded",
-            url: "<%=basePath%>/user/getUserList.do", //获取数据的Servlet地址
+            url: "<%=basePath%>/dictionaries/getDictionariesList.do", //获取数据的Servlet地址
             striped: true,  //表格显示条纹
             pagination: true, //启动分页
             toolbar:"#toolbar",
@@ -87,12 +79,8 @@
             clickToSelect:true,
             search:false,
             idField:"uid",
-            //showFooter:true,
             sidePagination: "server", //表示服务端请求
-            //设置为undefined可以获取pageNumber，pageSize，searchText，sortName，sortOrder
-            //设置为limit可以获取limit, offset, search, sort, order
             queryParamsType : "limit",
-
             queryParams: function queryParams(params) {   //设置查询参数
                 var param = {
                     limit: params.limit,
@@ -101,89 +89,23 @@
                 return param;
             },
             onLoadSuccess: function(){  //加载成功时执行
-
             },
             onLoadError: function(){  //加载失败时执行
             }
         });
     }
 
-    //添加窗口部门树
-    var setting = {
-        check: {
-            enable: true,
-            chkStyle: "radio",
-            radioType: "level",//单选
-        },
-        data: {
-            simpleData: {
-                enable: true,
-            }
-        },
-        view:{
-            showLine:true,
-        },
-        async: {
-            enable: true,
-            url:"<%=basePath%>/unit/getUnitTree.do"//树数据路径
-        },
-        //回调函数
-        callback: {
-            onCheck: onClick
-        }
-    };
-    //窗口中树回调函数
-    function onClick(e, treeId, treeNode){
-        $("#saveUnitid").val(treeNode.id);
-        var zTree = $.fn.zTree.getZTreeObj("treeDemo"),
-                nodes = zTree.getCheckedNodes(),//获取勾选中的节点
-                v = "";
-        nodes.sort(function compare(a,b){return a.id-b.id;});
-        for (var i=0, l=nodes.length; i<l; i++) {
-            v += nodes[i].name + ",";
-        }
-        if (v.length > 0 ) v = v.substring(0, v.length-1);
-        $("#unitId").val(v);
-    }
-    function showMenu() {
-        var unitNmae=$("#unitId").val();
-        //获取所有节点数据
-        var zTree = $.fn.zTree.getZTreeObj("treeDemo");
-        var nodes = zTree.getNodes();
-        var	nodes_array = zTree.transformToArray (nodes);
-        for(var i=0;i<nodes_array.length;i++){
-            if(nodes_array[i].name == unitNmae){
-                zTree.checkNode(nodes_array[i], true);
-                zTree.selectNode(nodes_array[i]);
-                zTree.expandNode(nodes_array[i].getParentNode(), true, true, true);
-            }
-        }
-        var cityObj = $("#unitId");
-        var cityOffset = $("#unitId").offset();
-        $("#menuContent").css({left:15 + "px", top:25 + "px"}).slideDown("fast");
-        $("body").bind("mousedown", onBodyDown);
-    }
-    function hideMenu() {
-        $("#menuContent").fadeOut("fast");
-        $("body").unbind("mousedown", onBodyDown);
-    }
-    function onBodyDown(event) {
-        if (!(event.target.id == "menuBtn" || event.target.id == "menuContent" || $(event.target).parents("#menuContent").length>0)) {
-            hideMenu();
-        }
-    }
     /**
-     * 初始化
+     * 初始化数据
      */
     $(document).ready(function () {
         //调用函数，初始化表格
         initTable();
-        $.fn.zTree.init($("#treeDemo"), setting);//窗口树初始化
+        //校验
         initValidate();
-        $("button[title='刷新']").hide();
-        $("#userForm").submit(function(ev){ev.preventDefault();});//AJAX提交必修使用
+        $("#dictForm").submit(function(ev){ev.preventDefault();});//AJAX提交必修使用
         $('#submitBtn').click(function() {
-            var bootstrapValidator = $("#userForm").data('bootstrapValidator');//必须
+            var bootstrapValidator = $("#dictForm").data('bootstrapValidator');//必须
             bootstrapValidator.validate();
             if(bootstrapValidator.isValid()) {
                 submit();
@@ -193,12 +115,12 @@
             }
         });
         $(".close").click(function (){
-            $('#userForm').data('bootstrapValidator').resetForm(true);
+            $('#dictForm').data('bootstrapValidator').resetForm(true);
         })
     });
-    //用户校验
+    //校验
     function initValidate(){
-        $('#userForm').bootstrapValidator({
+        $('#dictForm').bootstrapValidator({
             message: '值不能为空',
             feedbackIcons: {
                 valid: 'glyphicon glyphicon-ok',
@@ -217,34 +139,16 @@
                         }
                     }
                 },
-                telephone:{
-                    validators:{
-                        notEmpty: {
-                            message: '手机号不能为空!'
-                        },
-                        regexp: {
-                            regexp: /^[1]{1}[3,4,5,7,8]{1}[0-9]{9}$/,
-                            message: '请输入正确的电话号'
-                        }
-                    }
-                },
-                unitId:{
-                    validators:{
-                    notEmpty: {
-                    message: '部门不能为空!'
-                    }
-                }
-             }
             }
         });
     }
 //添加和编辑提交按钮
     function submit(){
-        var UserLabel=$("#myUserLabel").text();//添加编辑用户窗口
-        if(UserLabel.indexOf("添加") !=-1){
-            saveUser();//添加提交
+        var myDictLabel=$("#myDictLabel").text();//添加编辑用户窗口
+        if(myDictLabel.indexOf("添加") !=-1){
+            saveDict();//添加提交
         } else{
-            updateUser();//修改提交
+            updateDict();//修改提交
         }
     }
     //初始化表单
@@ -252,44 +156,41 @@
         $("#uid").val("");
         $("#fristname").val("");
         $("#telephone").val("");
-        $("#account").val("");
-        $("#password").val("");
-        $("#unitId").val("");
-        $("#numbers").val("");
+        $("#idcard").val("");
+        $("#email").val("");
+        $("#sex").val("");
+        $("#extrainfo").val("");
     }
 //添加窗口
     function newUser(){
-        $("#accountId").css("display","block");
-        $("#passwdId").css("display","block");
         init();
-        var zTree = $.fn.zTree.getZTreeObj("UnitTree");
-        $("#myUserLabel").html("添加用户");
+        $("#myDictLabel").html("添加用户");
         $('#newUser').modal('show');
     }
 //添加用户提交保存
-    function saveUser(){
+    function saveDict(){
         var fristname=$("#fristname").val();
         var telephone=$("#telephone").val();
-        var account=$("#account").val();
-        var password=$("#password").val();
-       var unitId=$("#saveUnitid").val();
-        var numbers=$("#numbers").val();
+        var idcard=$("#idcard").val();
+        var email=$("#email").val();
+        var sex=$("#sex").val();
+        var extrainfo=$("#extrainfo").val();
         $.ajax({
            type:"POST",
-            url:"<%=basePath%>/user/addUser.do",
+            url:"<%=basePath%>/sysuser/addSysUser.do",
             data:{
                 fristname:fristname,
                 telephone:telephone,
-                account:account,
-                password:password,
-                unitId:unitId,
-                numbers:numbers
+                idcard:idcard,
+                email:email,
+                sex:sex,
+                extrainfo:extrainfo
             },
             success:function(data){
                 if(data!=="failed"){
                     successInfo("添加成功!");
                     $('#cusTable').bootstrapTable('refresh');//初始化数据
-                    $('#userForm').data('bootstrapValidator').resetForm(true);
+                    $('#dictForm').data('bootstrapValidator').resetForm(true);
                 }else{
                     errorInfo("添加记录失败");
                 }
@@ -299,47 +200,32 @@
     }
 //编辑
     function editUser(){
-        $("#myUserLabel").html("修改用户");
+        $("#myDictLabel").html("修改用户");
         init();
-        //编辑的时候不修改帐号密码
-        $("#accountId").css("display","none");
-        $("#passwdId").css("display","none");
         var arr = $('#cusTable').bootstrapTable('getSelections');
-        var ids = getCheckUid();
+        var uid = getCheckUid();
         if(arr.length>0) {
-            var uid = getIdSelections();
-            if (uid.length > 1) {
+            var uids = getIdSelections();
+            if (uids.length > 1) {
                 warningInfo("请选择一条记录");
             } else {
                 $.ajax({
                     type: "POST",
-                    url: "<%=basePath%>/user/getUserById.do",
+                    url: "<%=basePath%>/sysuser/getSysUserByUid.do",
                     data: {
-                        ids: ids
+                        uid: uid
                     },
                     success: function (data) {
                         var msg = eval("(" + data + ")");
-                        $("#uid").val(ids.replace(",", ""));
+                        $("#uid").val(uid.replace(",", ""));
                         $("#fristname").val(msg.fristname);
                         $("#telephone").val(msg.telephone);
-                        $("#numbers").val(msg.numbers);
+                        $("#idcard").val(msg.idcard);
+                        $("#email").val(msg.email);
+                        $("#sex").val(msg.sex);
+                        $("#extrainfo").val(msg.extrainfo);
                     }
                 });
-                //获取部门，在树中默认选中
-                        $.ajax({
-                            url: "<%=basePath%>/user/getUnit.do",
-                            type: "POST",
-                            data: {
-                                ids: ids
-                            },
-                            success: function (msg) {
-                                var mss = eval("(" + msg + ")");
-                                for (var i = 0; i < mss.length; i++) {
-                                   $("#unitId").val(mss[i].fristname);
-                                    $("#saveUnitid").val(mss[i].uid);
-                                }
-                            }
-                        });
                 $('#newUser').modal('show');
             }
         }else{
@@ -348,27 +234,31 @@
 
     }
     //提交更新
-    function updateUser(){
+    function updateDict(){
         var uid=$("#uid").val();
         var fristname=$("#fristname").val();
         var telephone=$("#telephone").val();
-        var unitId=$("#saveUnitid").val();
-        var numbers=$("#numbers").val();
+        var idcard=$("#idcard").val();
+        var email=$("#email").val();
+        var sex=$("#sex").val();
+        var extrainfo=$("#extrainfo").val();
         $.ajax({
             type:"POST",
-            url:"<%=basePath%>/user/updateUser.do",
+            url:"<%=basePath%>/sysuser/updateSysUser.do",
             data:{
                 uid:uid,
                 fristname:fristname,
                 telephone:telephone,
-                unitId:unitId,
-                numbers:numbers
+                idcard:idcard,
+                email:email,
+                sex:sex,
+                extrainfo:extrainfo
             },
             success:function(data){
                 if(data!=="failed"){
                     successInfo("修改成功!");
                     $('#cusTable').bootstrapTable('refresh');//初始化数据
-                    $('#userForm').data('bootstrapValidator').resetForm(true);
+                    $('#dictForm').data('bootstrapValidator').resetForm(true);
                 }else{
                     errorInfo("修改记录失败");
                 }
@@ -390,13 +280,12 @@ function delRow(){
         warningInfo("请选择要删除的记录");
     }
 }
-    //删除菜单
+    //删除
 function deleteUser(){
-    console.info("deleteUser");
     var ids = getIdSelections();
      $.ajax({
         type: "POST",
-        url: "<%=basePath%>/user/delUserIds.do",
+        url: "<%=basePath%>/sysuser/deleteSysUserByUid.do",
         data: {
             ids:getCheckUid()
         },
@@ -433,13 +322,13 @@ function getIdSelections() {
 function getCheckUid(){
     var uids="";
     $('#cusTable').find('input[name="btSelectItem"]:checked').each(function(){
-        uids += $(this).val()+',';
+        uids += $(this).val();
     });
     return uids;
 }
     //清空校验
     function resetForm(){
-        $('#userForm').data('bootstrapValidator').resetForm(true);
+        $('#dictForm').data('bootstrapValidator').resetForm(true);
     }
 </script>
 <body id="loading" class="style_body">
@@ -454,9 +343,6 @@ function getCheckUid(){
         <button id="remove" class="btn btn-info" onclick="delRow()">
             <i class="glyphicon glyphicon-remove"></i> 删除
         </button>
-        <button id="refresh" class="btn btn-info" name="refresh" >
-            <i class="glyphicon glyphicon-refresh"></i> 刷新
-        </button>
     </div>
     <table id="cusTable" class="table">
         <thead>
@@ -464,7 +350,10 @@ function getCheckUid(){
             <th data-field="uid" data-checkbox="true" align="center"></th>
             <th data-field="fristname" data-editable="false"  align="center">姓名</th>
             <th data-field="telephone" data-editable="false" align="center">手机</th>
-            <th data-field="iccode" data-editable="false" align="center">身份证号</th>
+            <th data-field="idcard" data-editable="false" align="center">身份证号</th>
+            <th data-field="email" data-editable="false" align="center">邮箱</th>
+            <th data-field="sex" data-editable="false" align="center">性别</th>
+            <th data-field="extrainfo" data-editable="false" align="center">备注</th>
         </tr>
         </thead>
     </table>
@@ -475,51 +364,42 @@ function getCheckUid(){
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title" id="myUserLabel"></h4>
+                <h4 class="modal-title" id="myDictLabel"></h4>
             </div>
             <div class="modal-body">
                 <div class="row">
-                        <div id="userForm" method="post">
+                        <div id="dictForm" method="post">
                             <div class="col-md-6">
                                 <input class="form-control" id="uid" placeholder="ID" type="hidden">
-                                <!--上传附件，关联流程ID-->
-                                <input type="hidden" id="relateId" value="<%= request.getAttribute("wuid")%>">
-                                <input type="hidden" value="0" id="changeStatu">
                                 <div class="form-group">
                                     <label>姓名</label>
-                                    <input class="form-control" id="fristname" name="fristname" placeholder="姓名" type="text">
+                                    <input class="form-control" id="fristname" name="fristname"  type="text">
                                 </div>
                                 <div class="form-group">
-                                    <label>部门</label>
-                                    <input id="saveUnitid" type="hidden"/>
-                                    <input onclick="showMenu(); return false;" placeholder="点击选择" class="form-control" id="unitId" name="unitId" type="text" readonly value=""/>
-                                    <div id="menuContent" class="menuContent" style="display:none;position: absolute;">
-                                        <ul id="treeDemo" class="ztree" style="width:160px;margin-top:29px;background: white;border: 1px solid lightgrey"></ul>
-                                    </div>
+                                    <label>电话</label>
+                                    <input class="form-control" id="telephone" name="telephone" type="text">
                                 </div>
-                                <div id="accountId" class="form-group">
-                                    <label>帐号</label>
-                                    <input class="form-control" id="account" placeholder="帐号" type="text">
+                                <div class="form-group">
+                                    <label>身份证号</label>
+                                    <input class="form-control" id="idcard" name="idcard" type="text">
                                 </div>
-
                                 <!-- /.form-group -->
                             </div>
                             <!-- /.col -->
                             <div class="col-md-6">
                                 <!-- /.form-group -->
                                 <div class="form-group">
-                                    <label>联系方式</label>
-                                    <input class="form-control" id="telephone" name="telephone" placeholder="手机" type="text">
+                                    <label>邮箱</label>
+                                    <input class="form-control" id="email" name="email" type="text">
                                 </div>
                                 <div class="form-group">
-                                    <label>工号</label>
-                                    <input class="form-control" id="numbers" name="numbers" placeholder="工号" type="text">
+                                    <label>性别</label>
+                                    <input class="form-control" id="sex" name="sex"  type="text">
                                 </div>
-                                <div id="passwdId" class="form-group">
-                                    <label>密码</label>
-                                    <input class="form-control" id="password" placeholder="密码" type="password">
+                                <div class="form-group">
+                                    <label>备注</label>
+                                    <input class="form-control" id="extrainfo" type="text">
                                 </div>
-                                <div class="form-group" id="uploader" style="display:none;"></div>
                             </div>
                             </div>
                             <!-- /.col -->

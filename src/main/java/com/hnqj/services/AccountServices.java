@@ -83,6 +83,11 @@ protected final Log logger = LogFactory.getLog(getClass());
 		return accountList;
 	}
 
+	/**
+	 * 通过用户ID查询账号
+	 * @param fid
+     * @return
+     */
 	public Account getAccountforUserId(String fid) {
 		Account account = null;
 		try {
@@ -94,7 +99,7 @@ protected final Log logger = LogFactory.getLog(getClass());
 		return account;
 	}
 
-	//查询信息
+	//分页查询账号信息
 	public List<Account> getAllAccounts(PageData pageData) {
 		List<Account> accountList =null;
 		try {

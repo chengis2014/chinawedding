@@ -1,5 +1,6 @@
 package com.hnqj.controller;
 
+import com.hnqj.model.Sysusermgr;
 import com.hnqj.model.Userinfo;
 import com.hnqj.services.UserinfoServices;
 import org.apache.commons.logging.Log;
@@ -35,10 +36,10 @@ public class BaseController {
      *
      * @return
      */
-    public Userinfo getUser() {
+    public Sysusermgr getUser() {
         RequestAttributes ra = RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = ((ServletRequestAttributes) ra).getRequest();
-        Userinfo user = (Userinfo) request.getSession().getAttribute("user");
+        Sysusermgr user = (Sysusermgr) request.getSession().getAttribute("user");
         return user;
     }
 

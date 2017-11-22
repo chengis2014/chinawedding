@@ -49,7 +49,11 @@ public class ModuleController extends BaseController{
         pageData.put("limit",limit);
         List<Modules> glist=modulesServices.getAllModule(pageData);
         for (Modules module:glist){
-            module.setPmId(modulesServices.selectModuleByFid(module.getUid()).getMdName());
+            if(module.getPmId().equalsIgnoreCase("0")){
+                module.setPmId("");
+            }else{
+                module.setPmId(modulesServices.selectModuleByFid(module.getPmId()).getMdName());
+            }
         }
         tablereturn.setRows(glist);
         tablereturn.setTotal(glist.size());
@@ -90,14 +94,10 @@ public class ModuleController extends BaseController{
     @RequestMapping("/findModuleByFid.do")
     public String findModuleByFid(HttpServletRequest request, HttpServletResponse response){
         logger.info("findModuleByFid");
-        String fids = request.getParameter("fid");
-        String[] fid=fids.split(",");
-        System.out.println(fid);
-        Modules  module= new Modules();
-        for (String id:fid){
-            module = modulesServices.selectModuleByFid(id);
-            ResultUtils.write(response,toJson(module));
-        }
+        String uids = request.getParameter("fid");
+        String[] uid=uids.split(",");
+        Modules module=modulesServices.selectModuleByFid(uid[0]);
+        ResultUtils.write(response,toJson(module));
         return null;
     }
     /**
@@ -121,7 +121,7 @@ public class ModuleController extends BaseController{
             String mdIschild = request.getParameter("mdIschild") == null ? "" : request.getParameter("mdIschild");
             String mdOrdernum = request.getParameter("mdOrdernum") == null ? "" : request.getParameter("mdOrdernum");
             PageData pageData = new PageData();
-            pageData.put("fid",fid);
+            pageData.put("uid",fid);
             pageData.put("mdAddress",mdAddress);
             pageData.put("mdCode",mdCode);
             pageData.put("mdName",mdName);
@@ -160,7 +160,7 @@ public class ModuleController extends BaseController{
             String mdIschild = request.getParameter("mdIschild") == null ? "" : request.getParameter("mdIschild");
             String mdOrdernum = request.getParameter("mdOrdernum") == null ? "" : request.getParameter("mdOrdernum");
             PageData pageData = new PageData();
-            pageData.put("fid",fid);
+            pageData.put("uid",fid);
             pageData.put("mdAddress",mdAddress);
             pageData.put("mdCode",mdCode);
             pageData.put("mdName",mdName);

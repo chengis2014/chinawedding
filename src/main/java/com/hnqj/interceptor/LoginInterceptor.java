@@ -1,5 +1,6 @@
 package com.hnqj.interceptor;
 
+import com.hnqj.model.Sysusermgr;
 import com.hnqj.model.Userinfo;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
@@ -15,7 +16,7 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String requestURI = request.getRequestURI();
         HttpSession session = request.getSession();
-        Userinfo userName = (Userinfo) session.getAttribute("user");
+        Sysusermgr userName = (Sysusermgr) session.getAttribute("user");
         if (userName == null||requestURI.endsWith(".jsp")) {
             //不符合条件的，跳转到登录界面
             String CONTENT_TYPE = "text/html; charset=GBK";

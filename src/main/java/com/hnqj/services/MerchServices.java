@@ -85,4 +85,20 @@ protected final Log logger = LogFactory.getLog(getClass());
 	}
 	 return merchList; 
 	}
+
+	/**
+	 * 审核或者冻结商户
+	 * @param pageData
+     */
+	public int updateMerchStatu(PageData pageData) {
+		logger.info("审核或者冻结商户");
+		int iFlag = 0;
+		try {
+			iFlag = (int) daoSupport.update("MerchMapper.updateMerchStatu", pageData);
+		} catch (Exception e) {
+			e.printStackTrace();
+			iFlag = 0;
+		}
+		return iFlag;
+	}
 }

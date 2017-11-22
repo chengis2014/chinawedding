@@ -3,13 +3,10 @@ package com.hnqj.services;
 import com.hnqj.controller.OperAnnotation;
 import com.hnqj.core.PageData;
 
-import com.hnqj.model.Account;
-import com.hnqj.model.Modules;
-import com.hnqj.model.Roles;
+import com.hnqj.model.*;
 
 import javax.annotation.Resource;
 import com.hnqj.dao.DaoSupportImpl;
-import com.hnqj.model.Userinfo;
 import org.springframework.stereotype.Service;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -101,7 +98,7 @@ protected final Log logger = LogFactory.getLog(getClass());
 	}
 
 	@OperAnnotation(moduleName= "权限管理",option="selectRoleByUser")
-	public List<Roles> selectRoleByUser(Userinfo user){
+	public List<Roles> selectRoleByUser(Sysusermgr user){
 		List<Roles> rolesList =null;
 		String user_id = user.getUid();
 		try {

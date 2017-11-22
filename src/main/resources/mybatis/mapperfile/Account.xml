@@ -8,12 +8,13 @@
     <result column="userid" jdbcType="VARCHAR" property="userid" />
     <result column="state" jdbcType="SMALLINT" property="state" />
     <result column="usemobile" jdbcType="SMALLINT" property="usemobile" />
+    <result column="usertype" jdbcType="SMALLINT" property="usertype" />
   </resultMap>
   <!-- 添加信息 -->
   <insert id="addAccount" parameterType="pd">
-    insert into tb_account (uid, account, passwd,  userid, state, usemobile )
+    insert into tb_account (uid, account, passwd,  userid, state, usemobile,usertype )
     values (#{uid,jdbcType=VARCHAR}, #{account,jdbcType=VARCHAR}, #{passwd,jdbcType=VARCHAR},
-    #{userid,jdbcType=VARCHAR}, #{state,jdbcType=SMALLINT}, #{usemobile,jdbcType=SMALLINT}
+    #{userid,jdbcType=VARCHAR}, #{state,jdbcType=SMALLINT}, #{usemobile,jdbcType=SMALLINT}, #{usertype,jdbcType=SMALLINT}
     )
   </insert>
 
@@ -30,15 +31,16 @@
     passwd = #{passwd,jdbcType=VARCHAR},
     userid = #{userid,jdbcType=VARCHAR},
     state = #{state,jdbcType=SMALLINT},
-    usemobile = #{usemobile,jdbcType=SMALLINT}
+    usemobile = #{usemobile,jdbcType=SMALLINT},
+    usertype = #{usertype,jdbcType=SMALLINT}
     where uid = #{uid,jdbcType=VARCHAR}
   </update>
 
   <!--初始化密码-->
   <update id="resetPasswd" parameterType="pd">
     update tb_account
-    set passwd = #{passwd,jdbcType=VARCHAR}
-    where uid = #{uid,jdbcType=VARCHAR}
+    set passwd = #{passwd}
+    where uid = #{uid}
   </update>
 
 

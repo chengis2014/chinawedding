@@ -4,9 +4,11 @@ import com.hnqj.core.PageData;
 import com.hnqj.core.ResultUtils;
 import com.hnqj.core.TableReturn;
 import com.hnqj.model.Account;
+import com.hnqj.model.Sysusermgr;
 import com.hnqj.model.Userinfo;
 import com.hnqj.services.AccountServices;
 import com.hnqj.services.AccountServices;
+import com.hnqj.services.SysusermgrServices;
 import com.hnqj.services.UserinfoServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -32,7 +34,13 @@ public class AccountController extends  BaseController{
     AccountServices accountService;
     @Autowired
     UserinfoServices userinfoServices;
+    @Autowired
+    SysusermgrServices sysusermgrServices;
 
+    /**
+     * 跳转到账号管理页面
+     * @return
+     */
     @RequestMapping("/toAccountList.do")
     public String toAccountList(){
         return "sys/accountlist";
@@ -41,24 +49,29 @@ public class AccountController extends  BaseController{
     @RequestMapping("/getAccountList.do")
     public String getAccountList(HttpServletRequest request, HttpServletResponse response, Model model){
         logger.info("getAccountList");
-        //偏移量
         int offset = request.getParameter("offset") == null ? 0 : Integer.parseInt(request.getParameter("offset"));
-        // 每页行数
         int limit = request.getParameter("limit") == null ? 0 : Integer.parseInt(request.getParameter("limit"));
         TableReturn tablereturn =new TableReturn();
-       // tablereturn.setTotal(accountService.getAccountCount());
         PageData pageData = new PageData();
         pageData.put("offset",offset);
         pageData.put("limit",limit);
         List<Account> list=accountService.getAllAccounts(pageData);
-        tablereturn.setTotal(list.size());
+        List<Account> listCount=accountService.selectAccountList();
+        tablereturn.setTotal(listCount.size());
         List<Map<String, String>> hashMaps=new ArrayList<>();
         for(Account account:list){
-            Userinfo user=userinfoServices.selectUserByFid(account.getUserid());
             Map<String, String> map = new HashMap<>();
+            if(account.getUsertype() == 0){//会员用户
+                Userinfo user=userinfoServices.getUserInfoByUid(account.getUserid());
+                map.put("fname",user.getFristname());
+                map.put("usertype","会员");
+            }else{//后台用户
+                Sysusermgr sysUserByUid=sysusermgrServices.getSysUserByUid(account.getUserid());
+                map.put("fname",sysUserByUid.getFristname());
+                map.put("usertype","后台");
+            }
             map.put("fid",account.getUid());
             map.put("account",account.getAccount());
-            map.put("fname",user.getFristname());
             if(account.getUsemobile()==(short) 1){
                 map.put("usemobile","是");
             }else{
@@ -70,40 +83,7 @@ public class AccountController extends  BaseController{
         ResultUtils.write(response,toJson(tablereturn));
         return null;
     }
-    /**
-     * 增加帐号
-     * @param request
-     * @param response
-     * @return
-     */
-    @RequestMapping("/addAccount.do")
-    public String addAccount(HttpServletRequest request, HttpServletResponse response){
-        logger.info("addAccount");
-        String acount = request.getParameter("account") == null ? "" : request.getParameter("account");
-        String passwd= request.getParameter("passwd") == null ? "" : request.getParameter("passwd");
-        short usemobile= (request.getParameter("usemobile") == null) ? null : Short.parseShort(request.getParameter("usemobile"));
-        String userIds= request.getParameter("userIds") == null ? "" : request.getParameter("userIds");
-        //UUID.randomUUID().toString()生成一串随机数做唯一ID
-        try{
-            String[] idStrs=userIds.split(",");
-            for(String userid:idStrs){
-                Account account=new Account();
-                PageData pageData = new PageData();
-                pageData.put("fid",UUID.randomUUID().toString());
-                pageData.put("usemobile",usemobile);
-                pageData.put("acount",acount);
-                pageData.put("passwd",encodeMD5(passwd));
-                pageData.put("state",1);
-                pageData.put("userid",userid);
-                accountService.addAccount(pageData);
-            }
-            ResultUtils.writeSuccess(response);
-        } catch (Exception e) {
-            logger.error("addAccount e="+e.getMessage());
-            ResultUtils.writeFailed(response);
-        }
-        return null;
-    }
+
     /**
      * 删除账户
      * @param request
@@ -116,11 +96,9 @@ public class AccountController extends  BaseController{
     public String delAccountIds(HttpServletRequest request, HttpServletResponse response, Model model){
         logger.debug("delAccountIds");
         try{
-            String ids = request.getParameter("ids") == null ? "" : request.getParameter("ids");
-            String[] idStrs=ids.split(",");
-            for (String fid:idStrs){
-                accountService.deleteAccountByFid(fid);
-            }
+            String uid = request.getParameter("uid") == null ? "" : request.getParameter("uid");
+            String[] idStrs=uid.split(",");
+            accountService.deleteAccountByFid(idStrs[0]);
             ResultUtils.writeSuccess(response);
         } catch (Exception e) {
             logger.error("delAccountIds e="+e.getMessage());
@@ -135,10 +113,10 @@ public class AccountController extends  BaseController{
     public String resetPasswd(HttpServletRequest request, HttpServletResponse response) {
         logger.debug("resetPasswd");
         try{
-            String fid = request.getParameter("ids");
+            String uid = request.getParameter("uid");
             String passwd=encodeMD5("000000");
             PageData pageData = new PageData();
-            pageData.put("fid",fid);
+            pageData.put("uid",uid);
             pageData.put("passwd",passwd);
             accountService.resetPasswd(pageData);
             ResultUtils.writeSuccess(response);
@@ -160,10 +138,10 @@ public class AccountController extends  BaseController{
         String newPassword = request.getParameter("newPassword") == null ? "" : request.getParameter("newPassword");
         Account account=accountService.getAccountforUserId(getUser().getUid());
         PageData pageData = new PageData();
-        pageData.put("fid",account.getUid());
+        pageData.put("uid",account.getUid());
         pageData.put("passwd",encodeMD5(newPassword));
         try {
-            accountService.updateAccount(pageData);
+            accountService.resetPasswd(pageData);
             ResultUtils.writeSuccess(response);
         }catch(Exception e){
             logger.error("updatePersonPassword e="+e.toString());

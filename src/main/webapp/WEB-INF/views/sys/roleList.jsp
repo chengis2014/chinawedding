@@ -87,7 +87,7 @@
             exportDataType : "all",
             clickToSelect:true,
             //search:true,
-            idField:"fid",
+            idField:"uid",
             //showFooter:true,
             sidePagination: "server", //表示服务端请求
             //设置为undefined可以获取pageNumber，pageSize，searchText，sortName，sortOrder
@@ -241,12 +241,6 @@
         $("#myModalLabel").html("新建角色");
         $('#newModal').modal('show');
     }
-    //
-    //初始化新建菜单表单
-    function initNewModule(){
-
-    }
-
     function initValidate(){
         $('#defaultForm').bootstrapValidator({
             message: '值不能为空',
@@ -326,7 +320,7 @@
                         if(data!=="failed") {
                             $('#newModal').modal('show');
                             var msg = eval("(" + data + ")");
-                            $('#fid').val(msg.fid);
+                            $('#fid').val(msg.uid);
                             $('#roleName').val(msg.roleName);
                             $('#roleDescription').val(msg.roleDescription);
                             $('#roleCreator').val(msg.roleCreator);
@@ -545,7 +539,7 @@
     //取表格行数用于表格行的移除
     function getIdSelections() {
         return $.map($('#cusTable').bootstrapTable('getAllSelections'), function (row) {
-            return row.fid;
+            return row.uid;
         });
     }
     //获取FID用于后台操作
@@ -591,7 +585,7 @@
         <table id="cusTable" class="table" >
             <thead>
             <tr>
-                <th data-field="fid" data-checkbox="true" align="center"></th>
+                <th data-field="uid" data-checkbox="true" align="center"></th>
                 <th data-field="roleName" data-editable="false"  align="center" >角色名称</th>
                 <th data-field="roleDescription"  data-editable="false" align="center">角色描述</th>
                 <th data-field="roleCreator"  data-editable="false" align="center">创建者</th>

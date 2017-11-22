@@ -4,12 +4,10 @@ import com.alibaba.fastjson.JSONObject;
 import com.hnqj.core.MenuTree;
 import com.hnqj.core.PageData;
 import com.hnqj.core.ResultUtils;
-import com.hnqj.model.Account;
-import com.hnqj.model.Modules;
-import com.hnqj.model.Roles;
-import com.hnqj.model.Userinfo;
+import com.hnqj.model.*;
 import com.hnqj.services.AccountServices;
 import com.hnqj.services.RolesServices;
+import com.hnqj.services.SysusermgrServices;
 import com.hnqj.services.UserinfoServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -29,6 +27,8 @@ import static com.hnqj.core.EncodeUtil.encodeMD5;
 public class loginController extends BaseController{
     @Autowired
     UserinfoServices userinfoServices;
+    @Autowired
+    SysusermgrServices sysusermgrServices;
     @Autowired
     AccountServices accountServices;
     @Autowired
@@ -59,7 +59,7 @@ public class loginController extends BaseController{
         PageData pageData = new PageData();
         pageData.put("account",account);
         pageData.put("passwd",password);
-        Userinfo user=userinfoServices.getUser(pageData);
+        Sysusermgr user=sysusermgrServices.getUser(pageData);
         Map<String, String> map = new HashMap<>();
         if (user!=null) {
             /*
@@ -99,7 +99,7 @@ public class loginController extends BaseController{
     @RequestMapping(value = "/index.do")
     @OperAnnotation(moduleName = "用户登录", option = "登录页")
     public String index(HttpServletRequest request, Model model) {
-        Userinfo user =this.getUser();
+        Sysusermgr user =this.getUser();
         if (user != null) {
             request.getSession().setAttribute("user",user);
             List<MenuTree> menuList = getMenu(user);
@@ -116,7 +116,7 @@ public class loginController extends BaseController{
      * @param user
      * @return
      */
-    private List<MenuTree> getMenu(Userinfo user) {
+    private List<MenuTree> getMenu(Sysusermgr user) {
         List<MenuTree> menuList = new ArrayList<MenuTree>();
         try {
             List<Roles> roles = rolesServices.selectRoleByUser(user);

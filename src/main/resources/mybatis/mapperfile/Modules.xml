@@ -14,12 +14,6 @@
     <result column="md_code" jdbcType="VARCHAR" property="mdCode" />
     <result column="md_ordernum" jdbcType="SMALLINT" property="mdOrdernum" />
     <result column="md_method" jdbcType="VARCHAR" property="mdMethod" />
-    <result column="md_b_type" jdbcType="VARCHAR" property="mdBType" />
-    <result column="md_tl" jdbcType="VARCHAR" property="mdTl" />
-    <result column="md_width" jdbcType="VARCHAR" property="mdWidth" />
-    <result column="md_height" jdbcType="VARCHAR" property="mdHeight" />
-    <result column="md_max" jdbcType="VARCHAR" property="mdMax" />
-    <result column="md_min" jdbcType="VARCHAR" property="mdMin" />
     <result column="md_ischild" jdbcType="VARCHAR" property="mdIschild" />
   </resultMap>
   <!-- 添加信息 -->
@@ -27,16 +21,12 @@
     insert into tb_modules (uid,pm_id, md_name, md_address,
     md_img, md_enabled, md_creator,
     md_ctime, md_type, md_code,
-    md_ordernum, md_method, md_b_type,
-    md_tl, md_width, md_height,
-    md_max, md_min, md_ischild
+    md_ordernum, md_method, md_ischild
     )
     values (#{uid,jdbcType=VARCHAR},#{pmId,jdbcType=VARCHAR}, #{mdName,jdbcType=VARCHAR}, #{mdAddress,jdbcType=VARCHAR},
     #{mdImg,jdbcType=VARCHAR}, #{mdEnabled,jdbcType=INTEGER}, #{mdCreator,jdbcType=VARCHAR},
     #{mdCtime,jdbcType=DATE}, #{mdType,jdbcType=INTEGER}, #{mdCode,jdbcType=VARCHAR},
-    #{mdOrdernum,jdbcType=TINYINT}, #{mdMethod,jdbcType=VARCHAR}, #{mdBType,jdbcType=VARCHAR},
-    #{mdTl,jdbcType=VARCHAR}, #{mdWidth,jdbcType=VARCHAR}, #{mdHeight,jdbcType=VARCHAR},
-    #{mdMax,jdbcType=VARCHAR}, #{mdMin,jdbcType=VARCHAR}, #{mdIschild,jdbcType=VARCHAR}
+    #{mdOrdernum,jdbcType=TINYINT}, #{mdMethod,jdbcType=VARCHAR}, #{mdIschild,jdbcType=VARCHAR}
     )
   </insert>
 
@@ -59,12 +49,6 @@
     md_code = #{mdCode,jdbcType=VARCHAR},
     md_ordernum = #{mdOrdernum,jdbcType=TINYINT},
     md_method = #{mdMethod,jdbcType=VARCHAR},
-    md_b_type = #{mdBType,jdbcType=VARCHAR},
-    md_tl = #{mdTl,jdbcType=VARCHAR},
-    md_width = #{mdWidth,jdbcType=VARCHAR},
-    md_height = #{mdHeight,jdbcType=VARCHAR},
-    md_max = #{mdMax,jdbcType=VARCHAR},
-    md_min = #{mdMin,jdbcType=VARCHAR},
     md_ischild = #{mdIschild,jdbcType=VARCHAR}
     where uid = #{uid,jdbcType=VARCHAR}
   </update>
@@ -79,7 +63,7 @@
   <!--根据ID号 查询-->
   <select id="selectModuleByFid" parameterType="java.lang.String"
           resultMap="ModuleResultMap">
-    select * from tb_modules where uid =#{uid}
+    select * from tb_modules where uid = #{uid,jdbcType=VARCHAR}
   </select>
 
   <!-- 查询所有，返回List -->

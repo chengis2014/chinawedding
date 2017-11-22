@@ -13,35 +13,41 @@
     <result column="idpicback" jdbcType="LONGVARCHAR" property="idpicback" />
     -->
   </resultMap>
-  <!-- 添加后台用户信息 -->
-  <insert id="addUser" parameterType="pd">
-    insert into tb_userinfo (uid, fristname, telephone,
-      iccode, usrpicurl, idpic,
-      idpicback)
+  <!-- 会员用户注册 -->
+  <insert id="userInfoRegister" parameterType="pd">
+    insert into tb_userinfo (uid, fristname, telephone,iccode, usrpicurl)
     values (#{uid,jdbcType=VARCHAR}, #{fristname,jdbcType=VARCHAR}, #{telephone,jdbcType=VARCHAR},
-      #{iccode,jdbcType=VARCHAR}, #{usrpicurl,jdbcType=VARCHAR}, #{idpic,jdbcType=LONGVARCHAR},
-      #{idpicback,jdbcType=LONGVARCHAR})
+      #{iccode,jdbcType=VARCHAR}, #{usrpicurl,jdbcType=VARCHAR})
   </insert>
+  <!--会员信息修改-->
+  <update id="updateUserInfo" parameterType="pd">
+    update tb_userinfo
+    set fristname = #{fristname,jdbcType=VARCHAR},
+    telephone = #{telephone,jdbcType=VARCHAR},
+    iccode = #{iccode,jdbcType=VARCHAR},
+    usrpicurl = #{usrpicurl,jdbcType=SMALLINT},
+    idpic = #{idpic,jdbcType=LONGVARCHAR},
+    idpicback = #{idpicback,jdbcType=LONGVARCHAR}
+    where uid = #{uid,jdbcType=VARCHAR}
+  </update>
 
   <!--根据ID号 查询，返回UserInfoModel-->
-  <select id="selectUserByFid" parameterType="java.lang.String" resultMap="UserResultMap">
-    select * from tb_userinfo where uid =#{uid}
+  <select id="getUserInfoByUid" parameterType="java.lang.String" resultMap="UserResultMap">
+    select * from tb_userinfo where uid =#{uid,jdbcType=VARCHAR}
   </select>
 
   <!-- 查询所有，返回List -->
-  <select id="selectUserList" resultMap="UserResultMap">
+  <select id="selectUserInfoList" resultMap="UserResultMap">
     select * from tb_userinfo
   </select>
-
+  <!-- 分页查询所有数据 -->
+  <select id="getAllUserInfo" resultMap="UserResultMap">
+    select * from tb_userinfo LIMIT #{offset},#{limit}
+  </select>
   <!--登录时通过帐号密码查找用户-->
   <select id="selectUser" parameterType="pd" resultMap="UserResultMap">
     select * from tb_userinfo where uid in (
     select userid from tb_account  where account = #{account,jdbcType=VARCHAR} and passwd = #{passwd,jdbcType=VARCHAR}
     )
-  </select>
-
-  <!-- 分页列表 -->
-  <select id="getAllUser" resultMap="UserResultMap">
-    select * from tb_userinfo LIMIT #{offset},#{limit}
   </select>
 </mapper>

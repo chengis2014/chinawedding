@@ -26,7 +26,7 @@
     select * from tb_rolesmodules	where role_id=#{roleId,jdbcType=VARCHAR}
   </select>
 
-  <delete id="delRolesModulesByMdId">
+  <delete id="delRolesModulesByMdId" parameterType="pd">
     delete from tb_rolesmodules	where  role_id = #{role_id,jdbcType=VARCHAR} and md_id = #{mdId,jdbcType=VARCHAR}
   </delete>
 </mapper>

@@ -35,6 +35,10 @@ public class RoleController extends  BaseController {
     @Autowired
     RolesuserServices rolesuserServices;
 
+    /**
+     * 跳转到角色管理页面
+     * @return
+     */
     @RequestMapping("/roleList.do")
     public String roleList(){
         return "sys/roleList";
@@ -54,7 +58,6 @@ public class RoleController extends  BaseController {
         // 每页行数
         int limit = request.getParameter("limit") == null ? 0 : Integer.parseInt(request.getParameter("limit"));
         TableReturn tablereturn = new TableReturn();
-       // tablereturn.setTotal(iRoles.getRoleCount());
         PageData pageData = new PageData();
         pageData.put("offset",offset);
         pageData.put("limit",limit);
@@ -97,9 +100,9 @@ public class RoleController extends  BaseController {
             String roleDescription = request.getParameter("roleDescription");
             String roleCreator = request.getParameter("roleCreator");
             PageData pageData = new PageData();
-            pageData.put("fid",fid);
+            pageData.put("uid",fid);
             pageData.put("roleName",roleName);
-            pageData.put("creator",roleCreator);
+            pageData.put("roleCreator",roleCreator);
             pageData.put("roleDescription",roleDescription);
             pageData.put("roleCtime",new Date());
             pageData.put("roleEnabled",0);
@@ -127,9 +130,9 @@ public class RoleController extends  BaseController {
             String roleCreator = request.getParameter("roleCreator");
             Roles role=new Roles();
             PageData pageData = new PageData();
-            pageData.put("fid",fid);
+            pageData.put("uid",fid);
             pageData.put("roleName",roleName);
-            pageData.put("creator",roleCreator);
+            pageData.put("roleCreator",roleCreator);
             pageData.put("roleDescription",roleDescription);
             pageData.put("roleCtime",new Date());
             pageData.put("roleEnabled",0);
@@ -185,13 +188,16 @@ public class RoleController extends  BaseController {
                 if (lit.contains(rolesModules.getMdId())) {
                     arrayList.remove(rolesModules.getMdId());
                 }else{
-                    rolesmodulesServices.delRolesModulesByMdId(rolesModules.getMdId());
+                    PageData pageData = new PageData();
+                    pageData.put("role_id",role_id);
+                    pageData.put("mdId",rolesModules.getMdId());
+                    rolesmodulesServices.delRolesModulesByMdId(pageData);
                 }
             }
             for(String id:arrayList ){
                 Rolesmodules roleModules = new Rolesmodules();
                 PageData pageData = new PageData();
-                pageData.put("fid",UUID.randomUUID().toString());
+                pageData.put("uid",UUID.randomUUID().toString());
                 pageData.put("mdId",id);
                 pageData.put("roleId",role_id);
                 pageData.put("rmCtime",new Date());
@@ -280,7 +286,7 @@ public class RoleController extends  BaseController {
         List<Map<String,String>> hashMaps=new ArrayList<>();
         for(Rolesuser rolesUser:list){
             Map<String,String> map=new HashedMap();
-            Userinfo user=userinfoServices.selectUserByFid(rolesUser.getUserId());
+            Userinfo user=userinfoServices.getUserInfoByUid(rolesUser.getUserId());
             map.put("fname",user.getFristname());
             map.put("fid",user.getUid());
             hashMaps.add(map);
