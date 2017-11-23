@@ -6,7 +6,7 @@
     String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path;
 %>
 <head>
-    <title>商户管理</title>
+    <title>店铺等级管理</title>
     <meta charset="utf-8">
     <script src="<%=basePath%>/static/js/jquery-2.2.0.min.js"></script>
     <link rel="stylesheet" href="<%=basePath%>/static/css/trip.css">
@@ -94,43 +94,10 @@
         //调用函数，初始化表格
         initTable();
     });
-    //添加操作按钮
-    function nameFormatter(value, row, index) {
-        var fid = row.fids;
-        return '<i><a href="javascript:;" onclick="examine(\'' + fid + '\')">审核</a></i>'
-    }
 </script>
 <body id="loading" class="style_body">
 <div class=" style_border">
     <div id="toolbar" class="btn-group-sm">
-        <form style="margin-left: -20px" class="form-horizontal">
-            <div>
-                <label style="width: 70px" class="control-label col-md-1">状态:</label>
-                <div style="width: 150px;margin-top: 7px;margin-left: -20px" class=" col-md-2">
-                    <select style="" class="form-control" id="statu">
-                        <option value="0" class="form-control">全部</option>
-                        <option value="1" class="form-control">通过</option>
-                        <option value="2" class="form-control">驳回</option>
-                        <option value="3" class="form-control">冻结</option>
-                    </select>
-                </div>
-                <label style="width: 70px;margin-left: -18px" class="control-label col-md-1">等级:</label>
-                <div style="width: 150px;margin-top: 7px;margin-left: -20px" class=" col-md-2">
-                    <select style="" class="form-control" id="grade">
-                        <option value="0" class="form-control">全部</option>
-                        <option value="1" class="form-control">1级</option>
-                        <option value="2" class="form-control">2级</option>
-                    </select>
-                </div>
-                <label style="width: 70px;margin-left: -18px" class="control-label col-md-1">名称:</label>
-                <div style="width: 150px;margin-top: 7px;margin-left: -20px" class=" col-md-2">
-                    <input style="" class="form-control" id="merchname"/>
-                </div>
-                <button style="margin-top: 7px" id="add" class="btn btn-info" onclick="selectDate()">
-                    <i class="glyphicon glyphicon-expand"></i> 查询
-                </button>
-            </div>
-        </form>
     </div>
     <table id="cusTable" class="table">
         <thead>
@@ -142,7 +109,6 @@
             <th data-field="builddatetime" data-editable="false" align="center">创建时间</th>
             <th data-field="merchscroe" data-editable="false" align="center">店铺积分</th>
             <th data-field="extrainfo" data-editable="false" align="center">备注</th>
-            <th data-field="fids" data-formatter="nameFormatter">操作</th>
         </tr>
         </thead>
     </table>

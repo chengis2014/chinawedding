@@ -52,11 +52,11 @@ protected final Log logger = LogFactory.getLog(getClass());
 	}
 	 return iFlag; 
 	}
-	public Merch getMerchforId(String fid) {
+	public Merch getMerchforId(String uid) {
 	 logger.info("通过ID查询Merch");
 	Merch	merch=null;
 	 try { 
-		merch = (Merch) daoSupport.findForObject("MerchMapper.getMerchForId",fid);
+		merch = (Merch) daoSupport.findForObject("MerchMapper.getMerchForId",uid);
 	 }catch (Exception e){ 
 	 e.printStackTrace(); 
 	 merch=null; 

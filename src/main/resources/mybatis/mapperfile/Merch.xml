@@ -11,7 +11,7 @@
     <result column="statu" jdbcType="SMALLINT" property="statu" />
   </resultMap>
   <!--开店申请-->
-  <insert id="addMerch" parameterType="BaseResultMap">
+  <insert id="addMerch" parameterType="pd">
     insert into tb_merch (uid, merchname, userinfouid,
       bondvalue, builddatetime, merchscroe,statu
       )
@@ -25,4 +25,21 @@
     update tb_merch set statu=#{statu}
     where uid=#{uid}
   </update>
+  <!--通过ID查询记录-->
+  <select id="getMerchForId" parameterType="java.lang.String">
+    select * from tb_merch where uid=#{uid,jdbcType=VARCHAR}
+  </select>
+  <!--修改-->
+  <update id="updateMerch" parameterType="pd">
+    update tb_merch set statu=#{statu},merchname=#{merchname}
+    where uid=#{uid}
+  </update>
+  <!--分页查询-->
+  <select id="getAllMerch" parameterType="pd">
+    select * from tb_merch LIMIT #{offset},#{limit}
+  </select>
+  <!--查询所有-->
+  <select id="selectMerchList">
+    select * from tb_merch
+  </select>
 </mapper>
