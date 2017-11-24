@@ -6,7 +6,7 @@
 
 .bootstrap-table .table {
     margin-bottom: 0 !important;
-    border-bottom: 1px solid #dddddd;
+    border-bottom: 1px solid #A8A7A7;
     border-collapse: collapse !important;
     border-radius: 1px;
 }
@@ -32,7 +32,7 @@
 .fixed-table-container {
     position: relative;
     clear: both;
-    border: 1px solid #dddddd;
+    border: 1px solid #A8A7A7;
     border-radius: 4px;
     -webkit-border-radius: 4px;
     -moz-border-radius: 4px;
@@ -65,7 +65,7 @@
     height: 0;
     padding: 0;
     margin: 0;
-    border-left: 1px solid #dddddd;
+    border-left: 1px solid #A8A7A7;
 }
 
 .fixed-table-container thead th:focus {
@@ -87,6 +87,8 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    font-weight: 100;
+    font-weight: 100;
 }
 
 .fixed-table-container thead th .sortable {
@@ -113,7 +115,7 @@
 }
 
 .fixed-table-container tbody td {
-    border-left: 1px solid #dddddd;
+    border-left: 1px solid #A8A7A7;
 }
 
 .fixed-table-container tbody tr:first-child td {
@@ -126,7 +128,7 @@
 
 /* the same color with .active */
 .fixed-table-container tbody .selected td {
-    background-color: #f5f5f5;
+    /*background-color: #f5f5f5;*/
 }
 
 .fixed-table-container .bs-checkbox {
@@ -200,7 +202,7 @@
 .fixed-table-toolbar .search,
 .fixed-table-toolbar .columns {
     position: relative;
-    margin-top: 10px;
+    margin-top: 5px;
     margin-bottom: 10px;
     line-height: 34px;
 }
@@ -266,7 +268,7 @@
 
 .bootstrap-table .table > thead > tr > th {
     vertical-align: bottom;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid #A8A7A7;
 }
 
 /* support bootstrap 3 */

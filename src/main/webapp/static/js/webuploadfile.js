@@ -211,6 +211,7 @@
             //debugger
             var $ele = $(this);
             var id = $ele.parent().attr("id");
+            var dd=$(item)[0].id;
             id = id.replace($(item)[0].id, "");
 
             var file = uploader.getFile(id);

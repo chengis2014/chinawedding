@@ -332,9 +332,6 @@
 <div class="style_border">
     <div>
         <div id="toolbar" class="btn-group-sm">
-            <button id="add" class="btn btn-info" onclick="newAccount()">
-                <i class="glyphicon glyphicon-expand"></i> 增加
-            </button>
             <button id="remove" class="btn btn-info" onclick="delRow()">
                 <i class="glyphicon glyphicon-remove"></i> 删除
             </button>

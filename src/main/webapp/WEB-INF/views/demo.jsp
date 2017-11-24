@@ -21,15 +21,12 @@
     <script src="<%=basePath%>/static/js/jquery.noty.packaged.min.js"></script>
 
     <script src="<%=basePath%>/static/js/showinfo.js"></script>
-
-
     <script type="text/javascript" src="<%=basePath%>/static/bootstrap/js/bootstrap.min.js"></script>
     <%--<script type="text/javascript" src="<%=basePath%>/static/js/jquery.simplemodal.js"></script>--%>
     <script type="text/javascript" src="<%=basePath%>/static/js/selectbox.js"></script>
     <script src="<%=basePath%>/static/js/jquery-ui.min.js"></script>
     <script>
         $(document).ready(function() {
-
         });
     </script>
     <style>
@@ -38,12 +35,11 @@
             height:100%;
             background: url(<%=basePath%>/static/img/shbj3.jpg );
             background-repeat:no-repeat;
-            background-position:center;;
-
-
+            background-position:center;
             position: absolute;
             border:6px solid #ffffff;
         }
+        /*欢迎字体*/
         .bac_text {
             position: absolute;
             top: 50%;
@@ -52,11 +48,11 @@
             margin-left: -270px;
             text-align: center;
             font-size: 42px;
-            color: #5b6e84;
+            color:#474b4c;
             z-index: 3;
             padding: 20px;
             font-weight: 700;
-            text-shadow: 0 0 2px #5b6e84;
+            text-shadow: 0 0 2px #f2f7fd;
             /*box-shadow: 0 0 10px #18242D;*/
             /*border: 2px solid #ffffff;*/
         }
@@ -67,7 +63,7 @@
 <body>
 
 <div class="bac_bac"></div>
-<div class="bac_text">欢迎登录<br>后台管理系统</div>
+<div class="bac_text">欢迎登录<br>管理系统</div>
 
 </div>
 </body>

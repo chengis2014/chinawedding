@@ -44,5 +44,7 @@
         <typeAlias type="com.hnqj.model.Unsubscribe" alias="Unsubscribe"/>
         <typeAlias type="com.hnqj.model.Userinfo" alias="Userinfo"/>
         <typeAlias type="com.hnqj.model.Works" alias="Works"/>
+        <typeAlias type="com.hnqj.model.Integral" alias="Integral"/>
+        <typeAlias type="com.hnqj.model.Limit" alias="Limit"/>
     </typeAliases>
 </configuration>

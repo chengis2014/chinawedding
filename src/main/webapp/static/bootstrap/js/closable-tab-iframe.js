@@ -10,9 +10,9 @@ var closableTab = {
 		$("div[id^=tab_container_]").removeClass("active");
 
 		if(!$('#'+id)[0]){
-			var li_tab = '<li role="presentation" class="" id="'+id+'"><a href="#'+container+'"  role="tab" data-toggle="tab" style="position: relative;padding:3px 18px;margin:4px;border-radius: 20px;border-bottom: #ddd;">'+tabItem.name;
+			var li_tab = '<li role="presentation" class="" id="'+id+'"><a href="#'+container+'"  role="tab" data-toggle="tab" style="position: relative;border-radius: 20px;border-bottom: #ddd;">'+tabItem.name;
 			if(tabItem.closable){
-				li_tab = li_tab + '<span class="fa fa-remove" tabclose="'+id+'" style="position: absolute;right:5px;top: 7px;font-size: 10px;cursor:pointer;"  onclick="closableTab.closeTab(this)"></span></a></li> ';
+				li_tab = li_tab + '<span class="fa fa-remove" tabclose="'+id+'" style="position: absolute;right:-2px;top: 14px;font-size: 10px;cursor:pointer;"  onclick="closableTab.closeTab(this)"></span></a></li> ';
 			}else{
 				li_tab = li_tab + '</a></li>';
 			}

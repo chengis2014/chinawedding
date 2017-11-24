@@ -18,23 +18,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <title>后台管理系统</title>
-    <!-- Bootstrap core CSS -->
-    <!-- Bootstrap 3.3.6 -->
     <link rel="stylesheet" href="<%=basePath%>/static/bootstrap/css/bootstrap.min.css">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="<%=basePath%>/static/font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" href="<%=basePath%>/static/css/app.css">
+    <link rel="stylesheet" href="<%=basePath%>/static/css/lanse.css" id="changeStyle4">
     <script src="<%=basePath%>/static/js/jquery-2.2.0.min.js"></script>
     <!--浏览器显示图标-->
     <link rel="icon" href="<%=basePath%>/static/img/ico.ico" type="image/x-icon"/>
-    <%--<link href="<%=basePath%>/bootstrap/flatlab-master/css/bootstrap-reset.css" rel="stylesheet">--%>
-    <!--external css-->
-    <!--right slidebar-->
     <link href="<%=basePath%>/static/bootstrap/flatlab-master/css/slidebars.css" rel="stylesheet">
     <!-- Custom styles for this template -->
     <link href="<%=basePath%>/static/bootstrap/flatlab-master/css/style.css" rel="stylesheet">
     <link href="<%=basePath%>/static/bootstrap/flatlab-master/css/style-responsive.css" rel="stylesheet"/>
-
     <script src="<%=basePath%>/static/js/common.js"></script>
 
     <%--<link href="<%=basePath%>/css/bootstrap-addtabs.css" rel="stylesheet">--%>
@@ -101,12 +96,11 @@
         };
         function personal() {
             $.ajax({
-                url: "<%=basePath%>/user/getPersonMessage.do",
+                url: "<%=basePath%>/account/getDateByUserId.do",
                 type: "POST",
                 success: function (data) {
                     var msg = eval("(" + data + ")");
-                    $("#account").val(msg[0].account);
-                    $("#unitId").val(msg[0].unit);
+                    $("#account").val(msg.account);
                 }
             });
             $("#personal").modal("show");
@@ -193,8 +187,10 @@
         }
 
         .nav-tabs > li.active > a, .nav-tabs > li.active > a:focus, .nav-tabs > li.active > a:hover {
-            background-color: #57AED5;
+            /*background-color: #57AED5;*/
             color: #fff;
+            background:none;
+            border:none;
         }
 
         .transf {
@@ -203,9 +199,19 @@
         }
 
         ul.nav-tabs > li {
-            border-bottom: 1px solid #ddd;
+            border-bottom: 25px solid rgba(0, 0, 0, 0.2);
+            border-left: 20px solid transparent;
+            border-right:20px solid transparent;
+            height: 31px;
         }
-
+        ul.nav-tabs > li.active{
+            border-bottom: 25px solid  rgba(0, 0, 0, 0.4);
+            border-left: 20px solid transparent;
+            border-right:20px solid transparent;
+            height: 31px;
+            margin-left: 1px;
+            z-index: 99;
+        }
         span.fa.fa-remove:hover {
             -webkit-transform: scale(1.2);
             -moz-transform: scale(1.2);
@@ -213,7 +219,21 @@
             -o-transform: scale(1.2);
             transform: scale(1.2);;
         }
-
+        .dropdown-menu {
+            min-width: 60px;
+            text-align: center;
+        }
+        .nav>li>a:focus, .nav>li>a:hover{
+            background: none;
+            border: none;
+            color: #fff;
+        }
+        .nav>li>a:hover{
+            border: 1px solid transparent;
+        }
+        .nav-primary ul.nav > li >a:hover{
+            border: none;
+        }
     </style>
 </head>
 
@@ -221,10 +241,6 @@
 <section id="container">
     <!--header start-->
     <header class="header white-bg">
-        <%--<div class="sidebar-toggle-box">--%>
-        <%--<div id="" class="fa fa-bars tooltips" style="color:#fff" data-original-title="审计局" data-placement="right" ></div>--%>
-        <%--</div>--%>
-        <!--logo start-->
         <div style="float: left;">
             <!--<img style="height: 50px; width: 180px" src="<%=basePath%>/static/img/logo.gif">-->
         </div>
@@ -232,9 +248,6 @@
         <!--logo end-->
         <%--<div class="nav notify-row" id="top_menu">--%>
         <%--<!--  notification start -->--%>
-
-        <%--</div>--%>
-
         <div class="top-nav ">
             <ul class="nav pull-right top-menu" style="margin-top: 4px;">
                 <!-- user login dropdown start-->
@@ -252,25 +265,16 @@
                 <!-- user login dropdown end -->
             </ul>
         </div>
-        </header>
-    <!--header end-->
-    <!--sidebar start-->
+    </header>
     <section class="hbox stretch">
         <aside class="bg-black dk aside hidden-print " id="nav">
             <section class="vbox">
                 <section class="w-f-md scrollable">
-                    <div id="sidebar" class="slim-scroll" style="overflow-y: auto">
+                    <div id="sidebar" class="slim-scroll" style="overflow-y: auto;margin-top: 82px">
                         <nav class="nav-primary hidden-xs">
                             <!-- sidebar menu start-->
                             <ul class="sidebar-menu nav bg" id="nav-accordion">
-                                <li>
-                                    <div class="sidebar-toggle-box">
-                                        <a href="#nav" data-toggle="class:nav-xs,nav-xs" style="padding:10px 0">
-                                            <i class="fa fa-arrow-left "></i>
-                                            <%--<i class="fa fa-angle-double-left  fa-2x text-active"></i>--%>
-                                        </a>
-                                    </div>
-                                </li>
+
                                 <li style="line-height:35px">
                                     <a href="javascript:;" class="active">
                                         <i class="fa fa-home" class="liclick" tabId="1" url="<%=basePath%>/demo.do"
@@ -305,49 +309,25 @@
         <!--main content start-->
 
         <section id="main-content">
-            <section id="siteMinHeight" class="wrapper site-min-height" style="border:2px solid rgba(87,174,213,.5);">
+            <section id="siteMinHeight" class="wrapper site-min-height">
                 <ul class="nav nav-tabs" role="tablist"
-                    style="padding-bottom: 2px; background: rgba(76,182,203,.1);border-radius: 4px;box-shadow: 0 0 6px rgba(76,182,203,.6);">
+                    style="padding-bottom: 2px;">
                 </ul>
 
                 <div class="tab-content" id="tabContent">
-
-
-                    <!--footer start-->
-                    <%--<div>--%>
-                    <%--<button class="top_back btn btn-default">--%>
-                    <%--<a href="#top_back">--%>
-                    <%--<i class="fa fa-angle-up"></i>--%>
-                    <%--</a>--%>
-                    <%--</button>--%>
-                    <%--</div>--%>
-
-
                     <footer class="site-footer" style="position: fixed;bottom: 0;width: 100%;left: 0;">
                         <div class="text-center" style="font-size: 12px;line-height:20px;">
                             技术支持:河南青居电子商务有限公司
-                            <%--<a href="#" class="go-top">--%>
-                            <%--<i class="fa fa-angle-up" style="line-height:18px;"></i>--%>
-                            <%--</a>--%>
                         </div>
                     </footer>
                     <!--footer end-->
-
                 </div>
-
             </section>
         </section>
         <!--main content end-->
     </section>
     <!--sidebar end-->
-
-    <!-- Right Slidebar start -->
-
-    <!-- Right Slidebar end -->
-
 </section>
-
-
 <div class="modal fade" id="personal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -364,21 +344,11 @@
                             <input class="form-control" readonly id="fname" name="fname"
                                    placeholder="${user.getFristname()}" type="text">
                         </div>
-                        <div class="form-group">
-                            <label>电话</label>
-                            <input class="form-control" readonly placeholder="${user.getTelephone()}" id="mobilephone"
-                                   name="mobilephone" type="text"/>
-                        </div>
-                        <!-- /.form-group -->
                     </div>
                     <div class="col-md-6">
                         <div id="accountId" class="form-group">
                             <label>帐号</label>
                             <input class="form-control" readonly id="account" type="text">
-                        </div>
-                        <div class="form-group">
-                            <label>部门</label>
-                            <input class="form-control" readonly id="unitId" name="unitId" type="text"/>
                         </div>
                     </div>
                     <!-- /.col -->
@@ -429,25 +399,13 @@
     </div><!-- /.modal -->
 </div>
 <!-- js placed at the end of the document so the pages load faster -->
-
 <script src="<%=basePath%>/static/bootstrap/js/bootstrap.min.js"></script>
 <script src="<%=basePath%>/static/bootstrap/flatlab-master/js/jquery.dcjqaccordion.2.7.js"></script>
 <script src="<%=basePath%>/static/bootstrap/flatlab-master/js/jquery.scrollTo.min.js"></script>
 <script src="<%=basePath%>/static/bootstrap/flatlab-master/js/jquery.nicescroll.js" type="text/javascript"></script>
-<%--<script src="<%=basePath%>/bootstrap/flatlab-master/assets/gritter/js/jquery.gritter.js"></script>--%>
-<%--<script src="<%=basePath%>/bootstrap/flatlab-master/js/respond.min.js" ></script>--%>
-<%--<script src="<%=basePath%>/bootstrap/flatlab-master/js/jquery.pulsate.min.js"></script>--%>
-
-<!--right slidebar-->
 <script src="<%=basePath%>/static/bootstrap/flatlab-master/js/slidebars.min.js"></script>
-
 <!--common script for all pages-->
 <script src="<%=basePath%>/static/bootstrap/flatlab-master/js/common-scripts.js"></script>
-
-<!--script for this page only-->
-<%--<script src="<%=basePath%>/bootstrap/flatlab-master/js/gritter.js" type="text/javascript"></script>--%>
-<%--<script src="<%=basePath%>/bootstrap/flatlab-master/js/pulstate.js" type="text/javascript"></script>--%>
-
 <script src="<%=basePath%>/static/bootstrap/js/closable-tab-iframe.js"></script>
 <%--模态弹窗引用jquery-ui设置可拖动--%>
 <script src="<%=basePath%>/static/js/jquery-ui.min.js"></script>

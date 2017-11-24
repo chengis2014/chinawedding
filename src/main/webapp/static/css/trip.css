@@ -4,8 +4,8 @@ html{height:100%;}
 .font14_row{position:relative;background:#e5f1ff;border:1px solid #b2d2ff;padding: 25px 20px 38px;margin:38px;}
 label[id]{font-weight:normal;}
 
-.style_body{background:#e5f1ff;padding: 0;margin:0;border: 1px solid rgba(0,0,0,.1);height:100%;}
-.style_border{color:midnightblue;padding: 0 25px 25px;border: 1px solid #dcf;background:#fff;box-shadow:1px 1px 6px #ccc;width: auto;height:100%;overflow: auto;}
+.style_body{background:#d4e7fd;padding: 0;margin:0;height:100%;}
+.style_border{color:#272727;padding: 0 12px 12px;width: auto;height:100%;overflow: auto;}
 .style_title{font-size: 30px;color:#337ab7;font-weight: bold;text-align:center;margin:0;}
 label input[type=radio]{margin:0 5px;}
 div label{font-weight:700;}

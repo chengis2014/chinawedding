@@ -72,11 +72,6 @@ public class AccountController extends  BaseController{
             }
             map.put("fid",account.getUid());
             map.put("account",account.getAccount());
-            if(account.getUsemobile()==(short) 1){
-                map.put("usemobile","是");
-            }else{
-                map.put("usemobile","否");
-            }
             hashMaps.add(map);
         }
         tablereturn.setRows(hashMaps);
@@ -92,13 +87,14 @@ public class AccountController extends  BaseController{
      * @return
      */
     @RequestMapping("/delAccountIds.do")
-    @Transactional
+    @Transactional(rollbackFor=Exception.class)
     public String delAccountIds(HttpServletRequest request, HttpServletResponse response, Model model){
         logger.debug("delAccountIds");
         try{
             String uid = request.getParameter("uid") == null ? "" : request.getParameter("uid");
             String[] idStrs=uid.split(",");
             accountService.deleteAccountByFid(idStrs[0]);
+            accountService.deleteAccountByFid("111119BB26FDE49DCA104A38214B522E2");
             ResultUtils.writeSuccess(response);
         } catch (Exception e) {
             logger.error("delAccountIds e="+e.getMessage());
@@ -149,4 +145,24 @@ public class AccountController extends  BaseController{
         }
         return null;
     }
+
+    /**
+     * 根据用户ID获取账号信息
+     * @param request
+     * @param response
+     * @return
+     */
+    @RequestMapping("/getDateByUserId.do")
+    public String getDateByUserId(HttpServletRequest request, HttpServletResponse response) {
+        logger.info("getDateByUserId");
+        try{
+            Account account=accountService.getAccountforUserId(getUser().getUid());
+            ResultUtils.write(response,toJson(account));
+        }catch(Exception e){
+            logger.error("getDateByUserId e="+e.toString());
+            ResultUtils.writeFailed(response);
+        }
+        return null;
+    }
 }
+

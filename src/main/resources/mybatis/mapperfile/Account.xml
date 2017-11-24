@@ -57,9 +57,7 @@
 
   <!-- 分页列表 -->
   <select id="getAllAccounts" resultMap="AccountResultMap">
-    select  a.*
-    from tb_account a,tb_userinfo b
-    where a.userid=b.uid and a.state='1'  LIMIT #{offset},#{limit}
+    select  * from tb_account where state='1'  LIMIT #{offset},#{limit}
   </select>
   <!--获取所有数据-->
   <select id="selectAccountList" resultMap="AccountResultMap">
@@ -69,7 +67,7 @@
   <select id="getAccountforUserId" resultMap="AccountResultMap">
     select *
     from tb_account
-    where userid = #{uid,jdbcType=VARCHAR} and state='1'
+    where userid = #{userid,jdbcType=VARCHAR}
   </select>
   <!--校验账号-->
   <select id="getAccountforAccount" resultMap="AccountResultMap">
