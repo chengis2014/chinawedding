@@ -168,7 +168,7 @@
         .login-topStyle4 {
             background: url(<%=basePath%>/static/img/login_bg_white.png) center center repeat;
             width: 280px;
-            height: auto;
+            eight: auto;
             overflow: hidden;
             top: 26%;
             right: 51%;
@@ -193,7 +193,7 @@
         }
 
         .error-information {
-            color: #d02e50;
+            color: #d02530;
             font-size: 12px;
             padding-bottom: 3px;
         }
