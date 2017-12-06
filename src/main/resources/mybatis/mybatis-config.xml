@@ -46,5 +46,6 @@
         <typeAlias type="com.hnqj.model.Works" alias="Works"/>
         <typeAlias type="com.hnqj.model.Integral" alias="Integral"/>
         <typeAlias type="com.hnqj.model.Limit" alias="Limit"/>
+        <typeAlias type="com.hnqj.model.Proportions" alias="Proportions"/>
     </typeAliases>
 </configuration>

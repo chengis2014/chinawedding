@@ -333,7 +333,7 @@
     <div>
         <div id="toolbar" class="btn-group-sm">
             <button id="remove" class="btn btn-info" onclick="delRow()">
-                <i class="glyphicon glyphicon-remove"></i> 删除
+                <i class="glyphicon glyphicon-remove"></i> 冻结
             </button>
             <button id="resetPasswd" class="btn btn-info" onclick="resetPasswd()">
                 <i class="glyphicon glyphicon-edit"></i> 重置密码

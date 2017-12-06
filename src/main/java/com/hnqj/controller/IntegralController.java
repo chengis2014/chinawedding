@@ -17,7 +17,8 @@ import java.util.*;
 import static com.hnqj.core.ResultUtils.toJson;
 
 /**
- * Created by Administrator on 2017/8/8.
+ * 张威 2017/11
+ * 积分转换
  */
 @Controller
 @RequestMapping("/integral")
@@ -25,7 +26,7 @@ public class IntegralController extends  BaseController{
     @Autowired
     IntegralServices integralServices;
     /**
-     * 跳转到店铺等级管理页面
+     * 跳转到积分转换管理页面
      * @return
      */
     @RequestMapping("/toIntegralList.do")
@@ -97,7 +98,7 @@ public class IntegralController extends  BaseController{
         return null;
     }
     /**
-     * 后台用户信息修改
+     * 信息修改
      * @param request
      * @param response
      * @return

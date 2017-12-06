@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 /**
- * Created by wangyong on 2016/11/7.
+ * 张威 2017/11
  */
 public class BaseController {
     protected final Log logger = LogFactory.getLog(getClass());

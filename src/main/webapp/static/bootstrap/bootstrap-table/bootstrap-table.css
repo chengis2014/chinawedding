@@ -87,8 +87,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    font-weight: 100;
-    font-weight: 100;
+    font-weight: 400;
 }
 
 .fixed-table-container thead th .sortable {

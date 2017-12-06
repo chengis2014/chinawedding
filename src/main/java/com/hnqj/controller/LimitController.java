@@ -20,7 +20,8 @@ import static com.hnqj.core.ResultUtils.toDateJson;
 import static com.hnqj.core.ResultUtils.toJson;
 
 /**
- * Created by Administrator on 2017/8/8.
+ * 张威 2017/11
+ * 提现额度
  */
 @Controller
 @RequestMapping("/limit")
@@ -64,10 +65,14 @@ public class LimitController extends  BaseController{
     @RequestMapping("/addLimit.do")
     public String addLimit(HttpServletRequest request, HttpServletResponse response){
         logger.info("addLimit");
+        String mininum = request.getParameter("mininum") == null ? "" : request.getParameter("mininum");
+        String maxinum=request.getParameter("maxinum") == null ? "" : request.getParameter("maxinum");
         String drawallimit = request.getParameter("drawallimit") == null ? "" : request.getParameter("drawallimit");
         PageData PageData = new PageData();
         String uuid= UUID.randomUUID().toString();
         PageData.put("uid",uuid);
+        PageData.put("mininum",mininum);
+        PageData.put("maxinum",maxinum);
         PageData.put("drawallimit",drawallimit);
         PageData.put("createtime",new Date());
         try{
@@ -80,7 +85,7 @@ public class LimitController extends  BaseController{
         return null;
     }
     /**
-     * 后台用户信息修改
+     * 信息修改
      * @param request
      * @param response
      * @return
@@ -89,9 +94,13 @@ public class LimitController extends  BaseController{
     public String updateLimit(HttpServletRequest request, HttpServletResponse response){
         logger.debug("updateLimit");
         String uid = request.getParameter("uid") == null ? "" : request.getParameter("uid");
+        String mininum = request.getParameter("mininum") == null ? "" : request.getParameter("mininum");
+        String maxinum=request.getParameter("maxinum") == null ? "" : request.getParameter("maxinum");
         String drawallimit = request.getParameter("drawallimit") == null ? "" : request.getParameter("drawallimit");
         PageData PageData = new PageData();
         PageData.put("uid",uid);
+        PageData.put("mininum",mininum);
+        PageData.put("maxinum",maxinum);
         PageData.put("drawallimit",drawallimit);
         PageData.put("createtime",new Date());
         try{

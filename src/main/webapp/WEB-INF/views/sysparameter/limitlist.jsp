@@ -130,7 +130,29 @@
                             message: '提现额度不能为空!'
                         }
                     }
-                }
+                },
+                mininum:{
+                    validators:{
+                        notEmpty: {
+                            message: '积分最小值不能为空!'
+                        },
+                        regexp: {
+                            regexp: /^[0-9]*$/,
+                            message: '积分最小值只能由整数组成'
+                        }
+                    }
+                },
+                maxinum:{
+                    validators:{
+                        notEmpty: {
+                            message: '积分最大值不能为空!'
+                        },
+                        regexp: {
+                            regexp: /^[0-9]*$/,
+                            message: '积分最大值只能由整数组成'
+                        }
+                    }
+                },
             }
         });
     }
@@ -147,6 +169,8 @@
     function init(){
         $("#uid").val("");
         $("#drawallimit").val("");
+        $("#mininum").val("");
+        $("#maxinum").val("");
     }
     //添加窗口
     function newLimit(){
@@ -156,11 +180,15 @@
     }
     //新增提交保存
     function saveLimit(){
+        var mininum=$("#mininum").val();
+        var maxinum=$("#maxinum").val();
         var drawallimit=$("#drawallimit").val();
         $.ajax({
             type:"POST",
             url:"<%=basePath%>/limit/addLimit.do",
             data:{
+                mininum:mininum,
+                maxinum:maxinum,
                 drawallimit:drawallimit
             },
             success:function(data){
@@ -196,6 +224,8 @@
                     success: function (data) {
                         var msg = eval("(" + data + ")");
                         $("#uid").val(uid.replace(",", ""));
+                        $("#mininum").val(msg.mininum);
+                        $("#maxinum").val(msg.maxinum);
                         $("#drawallimit").val(msg.drawallimit);
                     }
                 });
@@ -209,12 +239,16 @@
     //提交更新
     function updateLimit(){
         var uid=$("#uid").val();
+        var mininum=$("#mininum").val();
+        var maxinum=$("#maxinum").val();
         var drawallimit=$("#drawallimit").val();
         $.ajax({
             type:"POST",
             url:"<%=basePath%>/limit/updateLimit.do",
             data:{
                 uid:uid,
+                mininum:mininum,
+                maxinum:maxinum,
                 drawallimit:drawallimit
             },
             success:function(data){
@@ -311,6 +345,8 @@
         <thead>
         <tr>
             <th data-field="uid" data-checkbox="true" align="center"></th>
+            <th data-field="mininum" data-editable="false"  align="center">积分最小值</th>
+            <th data-field="maxinum" data-editable="false" align="center">积分最大值</th>
             <th data-field="drawallimit" data-editable="false"  align="center">提现额度</th>
             <th data-field="createtime" data-editable="false" align="center">创建时间</th>
         </tr>
@@ -330,8 +366,17 @@
                         <div class="col-md-6">
                             <input class="form-control" id="uid" type="hidden">
                             <div class="form-group">
+                                <label>积分最小值</label>
+                                <input style="width:315px" class="form-control" id="mininum" name="mininum">
+                            </div>
+                            <!-- /.form-group -->
+                            <div class="form-group">
+                                <label>积分最大值</label>
+                                <input style="width:315px" class="form-control" id="maxinum" name="maxinum">
+                            </div>
+                            <div class="form-group">
                                 <label>提现额度</label>
-                                <input style="width:350px" class="form-control" id="drawallimit" name="drawallimit">
+                                <input style="width:315px" class="form-control" id="drawallimit" name="drawallimit">
                             </div>
                         </div>
                     </div>

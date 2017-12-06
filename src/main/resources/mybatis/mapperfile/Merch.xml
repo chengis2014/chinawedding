@@ -35,11 +35,11 @@
     where uid=#{uid}
   </update>
   <!--分页查询-->
-  <select id="getAllMerch" parameterType="pd">
+  <select id="getAllMerch" resultMap="BaseResultMap" parameterType="pd">
     select * from tb_merch LIMIT #{offset},#{limit}
   </select>
   <!--查询所有-->
-  <select id="selectMerchList">
+  <select id="selectMerchList" resultMap="BaseResultMap">
     select * from tb_merch
   </select>
 </mapper>

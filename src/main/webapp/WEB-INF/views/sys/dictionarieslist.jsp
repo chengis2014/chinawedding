@@ -68,7 +68,7 @@
         $("#cusTable").bootstrapTable({
             method: "get",  //使用get请求到服务器获取数据
             contentType: "application/x-www-form-urlencoded",
-            url: "<%=basePath%>/dictionaries/getDictionariesList.do", //获取数据的Servlet地址
+            url: "<%=basePath%>/dictionaries/getDictList.do", //获取数据的Servlet地址
             striped: true,  //表格显示条纹
             pagination: true, //启动分页
             toolbar:"#toolbar",
@@ -128,14 +128,24 @@
                 validating: 'glyphicon glyphicon-refresh'
             },
             fields: {
-                fristname:{
+                groupname:{
                     validators:{
                         notEmpty: {
-                            message: '姓名不能为空!'
-                        },
-                        regexp: {
-                            regexp: /[\u4e00-\u9fa5]/,
-                            message: '姓名只能由中文字符组成'
+                            message: '组名不能为空!'
+                        }
+                    }
+                },
+                keyname:{
+                    validators:{
+                        notEmpty: {
+                            message: '键名不能为空!'
+                        }
+                    }
+                },
+                keyvalue:{
+                    validators:{
+                        notEmpty: {
+                            message: '键值不能为空!'
                         }
                     }
                 },
@@ -154,37 +164,48 @@
     //初始化表单
     function init(){
         $("#uid").val("");
-        $("#fristname").val("");
-        $("#telephone").val("");
-        $("#idcard").val("");
-        $("#email").val("");
-        $("#sex").val("");
-        $("#extrainfo").val("");
+        $("#groupname").val("");
+        $("#keyname").val("");
+        $("#parentid").val("");
+        $("#keyvalue").val("");
+        $("#remarket").val("");
     }
 //添加窗口
-    function newUser(){
+    function newDict(){
         init();
-        $("#myDictLabel").html("添加用户");
-        $('#newUser').modal('show');
+        $.ajax({
+            type: "post",
+            url: "<%=basePath%>/dictionaries/getParentModule.do",
+            success: function (data) {
+                var msg = eval("(" + data + ")");
+                $("#parentid").find("option").remove();
+                var varItem1 = new Option("无","0");
+                $("#parentid").append(varItem1);
+                $.each(msg, function(name, value) {
+                    var varItem2 = new Option(value.groupname,value.uid);
+                    $("#parentid").append(varItem2);
+                });
+            }
+        });
+        $("#myDictLabel").html("添加");
+        $('#newDict').modal('show');
     }
 //添加用户提交保存
     function saveDict(){
-        var fristname=$("#fristname").val();
-        var telephone=$("#telephone").val();
-        var idcard=$("#idcard").val();
-        var email=$("#email").val();
-        var sex=$("#sex").val();
-        var extrainfo=$("#extrainfo").val();
+        var groupname=$("#groupname").val();
+        var keyname=$("#keyname").val();
+        var parentid = $("#parentid").val();
+        var keyvalue=$("#keyvalue").val();
+        var remarket=$("#remarket").val();
         $.ajax({
            type:"POST",
-            url:"<%=basePath%>/sysuser/addSysUser.do",
+            url:"<%=basePath%>/dictionaries/addDict.do",
             data:{
-                fristname:fristname,
-                telephone:telephone,
-                idcard:idcard,
-                email:email,
-                sex:sex,
-                extrainfo:extrainfo
+                groupname:groupname,
+                keyname:keyname,
+                parentid:parentid,
+                keyvalue:keyvalue,
+                remarket:remarket
             },
             success:function(data){
                 if(data!=="failed"){
@@ -196,14 +217,14 @@
                 }
             }
         });
-        $('#newUser').modal('hide');
+        $('#newDict').modal('hide');
     }
 //编辑
-    function editUser(){
-        $("#myDictLabel").html("修改用户");
+    function editDictionaries(){
+        $("#myDictLabel").html("修改");
         init();
         var arr = $('#cusTable').bootstrapTable('getSelections');
-        var uid = getCheckUid();
+        var ids = getCheckUid();
         if(arr.length>0) {
             var uids = getIdSelections();
             if (uids.length > 1) {
@@ -211,22 +232,29 @@
             } else {
                 $.ajax({
                     type: "POST",
-                    url: "<%=basePath%>/sysuser/getSysUserByUid.do",
+                    url: "<%=basePath%>/dictionaries/getDictById.do",
                     data: {
-                        uid: uid
+                        ids: ids
                     },
                     success: function (data) {
                         var msg = eval("(" + data + ")");
-                        $("#uid").val(uid.replace(",", ""));
-                        $("#fristname").val(msg.fristname);
-                        $("#telephone").val(msg.telephone);
-                        $("#idcard").val(msg.idcard);
-                        $("#email").val(msg.email);
-                        $("#sex").val(msg.sex);
-                        $("#extrainfo").val(msg.extrainfo);
+                        $("#uid").val(ids);
+                        $("#groupname").val(msg[0].groupname);
+                        $("#keyname").val(msg[0].keyname);
+                        $("#keyvalue").val(msg[0].keyvalue);
+                        $("#saveparentid").val(msg[0].parentid);
+                        $("#parentid").find("option").remove();
+                        var varItem2="";
+                        if(msg[0].parentName == ""){
+                            varItem2 = new Option("无","");
+                        }else{
+                            varItem2 = new Option(msg[0].parentName,"");
+                        }
+                        $("#parentid").append(varItem2);
+                        $("#remarket").val(msg[0].remarket);
                     }
                 });
-                $('#newUser').modal('show');
+                $('#newDict').modal('show');
             }
         }else{
             warningInfo("请选择一条记录");
@@ -236,23 +264,21 @@
     //提交更新
     function updateDict(){
         var uid=$("#uid").val();
-        var fristname=$("#fristname").val();
-        var telephone=$("#telephone").val();
-        var idcard=$("#idcard").val();
-        var email=$("#email").val();
-        var sex=$("#sex").val();
-        var extrainfo=$("#extrainfo").val();
+        var groupname=$("#groupname").val();
+        var keyname=$("#keyname").val();
+        var keyvalue=$("#keyvalue").val();
+        var parentid=$("#saveparentid").val();
+        var remarket=$("#remarket").val();
         $.ajax({
             type:"POST",
-            url:"<%=basePath%>/sysuser/updateSysUser.do",
+            url:"<%=basePath%>/dictionaries/updateDict.do",
             data:{
                 uid:uid,
-                fristname:fristname,
-                telephone:telephone,
-                idcard:idcard,
-                email:email,
-                sex:sex,
-                extrainfo:extrainfo
+                groupname:groupname,
+                keyname:keyname,
+                keyvalue:keyvalue,
+                parentid:parentid,
+                remarket:remarket
             },
             success:function(data){
                 if(data!=="failed"){
@@ -264,28 +290,32 @@
                 }
             }
         });
-        $('#newUser').modal('hide');
+        $('#newDict').modal('hide');
     }
 
 function delRow(){
     var arr = $('#cusTable').bootstrapTable('getSelections');
     if(arr.length>0) {
-        var uid = getIdSelections();
+        var uid = getIdSelections()
+        if (uid.length > 1) {
+            warningInfo("请选择一条记录");
+        } else {
             (confirmInfo("确认删除当前记录?")).then(function (status) {
                 if (status == true) {
-                    deleteUser();
+                    deleteDictionaries();
                 }
             });
+        }
     }else{
         warningInfo("请选择要删除的记录");
     }
 }
     //删除
-function deleteUser(){
+function deleteDictionaries(){
     var ids = getIdSelections();
      $.ajax({
         type: "POST",
-        url: "<%=basePath%>/sysuser/deleteSysUserByUid.do",
+        url: "<%=basePath%>/dictionaries/delDictById.do",
         data: {
             ids:getCheckUid()
         },
@@ -334,10 +364,10 @@ function getCheckUid(){
 <body id="loading" class="style_body">
 <div class=" style_border">
     <div id="toolbar" class="btn-group-sm">
-        <button id="add" class="btn btn-info" onclick="newUser()">
+        <button id="add" class="btn btn-info" onclick="newDict()">
             <i class="glyphicon glyphicon-expand"></i> 增加
         </button>
-        <button id="edit" class="btn btn-info" onclick="editUser()">
+        <button id="edit" class="btn btn-info" onclick="editDictionaries()">
             <i class="glyphicon glyphicon-edit"></i> 修改
         </button>
         <button id="remove" class="btn btn-info" onclick="delRow()">
@@ -348,18 +378,17 @@ function getCheckUid(){
         <thead>
         <tr>
             <th data-field="uid" data-checkbox="true" align="center"></th>
-            <th data-field="fristname" data-editable="false"  align="center">姓名</th>
-            <th data-field="telephone" data-editable="false" align="center">手机</th>
-            <th data-field="idcard" data-editable="false" align="center">身份证号</th>
-            <th data-field="email" data-editable="false" align="center">邮箱</th>
-            <th data-field="sex" data-editable="false" align="center">性别</th>
-            <th data-field="extrainfo" data-editable="false" align="center">备注</th>
+            <th data-field="groupname" data-editable="false"  align="center">组名</th>
+            <th data-field="keyname" data-editable="false" align="center">键名</th>
+            <th data-field="keyvalue" data-editable="false" align="center">键值</th>
+            <th data-field="parentid" data-editable="false" align="center">父级</th>
+            <th data-field="remarket" data-editable="false" align="center">备注</th>
         </tr>
         </thead>
     </table>
     </div>
 
-    <div class="modal fade" id="newUser" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal fade" id="newDict" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -370,35 +399,33 @@ function getCheckUid(){
                 <div class="row">
                         <div id="dictForm" method="post">
                             <div class="col-md-6">
-                                <input class="form-control" id="uid" placeholder="ID" type="hidden">
+                                <input class="form-control" id="uid"  type="hidden">
                                 <div class="form-group">
-                                    <label>姓名</label>
-                                    <input class="form-control" id="fristname" name="fristname"  type="text">
+                                    <label>组名</label>
+                                    <input class="form-control" id="groupname" name="groupname"  type="text">
                                 </div>
                                 <div class="form-group">
-                                    <label>电话</label>
-                                    <input class="form-control" id="telephone" name="telephone" type="text">
+                                    <label>键名</label>
+                                    <input class="form-control" id="keyname" name="keyname" type="text">
                                 </div>
                                 <div class="form-group">
-                                    <label>身份证号</label>
-                                    <input class="form-control" id="idcard" name="idcard" type="text">
+                                    <label>键值</label>
+                                    <input class="form-control" id="keyvalue" name="keyvalue" type="text">
                                 </div>
                                 <!-- /.form-group -->
                             </div>
                             <!-- /.col -->
                             <div class="col-md-6">
-                                <!-- /.form-group -->
                                 <div class="form-group">
-                                    <label>邮箱</label>
-                                    <input class="form-control" id="email" name="email" type="text">
-                                </div>
-                                <div class="form-group">
-                                    <label>性别</label>
-                                    <input class="form-control" id="sex" name="sex"  type="text">
+                                    <label>父级</label>
+                                    <input id="saveparentid" type="hidden"/>
+                                    <select class="form-control" id="parentid" name="parentid"  type="text">
+                                    <option value="0">无</option>
+                                    </select>
                                 </div>
                                 <div class="form-group">
                                     <label>备注</label>
-                                    <input class="form-control" id="extrainfo" type="text">
+                                    <input class="form-control" id="remarket" type="text">
                                 </div>
                             </div>
                             </div>

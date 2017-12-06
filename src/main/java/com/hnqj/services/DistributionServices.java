@@ -85,4 +85,16 @@ protected final Log logger = LogFactory.getLog(getClass());
 	}
 	 return distributionList; 
 	}
+
+	public Distribution getDistributionforParentId(String parentid) {
+		logger.info("通过parentid查询Distribution");
+		Distribution distribution=null;
+		try {
+			distribution = (Distribution) daoSupport.findForObject("DistributionMapper.getDistributionforParentId",parentid);
+		}catch (Exception e){
+			e.printStackTrace();
+			distribution=null;
+		}
+		return distribution;
+	}
 }

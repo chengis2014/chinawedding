@@ -85,4 +85,27 @@ protected final Log logger = LogFactory.getLog(getClass());
 	}
 	 return dictList; 
 	}
+
+	public List<Dict> getParentModule() {
+		logger.info("查询所有父级");
+		List<Dict>	dictList=null;
+		try {
+			dictList = (List<Dict>) daoSupport.findForList("DictMapper.getParentModule",null);
+		}catch (Exception e){
+			e.printStackTrace();
+			dictList=null;
+		}
+		return dictList;
+	}
+
+	public void delChildByFid(String ids) {
+		logger.info("删除子级Dict");
+		int iFlag = 0;
+		try {
+			iFlag = (int) daoSupport.delete("DictMapper.delChildByFid", ids);
+		} catch (Exception e) {
+			e.printStackTrace();
+			iFlag = 0;
+		}
+	}
 }

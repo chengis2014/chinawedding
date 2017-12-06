@@ -22,7 +22,8 @@ import static com.hnqj.core.EncodeUtil.encodeMD5;
 import static com.hnqj.core.ResultUtils.toJson;
 
 /**
- * Created by Administrator on 2017/8/8.
+ * 张威 2017/11
+ * 会员管理
  */
 @Controller
 @RequestMapping("/user")

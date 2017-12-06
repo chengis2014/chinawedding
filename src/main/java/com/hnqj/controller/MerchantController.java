@@ -5,25 +5,29 @@ import com.hnqj.core.ResultUtils;
 import com.hnqj.core.TableReturn;
 import com.hnqj.model.Merch;
 import com.hnqj.services.MerchServices;
+import com.hnqj.services.UserinfoServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
+import static com.hnqj.core.ResultUtils.toDateJson;
 import static com.hnqj.core.ResultUtils.toJson;
 
 /**
- * Created by Administrator on 2017/8/8.
+ * 张威 2017/11
+ * 商户管理
  */
 @Controller
 @RequestMapping("/merchant")
 public class MerchantController extends  BaseController{
     @Autowired
     MerchServices merchServices;
+    @Autowired
+    UserinfoServices userinfoServices;
     /**
      * 跳转到商户管理页面
      * @return
@@ -47,10 +51,32 @@ public class MerchantController extends  BaseController{
         pageData.put("limit",showCount);
         try{
             List<Merch> list=merchServices.getAllMerch(pageData);
+            List<Map<String, Object>> hashMaps=new ArrayList<>();
+            for(Merch merch:list){
+                Map<String, Object> map = new HashMap<>();
+                map.put("uid",merch.getUid());
+                map.put("uids",merch.getUid());
+                map.put("merchname",merch.getMerchname());
+                map.put("userinfouid",userinfoServices.getUserInfoByUid(merch.getUserinfouid()).getFristname());
+                map.put("bondvalue",merch.getBondvalue());
+                map.put("builddatetime",merch.getBuilddatetime());
+                map.put("merchscroe",merch.getMerchscroe());
+                map.put("statu",merch.getStatu());
+                if(merch.getStatu() == 0){
+                    map.put("status","待审核");
+                }else if(merch.getStatu() == 1){
+                    map.put("status","审核通过");
+                }else if(merch.getStatu() == 2){
+                    map.put("status","审核不通过");
+                }else{
+                    map.put("status","已冻结");
+                }
+                hashMaps.add(map);
+            }
             List<Merch> listCount=merchServices.selectMerchList();
             tablereturn.setTotal(listCount.size());
-            tablereturn.setRows(list);
-            ResultUtils.write(response,toJson(tablereturn));
+            tablereturn.setRows(hashMaps);
+            ResultUtils.write(response,toDateJson(tablereturn));
         }catch(Exception e){
             logger.error("applyShop e="+e.getMessage());
             ResultUtils.writeFailed(response);

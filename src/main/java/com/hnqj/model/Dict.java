@@ -35,7 +35,7 @@ public class Dict {
      *
      * @mbg.generated Sun Nov 12 10:54:35 CST 2017
      */
-    private Integer keyvalue;
+    private String keyvalue;
 
     /**
      *
@@ -44,7 +44,7 @@ public class Dict {
      *
      * @mbg.generated Sun Nov 12 10:54:35 CST 2017
      */
-    private Integer parentid;
+    private String parentid;
 
     /**
      *
@@ -135,7 +135,7 @@ public class Dict {
      *
      * @mbg.generated Sun Nov 12 10:54:35 CST 2017
      */
-    public Integer getKeyvalue() {
+    public String getKeyvalue() {
         return keyvalue;
     }
 
@@ -147,7 +147,7 @@ public class Dict {
      *
      * @mbg.generated Sun Nov 12 10:54:35 CST 2017
      */
-    public void setKeyvalue(Integer keyvalue) {
+    public void setKeyvalue(String keyvalue) {
         this.keyvalue = keyvalue;
     }
 
@@ -159,7 +159,7 @@ public class Dict {
      *
      * @mbg.generated Sun Nov 12 10:54:35 CST 2017
      */
-    public Integer getParentid() {
+    public String getParentid() {
         return parentid;
     }
 
@@ -171,7 +171,7 @@ public class Dict {
      *
      * @mbg.generated Sun Nov 12 10:54:35 CST 2017
      */
-    public void setParentid(Integer parentid) {
+    public void setParentid(String parentid) {
         this.parentid = parentid;
     }
 

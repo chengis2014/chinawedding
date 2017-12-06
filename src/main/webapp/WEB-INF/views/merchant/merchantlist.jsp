@@ -81,6 +81,7 @@
                 return param;
             },
             onLoadSuccess: function(){  //加载成功时执行
+                $('#cusTable').bootstrapTable('hideColumn', 'statu');
             },
             onLoadError: function(){  //加载失败时执行
             }
@@ -96,8 +97,94 @@
     });
     //添加操作按钮
     function nameFormatter(value, row, index) {
-        var fid = row.fids;
-        return '<i><a href="javascript:;" onclick="examine(\'' + fid + '\')">审核</a></i>'
+        var uids = row.uids;
+        if(row.statu == 0){
+            return '<i><a href="javascript:;" onclick="adopt(\'' + uids + '\')">通过</a> &nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:;" onclick="regect(\'' + uids + '\')">驳回</a></i>'
+        }else if(row.statu == 1){
+            return '<i><a href="javascript:;" onclick="frozen(\'' + uids + '\')">冻结</a></i>'
+        }else if(row.statu == 3){
+            return '<i><a href="javascript:;" onclick="thaw(\'' + uids + '\')">解冻</a></i>'
+        }
+    }
+    //审核通过
+    function adopt(uid){
+        var statu="1";
+        $.ajax({
+           url:"<%=basePath%>/merchant/examineOrFrozen.do",
+           type:"POST",
+           data:{
+               uid:uid,
+               statu:statu
+           },
+           success:function(data){
+               if(data!=="failed"){
+                   successInfo("审核成功!");
+                   $('#cusTable').bootstrapTable('refresh');//初始化数据
+               }else{
+                   errorInfo("审核失败");
+               }
+           }
+        });
+    }
+    //驳回
+    function regect(uid){
+        var statu="2";
+        $.ajax({
+            url:"<%=basePath%>/merchant/examineOrFrozen.do",
+            type:"POST",
+            data:{
+                uid:uid,
+                statu:statu
+            },
+            success:function(data){
+                if(data!=="failed"){
+                    successInfo("审核成功!");
+                    $('#cusTable').bootstrapTable('refresh');//初始化数据
+                }else{
+                    errorInfo("审核失败");
+                }
+            }
+        });
+    }
+    //冻结
+    function frozen(uid){
+        var statu="3";
+        $.ajax({
+            url:"<%=basePath%>/merchant/examineOrFrozen.do",
+            type:"POST",
+            data:{
+                uid:uid,
+                statu:statu
+            },
+            success:function(data){
+                if(data!=="failed"){
+                    successInfo("冻结成功!");
+                    $('#cusTable').bootstrapTable('refresh');//初始化数据
+                }else{
+                    errorInfo("冻结失败");
+                }
+            }
+        });
+    }
+    //解冻
+    function thaw(uid) {
+        var statu = "1";
+        $.ajax({
+            url: "<%=basePath%>/merchant/examineOrFrozen.do",
+            type: "POST",
+            data: {
+                uid: uid,
+                statu: statu
+            },
+            success: function (data) {
+                if (data !== "failed") {
+                    successInfo("解冻成功!");
+                    $('#cusTable').bootstrapTable('refresh');//初始化数据
+                } else {
+                    errorInfo("解冻失败");
+                }
+            }
+        });
     }
 </script>
 <body id="loading" class="style_body">
@@ -141,8 +228,9 @@
             <th data-field="bondvalue" data-editable="false" align="center">保证金金额</th>
             <th data-field="builddatetime" data-editable="false" align="center">创建时间</th>
             <th data-field="merchscroe" data-editable="false" align="center">店铺积分</th>
-            <th data-field="extrainfo" data-editable="false" align="center">备注</th>
-            <th data-field="fids" data-formatter="nameFormatter">操作</th>
+            <th data-field="status" data-editable="false" align="center">状态</th>
+            <th data-field="statu" data-editable="false" align="center"></th>
+            <th data-field="uids" data-formatter="nameFormatter">操作</th>
         </tr>
         </thead>
     </table>
