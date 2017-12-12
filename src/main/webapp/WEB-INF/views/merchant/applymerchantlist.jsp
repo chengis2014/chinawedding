@@ -6,7 +6,7 @@
     String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path;
 %>
 <head>
-    <title>商户管理</title>
+    <title>申请商户管理</title>
     <meta charset="utf-8">
     <script src="<%=basePath%>/static/js/jquery-2.2.0.min.js"></script>
     <link rel="stylesheet" href="<%=basePath%>/static/css/trip.css">
@@ -52,12 +52,8 @@
 </head>
 <script >
 
-    var statu=1;
-    var status="";
-    var grade="";
-    var merchname="";
     //初始化表格
-    function initTable() {
+    function initTable(statu) {
         //先销毁表格
         $('#cusTable').bootstrapTable('destroy');
         //初始化表格,动态从服务器加载数据
@@ -81,10 +77,7 @@
                 var param = {
                     limit: params.limit,
                     offset: params.offset,
-                    statu:statu,
-                    status:status,
-                    grade:grade,
-                    merchname:merchname
+                    statu:statu
                 };
                 return param;
             },
@@ -101,19 +94,12 @@
      */
     $(document).ready(function () {
         //调用函数，初始化表格
-        initTable();
+        initTable(0);
     });
     //添加操作按钮
     function nameFormatter(value, row, index) {
-        var id = row.uids;
-        if(row.statu == 1){
-            return '<i><a href="javascript:;" onclick="examine(\'' + id + '\')">查看</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:;" onclick="frozen(\'' + id + '\')">冻结</a></i>'
-        }else if(row.statu == 2){
-            return '<i><a href="javascript:;" onclick="examine(\'' + id + '\')">查看</a></i>'
-        }else{
-            return '<i><a href="javascript:;" onclick="thaw(\'' + id + '\')">解冻</a></i>'
-        }
-
+        var uids = row.uids;
+        return '<i><a href="javascript:;" onclick="examine(\'' + uids + '\')">查看</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:;" onclick="adopt(\'' + uids + '\')">通过</a> &nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:;" onclick="regect(\'' + uids + '\')">驳回</a></i>'
     }
     //查看店铺明细
     function examine(id){
@@ -121,9 +107,29 @@
         var url = "/merchant/toExamineMerchantList.do?id=" + id;
         window.parent.addTabs(id, name, url);
     }
-    //冻结
-    function frozen(uid){
-        var statu="3";
+    //审核通过
+    function adopt(uid){
+        var statu="1";
+        $.ajax({
+           url:"<%=basePath%>/merchant/examineOrFrozen.do",
+           type:"POST",
+           data:{
+               uid:uid,
+               statu:statu
+           },
+           success:function(data){
+               if(data!=="failed"){
+                   successInfo("审核成功!");
+                   $('#cusTable').bootstrapTable('refresh');//初始化数据
+               }else{
+                   errorInfo("审核失败");
+               }
+           }
+        });
+    }
+    //驳回
+    function regect(uid){
+        var statu="2";
         $.ajax({
             url:"<%=basePath%>/merchant/examineOrFrozen.do",
             type:"POST",
@@ -133,76 +139,18 @@
             },
             success:function(data){
                 if(data!=="failed"){
-                    successInfo("冻结成功!");
+                    successInfo("审核成功!");
                     $('#cusTable').bootstrapTable('refresh');//初始化数据
                 }else{
-                    errorInfo("冻结失败");
+                    errorInfo("审核失败");
                 }
             }
         });
-    }
-    //解冻
-    function thaw(uid) {
-        var statu = "1";
-        $.ajax({
-            url: "<%=basePath%>/merchant/examineOrFrozen.do",
-            type: "POST",
-            data: {
-                uid: uid,
-                statu: statu
-            },
-            success: function (data) {
-                if (data !== "failed") {
-                    successInfo("解冻成功!");
-                    $('#cusTable').bootstrapTable('refresh');//初始化数据
-                } else {
-                    errorInfo("解冻失败");
-                }
-            }
-        });
-    }
-    //查询
-    function selectDate(){
-        statu=2;
-        status=$("#statu").val();
-        grade=$("#grade").val();
-        merchname=$("#merchname").val();
-        initTable();
     }
 </script>
 <body id="loading" class="style_body">
 <div class=" style_border">
     <div id="toolbar" class="btn-group-sm">
-        <form style="margin-left: -20px" class="form-horizontal">
-            <div>
-                <label style="width: 70px" class="control-label col-md-1">状态:</label>
-                <div style="width: 150px;margin-top: 7px;margin-left: -20px" class=" col-md-2">
-                    <select style="" class="form-control" id="statu">
-                        <option value="0" class="form-control">全部</option>
-                        <option value="1" class="form-control">通过</option>
-                        <option value="2" class="form-control">驳回</option>
-                        <option value="3" class="form-control">冻结</option>
-                    </select>
-                </div>
-                <label style="width: 70px;margin-left: -18px" class="control-label col-md-1">等级:</label>
-                <div style="width: 150px;margin-top: 7px;margin-left: -20px" class=" col-md-2">
-                    <select style="" class="form-control" id="grade">
-                        <option value="0" class="form-control">全部</option>
-                        <option value="1" class="form-control">初级</option>
-                        <option value="2" class="form-control">中级</option>
-                        <option value="3" class="form-control">高级</option>
-                        <option value="4" class="form-control">特级</option>
-                    </select>
-                </div>
-                <label style="width: 70px;margin-left: -18px" class="control-label col-md-1">名称:</label>
-                <div style="width: 150px;margin-top: 7px;margin-left: -20px" class=" col-md-2">
-                    <input style="" class="form-control" id="merchname"/>
-                </div>
-            </div>
-        </form>
-        <button style="margin-top: -31px;margin-left: 545px" class="btn btn-info"  id="add" onclick="selectDate()">
-            <i class="glyphicon glyphicon-expand"></i> 查询
-        </button>
     </div>
     <table id="cusTable" class="table">
         <thead>
@@ -214,7 +162,6 @@
             <th data-field="builddatetime" data-editable="false" align="center">创建时间</th>
             <th data-field="merchscroe" data-editable="false" align="center">店铺等级</th>
             <th data-field="status" data-editable="false" align="center">状态</th>
-            <th data-field="statu" data-editable="false" align="center"></th>
             <th data-field="uids" data-formatter="nameFormatter">操作</th>
         </tr>
         </thead>

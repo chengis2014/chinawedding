@@ -6,7 +6,7 @@
     String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path;
 %>
 <head>
-    <title>积分转换比例管理</title>
+    <title>店铺等级管理</title>
     <meta charset="utf-8">
     <script src="<%=basePath%>/static/js/jquery-2.2.0.min.js"></script>
     <link rel="stylesheet" href="<%=basePath%>/static/css/trip.css">
@@ -368,10 +368,10 @@
                             <div class="form-group">
                                 <label>等级</label>
                                 <select style="width:315px" class="form-control" id="grade" name="grade">
-                                    <option value="1">一级</option>
-                                    <option value="2">二级</option>
-                                    <option value="3">三级</option>
-                                    <option value="4">四级</option>
+                                    <option value="1">初级</option>
+                                    <option value="2">中级</option>
+                                    <option value="3">高级</option>
+                                    <option value="4">特级</option>
                                 </select>
                             </div>
                             <!-- /.form-group -->

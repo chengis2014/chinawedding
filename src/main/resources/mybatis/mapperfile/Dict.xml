@@ -24,12 +24,16 @@
     from tb_dict
     where uid = #{uid,jdbcType=VARCHAR}
   </select>
-  <!--分页查询所有-->
+  <!--分页查询所有父节点-->
   <select id="getAllDict" resultMap="BaseResultMap">
-    select * from tb_dict LIMIT #{offset},#{limit}
+    select * from tb_dict where parentid = #{parentId} LIMIT #{offset},#{limit}
+  </select>
+  <!--根据树ID查询所有-->
+  <select id="selectDictList" resultMap="BaseResultMap">
+    select * from tb_dict where parentid = #{parentId}
   </select>
   <!--查询所有-->
-  <select id="selectDictList" resultMap="BaseResultMap">
+  <select id="selectDictLists" resultMap="BaseResultMap">
     select * from tb_dict
   </select>
 <!--修改-->

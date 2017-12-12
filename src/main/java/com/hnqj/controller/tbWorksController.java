@@ -6,7 +6,6 @@ import com.hnqj.core.PageData;
 import com.hnqj.core.ResultUtils;
 import com.hnqj.core.TableReturn;
 import com.hnqj.model.Works;
-import com.hnqj.services.WorksServices;
 import com.hnqj.services.UserinfoServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -26,8 +25,8 @@ import static com.hnqj.core.ResultUtils.toJson;
 @Controller
 @RequestMapping("/worksMgr")
 public class tbWorksController extends  BaseController{
-    @Autowired
-    WorksServices worksService;
+    //@Autowired
+    //WorksServices worksService;
     @Autowired
     UserinfoServices userinfoServices;
     /*
@@ -48,10 +47,10 @@ public class tbWorksController extends  BaseController{
         PageData pageData = new PageData();
         pageData.put("offset",currentPage);
         pageData.put("limit",showCount);
-        List<Works> list=worksService.getAllWorks(pageData);
-        List<Works> listCount=worksService.selectWorksList();
-        tablereturn.setTotal(listCount.size());
-        tablereturn.setRows(list);
+        //List<Works> list=worksService.getAllWorks(pageData);
+        //List<Works> listCount=worksService.selectWorksList();
+        //tablereturn.setTotal(listCount.size());
+        //tablereturn.setRows(list);
         ResultUtils.write(response,toJson(tablereturn));
         return null;
     }
@@ -95,7 +94,7 @@ public class tbWorksController extends  BaseController{
         trainPageData.put("delflag",0);//删除标志 默认0
         //插入数据库
         try{
-            worksService.addWorks(trainPageData);
+            //worksService.addWorks(trainPageData);
             ResultUtils.writeSuccess(response);
         } catch (Exception e) {
             logger.error("addWorksList e="+e.getMessage());
@@ -113,7 +112,7 @@ public class tbWorksController extends  BaseController{
         String[] idStrs = jsonTxt.split(",");
         try{
             for (String fid:idStrs){
-                worksService.delWorksByFid(fid);
+                //worksService.delWorksByFid(fid);
             }
             ResultUtils.writeSuccess(response);
         } catch (Exception e) {
@@ -161,7 +160,7 @@ public class tbWorksController extends  BaseController{
         trainPageData.put("delflag",0);//删除标志 默认0
         //插入数据库
         try{
-            worksService.updateWorks(trainPageData);
+            //worksService.updateWorks(trainPageData);
             ResultUtils.writeSuccess(response);
         } catch (Exception e) {
             logger.error("updateWorks e="+e.getMessage());

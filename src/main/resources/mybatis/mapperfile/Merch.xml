@@ -9,15 +9,16 @@
     <result column="builddatetime" jdbcType="TIMESTAMP" property="builddatetime" />
     <result column="merchscroe" jdbcType="INTEGER" property="merchscroe" />
     <result column="statu" jdbcType="SMALLINT" property="statu" />
+    <result column="cycle" jdbcType="VARCHAR" property="cycle" />
   </resultMap>
   <!--开店申请-->
   <insert id="addMerch" parameterType="pd">
     insert into tb_merch (uid, merchname, userinfouid,
-      bondvalue, builddatetime, merchscroe,statu
+      bondvalue, builddatetime, merchscroe,statu,cycle
       )
     values (#{uid,jdbcType=VARCHAR}, #{merchname,jdbcType=VARCHAR}, #{userinfouid,jdbcType=VARCHAR}, 
       #{bondvalue,jdbcType=INTEGER}, #{builddatetime,jdbcType=TIMESTAMP}, #{merchscroe,jdbcType=INTEGER}
-      ,#{statu,jdbcType=SMALLINT}
+      ,#{statu,jdbcType=SMALLINT},#{cycle,jdbcType=VARCHAR}
       )
   </insert>
   <!--审核或者冻结商户-->
@@ -26,7 +27,7 @@
     where uid=#{uid}
   </update>
   <!--通过ID查询记录-->
-  <select id="getMerchForId" parameterType="java.lang.String">
+  <select id="getMerchForId" parameterType="java.lang.String" resultMap="BaseResultMap">
     select * from tb_merch where uid=#{uid,jdbcType=VARCHAR}
   </select>
   <!--修改-->
@@ -36,10 +37,46 @@
   </update>
   <!--分页查询-->
   <select id="getAllMerch" resultMap="BaseResultMap" parameterType="pd">
-    select * from tb_merch LIMIT #{offset},#{limit}
+    select * from tb_merch where statu != '0' LIMIT #{offset},#{limit}
   </select>
   <!--查询所有-->
   <select id="selectMerchList" resultMap="BaseResultMap">
+  select * from tb_merch where statu != '0'
+</select>
+  <!--分页查询申请列表-->
+  <select id="getApplyMerch" resultMap="BaseResultMap">
+    select * from tb_merch where statu = '0' LIMIT #{offset},#{limit}
+  </select>
+  <!--查询申请列表-->
+  <select id="selectApplyMerchList" resultMap="BaseResultMap">
+    select * from tb_merch where statu = '0'
+  </select>
+  <!--根据条件分页搜索商户-->
+  <select id="getAllMerchByCondition" resultMap="BaseResultMap">
     select * from tb_merch
+    where statu != '0'
+    <if test="statu!=null and statu!=''">
+      and statu = #{statu}
+    </if>
+    <if test="grade!=null and grade!=''">
+      and merchscroe between #{mininum} and #{maxinum}
+    </if>
+    <if test="merchname!=null and merchname!=''">
+      and merchname = #{merchname}
+    </if>
+    LIMIT #{offset},#{limit}
+  </select>
+  <select id="selectMerchListByCondition" resultMap="BaseResultMap">
+    select * from tb_merch
+    where statu != '0'
+    <if test="statu!=null and statu!=''">
+      and statu = #{statu}
+    </if>
+    <if test="grade!=null and grade!=''">
+      and merchscroe between #{mininum} and #{maxinum}
+    </if>
+    <if test="merchname!=null and merchname!=''">
+      and merchname = #{merchname}
+    </if>
   </select>
 </mapper>

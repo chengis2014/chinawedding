@@ -15,7 +15,7 @@ public class GeneratorTools {
     private String pa = ",";
 
 
-    private String path = "D:\\chinawedding\\chinawedding\\src\\main\\java\\com\\hnqj";
+    private String path = "I:\\chinawedding\\chinawedding\\src\\main\\java\\com\\hnqj";
 
     private void getServiceImpl(String bean) {
             String service = bean + "Services";
@@ -154,26 +154,24 @@ public class GeneratorTools {
         generator.getServiceImpl("Collection");
         generator.getServiceImpl("Comment");
         generator.getServiceImpl("Dealrecord");
-        generator.getServiceImpl("Dict");
-        generator.getServiceImpl("Distribution");
+        generator.getServiceImpl("Dealuidchild");
+        generator.getServiceImpl("Distrirecord");
         generator.getServiceImpl("Findimg");
         generator.getServiceImpl("Groomapply");
-        generator.getServiceImpl("Merch");
+        generator.getServiceImpl("Leavemsg");
+        generator.getServiceImpl("Merchcycle");
         generator.getServiceImpl("Merchdown");
-        generator.getServiceImpl("Modules");
+        generator.getServiceImpl("Notify");
         generator.getServiceImpl("Playimg");
         generator.getServiceImpl("Releaseadvert");
-        generator.getServiceImpl("Roles");
-        generator.getServiceImpl("Rolesmodules");
-        generator.getServiceImpl("Rolesuser");
+        generator.getServiceImpl("Shoppingcart");
         generator.getServiceImpl("Sysconfig");
         generator.getServiceImpl("Syslog");
-        generator.getServiceImpl("Sysusermgr");
         generator.getServiceImpl("Template");
         generator.getServiceImpl("Train");
         generator.getServiceImpl("Unsubscribe");
-        generator.getServiceImpl("Userinfo");
-        generator.getServiceImpl("UserinfoWithBLOBs");
+        generator.getServiceImpl("Userlevel");
+        generator.getServiceImpl("Worklabel");
         generator.getServiceImpl("Works");
     }
 }

@@ -85,4 +85,28 @@ protected final Log logger = LogFactory.getLog(getClass());
 	}
 	 return IntegralList; 
 	}
+
+	public Integral selectIntegralByScroe(PageData pagedata) {
+		logger.info("通过积分查询Integral");
+		Integral Integral=null;
+		try {
+			Integral = (Integral) daoSupport.findForObject("IntegralMapper.selectIntegralByScroe",pagedata);
+		}catch (Exception e){
+			e.printStackTrace();
+			Integral=null;
+		}
+		return Integral;
+	}
+
+	public Integral selectIntegralByGrade(String grade) {
+		logger.info("通过等级查询Integral");
+		Integral Integral=null;
+		try {
+			Integral = (Integral) daoSupport.findForObject("IntegralMapper.selectIntegralByGrade",grade);
+		}catch (Exception e){
+			e.printStackTrace();
+			Integral=null;
+		}
+		return Integral;
+	}
 }

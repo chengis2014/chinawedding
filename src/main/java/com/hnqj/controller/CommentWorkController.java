@@ -6,7 +6,6 @@ import com.hnqj.core.PageData;
 import com.hnqj.core.ResultUtils;
 import com.hnqj.core.TableReturn;
 import com.hnqj.model.Comment;
-import com.hnqj.services.CommentServices;
 import com.hnqj.services.UserinfoServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -26,8 +25,8 @@ import static com.hnqj.core.ResultUtils.toJson;
 @Controller
 @RequestMapping("/worksCommentMgr")
 public class CommentWorkController extends  BaseController{
-    @Autowired
-    CommentServices commentService;
+    //@Autowired
+    //CommentServices commentService;
     @Autowired
     UserinfoServices userinfoServices;
         /*
@@ -48,10 +47,10 @@ public class CommentWorkController extends  BaseController{
         PageData pageData = new PageData();
         pageData.put("offset",currentPage);
         pageData.put("limit",showCount);
-        List<Comment> list=commentService.getAllComment(pageData);
-        List<Comment> listCount=commentService.selectCommentList();
-        tablereturn.setTotal(listCount.size());
-        tablereturn.setRows(list);
+        //List<Comment> list=commentService.getAllComment(pageData);
+        //List<Comment> listCount=commentService.selectCommentList();
+        //tablereturn.setTotal(listCount.size());
+        //tablereturn.setRows(list);
         ResultUtils.write(response,toJson(tablereturn));
         return null;
     }
@@ -79,7 +78,7 @@ public class CommentWorkController extends  BaseController{
         trainPageData.put("delflag",0);//删除标志 默认0
         //插入数据库
         try{
-            commentService.addComment(trainPageData);
+            //commentService.addComment(trainPageData);
             ResultUtils.writeSuccess(response);
         } catch (Exception e) {
             logger.error("addComment e="+e.getMessage());
@@ -97,7 +96,7 @@ public class CommentWorkController extends  BaseController{
         String[] idStrs = jsonTxt.split(",");
         try{
             for (String fid:idStrs){
-                commentService.delCommentByFid(fid);
+                //commentService.delCommentByFid(fid);
             }
             ResultUtils.writeSuccess(response);
         } catch (Exception e) {
@@ -129,7 +128,7 @@ public class CommentWorkController extends  BaseController{
         trainPageData.put("delflag",0);//删除标志 默认0
         //插入数据库
         try{
-            commentService.updateComment(trainPageData);
+            //commentService.updateComment(trainPageData);
             ResultUtils.writeSuccess(response);
         } catch (Exception e) {
             logger.error("updateComment e="+e.getMessage());

@@ -6,7 +6,6 @@ import com.hnqj.core.PageData;
 import com.hnqj.core.ResultUtils;
 import com.hnqj.core.TableReturn;
 import com.hnqj.model.Releaseadvert;
-import com.hnqj.services.ReleaseadvertServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,8 +23,8 @@ import static com.hnqj.core.ResultUtils.toJson;
 @Controller
 @RequestMapping("/advertInfoMgr")
 public class ReleaseadvertController extends BaseController{
-    @Autowired
-    ReleaseadvertServices adServices;
+    //@Autowired
+    //ReleaseadvertServices adServices;
     /*
   *跳转广告信息管理页面
   * */
@@ -44,10 +43,10 @@ public class ReleaseadvertController extends BaseController{
         PageData pageData = new PageData();
         pageData.put("offset",currentPage);
         pageData.put("limit",showCount);
-        List<Releaseadvert> list=adServices.getAllReleaseadvert(pageData);
-        List<Releaseadvert> listCount=adServices.selectReleaseadvertList();
-        tablereturn.setTotal(listCount.size());
-        tablereturn.setRows(list);
+        //List<Releaseadvert> list=adServices.getAllReleaseadvert(pageData);
+        //List<Releaseadvert> listCount=adServices.selectReleaseadvertList();
+        //tablereturn.setTotal(listCount.size());
+        //tablereturn.setRows(list);
         ResultUtils.write(response,toJson(tablereturn));
         return null;
     }
@@ -79,7 +78,7 @@ public class ReleaseadvertController extends BaseController{
         //adPageData.put("delflag",0);//删除标志 默认0
         //插入数据库
         try{
-            adServices.addReleaseadvert(adPageData);
+            //adServices.addReleaseadvert(adPageData);
             ResultUtils.writeSuccess(response);
         } catch (Exception e) {
             logger.error("addAdvertInfoList e="+e.getMessage());
@@ -97,7 +96,7 @@ public class ReleaseadvertController extends BaseController{
         String[] idStrs = jsonTxt.split(",");
         try{
             for (String fid:idStrs){
-                adServices.delReleaseadvertByFid(fid);
+                //adServices.delReleaseadvertByFid(fid);
             }
             ResultUtils.writeSuccess(response);
         } catch (Exception e) {
@@ -134,7 +133,7 @@ public class ReleaseadvertController extends BaseController{
         //adPageData.put("delflag",0);//删除标志 默认0
         //插入数据库
         try{
-            adServices.updateReleaseadvert(adPageData);
+            //adServices.updateReleaseadvert(adPageData);
             ResultUtils.writeSuccess(response);
         } catch (Exception e) {
             logger.error("updateAdvertInfo e="+e.getMessage());

@@ -106,6 +106,17 @@ protected final Log logger = LogFactory.getLog(getClass());
 		}
 		return moduleList;
 	}
+	//查询信息
+	public List<Modules> getAllModuleCount() {
+		List<Modules> moduleList =null;
+		try {
+			moduleList = (List<Modules>) daoSupport.findForList("ModuleMapper.getAllModuleCount",null);
+		}catch (Exception e){
+			e.printStackTrace();
+			moduleList =null;
+		}
+		return moduleList;
+	}
 	//是否包含子菜单
 	public List<Modules> getParentModule(){
 		List<Modules> moduleList =null;

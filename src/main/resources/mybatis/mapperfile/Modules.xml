@@ -75,11 +75,16 @@
     select *
     from tb_modules where md_enabled!='1' LIMIT  #{offset},#{limit}
   </select>
+  <select id="getAllModuleCount" resultMap="ModuleResultMap">
+    select *
+    from tb_modules where md_enabled!='1'
+  </select>
   <!-- 分页列表并排序 -->
   <select id="getAllModuleOrder" resultMap="ModuleResultMap">
     select *
     from tb_modules where md_enabled!='1' ORDER BY pm_id,md_ordernum LIMIT  #{offset},#{limit}
   </select>
+
 
   <select id="getModuleListByRoleId" resultMap="ModuleResultMap" parameterType="java.lang.String">
     select

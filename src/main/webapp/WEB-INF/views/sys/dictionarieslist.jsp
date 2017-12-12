@@ -30,6 +30,10 @@
     <link rel="stylesheet" href="<%=basePath%>/static/bootstrap/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css"/>
     <script type="text/javascript" src="<%=basePath%>/static/bootstrap/bootstrap-datetimepicker/js/bootstrap-datetimepicker.js"></script>
     <script type="text/javascript" src="<%=basePath%>/static/bootstrap/bootstrap-datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN.js"></script>
+    <!--树-->
+    <script type="text/javascript" src="<%=basePath%>/static/js/ztree3d5/js/jquery.ztree.all.js"></script>
+    <link rel="stylesheet" href="<%=basePath%>/static/js/ztree3d5/css/zTreeStyle/zTreeStyle.css" type="text/css" />
+    <link rel="stylesheet" href="<%=basePath%>/static/js/ztree3d5/css/demo.css" type="text/css" />
     <%--自建公共js文件--%>
     <script type="text/javascript" src="<%=basePath%>/static/js/common-creat.js"></script>
     <style>
@@ -59,9 +63,8 @@
     </style>
 </head>
 <script >
-
     //初始化表格
-    function initTable() {
+    function initTable(treeId) {
         //先销毁表格
         $('#cusTable').bootstrapTable('destroy');
         //初始化表格,动态从服务器加载数据
@@ -84,7 +87,8 @@
             queryParams: function queryParams(params) {   //设置查询参数
                 var param = {
                     limit: params.limit,
-                    offset: params.offset
+                    offset: params.offset,
+                    treeId:treeId
                 };
                 return param;
             },
@@ -99,6 +103,7 @@
      * 初始化数据
      */
     $(document).ready(function () {
+        $.fn.zTree.init($("#DictTree"), setting);//页面树初始化
         //调用函数，初始化表格
         initTable();
         //校验
@@ -118,6 +123,31 @@
             $('#dictForm').data('bootstrapValidator').resetForm(true);
         })
     });
+    //页面树数据源
+    var setting = {
+        check: {
+            enable: false,
+        },
+        data: {
+            simpleData: {
+                enable: true,
+            }
+        },
+        async: {
+            enable: true,
+            url:"<%=basePath%>/dictionaries/getDictTree.do"//树数据路径
+        },
+        //回调函数
+        callback: {
+            onClick: getDict
+        }
+    };
+    //树单击事件
+    function getDict(event, treeId, treeNode) {
+        initTable(treeNode.id);
+        $("#saveparentid").val(treeNode.id);
+        $("#saveparentname").val(treeNode.name);
+    }
     //校验
     function initValidate(){
         $('#dictForm').bootstrapValidator({
@@ -173,20 +203,12 @@
 //添加窗口
     function newDict(){
         init();
-        $.ajax({
-            type: "post",
-            url: "<%=basePath%>/dictionaries/getParentModule.do",
-            success: function (data) {
-                var msg = eval("(" + data + ")");
-                $("#parentid").find("option").remove();
-                var varItem1 = new Option("无","0");
-                $("#parentid").append(varItem1);
-                $.each(msg, function(name, value) {
-                    var varItem2 = new Option(value.groupname,value.uid);
-                    $("#parentid").append(varItem2);
-                });
-            }
-        });
+        var parentid=$("#saveparentid").val();
+        var parentname=$("#saveparentname").val();
+        if(parentid == ""){
+            $("#saveparentid").val("0");
+        }
+        $("#parentid").val(parentname);
         $("#myDictLabel").html("添加");
         $('#newDict').modal('show');
     }
@@ -194,7 +216,7 @@
     function saveDict(){
         var groupname=$("#groupname").val();
         var keyname=$("#keyname").val();
-        var parentid = $("#parentid").val();
+        var parentid=$("#saveparentid").val();
         var keyvalue=$("#keyvalue").val();
         var remarket=$("#remarket").val();
         $.ajax({
@@ -210,6 +232,7 @@
             success:function(data){
                 if(data!=="failed"){
                     successInfo("添加成功!");
+                    $.fn.zTree.init($("#DictTree"), setting);//页面树初始化
                     $('#cusTable').bootstrapTable('refresh');//初始化数据
                     $('#dictForm').data('bootstrapValidator').resetForm(true);
                 }else{
@@ -362,6 +385,9 @@ function getCheckUid(){
     }
 </script>
 <body id="loading" class="style_body">
+<div style="padding:0 10px;float: left;">
+    <ul style="background: none;border: none;" id="DictTree" class="ztree"></ul>
+</div>
 <div class=" style_border">
     <div id="toolbar" class="btn-group-sm">
         <button id="add" class="btn btn-info" onclick="newDict()">
@@ -419,9 +445,8 @@ function getCheckUid(){
                                 <div class="form-group">
                                     <label>父级</label>
                                     <input id="saveparentid" type="hidden"/>
-                                    <select class="form-control" id="parentid" name="parentid"  type="text">
-                                    <option value="0">无</option>
-                                    </select>
+                                    <input id="saveparentname" type="hidden"/>
+                                    <input readonly class="form-control" id="parentid" name="parentid"  type="text"/>
                                 </div>
                                 <div class="form-group">
                                     <label>备注</label>

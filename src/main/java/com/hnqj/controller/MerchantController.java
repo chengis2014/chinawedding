@@ -3,11 +3,15 @@ package com.hnqj.controller;
 import com.hnqj.core.PageData;
 import com.hnqj.core.ResultUtils;
 import com.hnqj.core.TableReturn;
+import com.hnqj.model.Integral;
 import com.hnqj.model.Merch;
+import com.hnqj.model.Userinfo;
+import com.hnqj.services.IntegralServices;
 import com.hnqj.services.MerchServices;
 import com.hnqj.services.UserinfoServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,6 +32,8 @@ public class MerchantController extends  BaseController{
     MerchServices merchServices;
     @Autowired
     UserinfoServices userinfoServices;
+    @Autowired
+    IntegralServices integralServices;
     /**
      * 跳转到商户管理页面
      * @return
@@ -36,6 +42,24 @@ public class MerchantController extends  BaseController{
     public String toMerchantList(){
         return "merchant/merchantlist";
     }
+    /**
+     * 跳转到申请商户管理页面
+     * @return
+     */
+    @RequestMapping("/toApplyMerchantList.do")
+    public String toApplyMerchantList(){
+        return "merchant/applymerchantlist";
+    }
+    /**
+     * 跳转到审核商户管理页面
+     * @return
+     */
+    @RequestMapping("/toExamineMerchantList.do")
+    public String toExamineMerchantList(HttpServletRequest request, Model model){
+        String id = request.getParameter("id") == null ? "" : request.getParameter("id");
+        model.addAttribute("id",id);//商户Id传到页面
+        return "merchant/examinemerchant";
+    }
 
     /**
      * 初始化数据
@@ -43,6 +67,10 @@ public class MerchantController extends  BaseController{
     @RequestMapping("/getMerchantList.do")
     public String getMerchantList(HttpServletRequest request, HttpServletResponse response) {
         logger.info("getMerchantList");
+        String statu = request.getParameter("statu") == null ? "" : request.getParameter("statu");
+        String status = request.getParameter("status") == null ? "" : request.getParameter("status");
+        String grade = request.getParameter("grade") == null ? "" : request.getParameter("grade");
+        String merchname = request.getParameter("merchname") == null ? "" : request.getParameter("merchname");
         int currentPage = request.getParameter("offset") == null ? 0 : Integer.parseInt(request.getParameter("offset"));
         int showCount = request.getParameter("limit") == null ? 10 : Integer.parseInt(request.getParameter("limit"));
         TableReturn tablereturn =new TableReturn();
@@ -50,8 +78,36 @@ public class MerchantController extends  BaseController{
         pageData.put("offset",currentPage);
         pageData.put("limit",showCount);
         try{
-            List<Merch> list=merchServices.getAllMerch(pageData);
+            List<Merch> list=null;
+            List<Merch> listCount=null;
             List<Map<String, Object>> hashMaps=new ArrayList<>();
+            if(statu.equalsIgnoreCase("0")){//获取申请列表
+                list= merchServices.getApplyMerch(pageData);
+                listCount=merchServices.selectApplyMerchList();
+            }else if(statu.equalsIgnoreCase("1")){//商户管理
+                list= merchServices.getAllMerch(pageData);
+                listCount=merchServices.selectMerchList();
+            }else{//根据条件商户搜索
+                PageData page = new PageData();
+                page.put("offset",currentPage);
+                page.put("limit",showCount);
+                if(status.equalsIgnoreCase("0")){
+                    page.put("statu","");
+                }else{
+                    page.put("statu",status);
+                }
+                if(!grade.equalsIgnoreCase("0")){
+                    Integral integral=integralServices.selectIntegralByGrade(grade);
+                    page.put("grade",grade);
+                    page.put("mininum",integral.getMininum());
+                    page.put("maxinum",integral.getMaxinum());
+                }else{
+                    page.put("grade","");
+                }
+                page.put("merchname",merchname);
+                list= merchServices.getAllMerchByCondition(page);
+                listCount=merchServices.selectMerchListByCondition();
+            }
             for(Merch merch:list){
                 Map<String, Object> map = new HashMap<>();
                 map.put("uid",merch.getUid());
@@ -60,7 +116,18 @@ public class MerchantController extends  BaseController{
                 map.put("userinfouid",userinfoServices.getUserInfoByUid(merch.getUserinfouid()).getFristname());
                 map.put("bondvalue",merch.getBondvalue());
                 map.put("builddatetime",merch.getBuilddatetime());
-                map.put("merchscroe",merch.getMerchscroe());
+                PageData pageDatas = new PageData();
+                pageDatas.put("scroe",merch.getMerchscroe());
+                Integral integral=integralServices.selectIntegralByScroe(pageDatas);
+                if(integral.getGrade() == 1){
+                    map.put("merchscroe","初级");
+                }else if(integral.getGrade() == 2){
+                    map.put("merchscroe","中级");
+                }else if(integral.getGrade() == 3){
+                    map.put("merchscroe","高级");
+                }else{
+                    map.put("merchscroe","特级");
+                }
                 map.put("statu",merch.getStatu());
                 if(merch.getStatu() == 0){
                     map.put("status","待审核");
@@ -73,7 +140,6 @@ public class MerchantController extends  BaseController{
                 }
                 hashMaps.add(map);
             }
-            List<Merch> listCount=merchServices.selectMerchList();
             tablereturn.setTotal(listCount.size());
             tablereturn.setRows(hashMaps);
             ResultUtils.write(response,toDateJson(tablereturn));
@@ -83,12 +149,55 @@ public class MerchantController extends  BaseController{
         }
         return null;
     }
+
+    /**
+     * 商户审核初始化数据
+     * @param request
+     * @param response
+     * @return
+     */
+    @RequestMapping("/getExamineMerchantList.do")
+    public String getExamineMerchantList(HttpServletRequest request, HttpServletResponse response) {
+        logger.info("getExamineMerchantList");
+        String merchId = request.getParameter("merchId") == null ? "" : request.getParameter("merchId");
+        List<Map<String, Object>> hashMaps=new ArrayList<>();
+        Map<String, Object> map = new HashMap<>();
+        try{
+            Merch merch=merchServices.getMerchforId(merchId);
+            map.put("uid",merch.getUid());
+            map.put("merchname",merch.getMerchname());
+            Userinfo userinfo=userinfoServices.getUserInfoByUid(merch.getUserinfouid());
+            map.put("username",userinfo.getFristname());
+            map.put("userIcCode",userinfo.getIccode());
+            map.put("telephone",userinfo.getTelephone());
+            map.put("bondvalue",merch.getBondvalue());
+            map.put("builddatetime",merch.getBuilddatetime());
+            PageData pageDatas = new PageData();
+            pageDatas.put("scroe",merch.getMerchscroe());
+            Integral integral=integralServices.selectIntegralByScroe(pageDatas);
+            if(integral.getGrade() == 1){
+                map.put("merchscroe","初级");
+            }else if(integral.getGrade() == 2){
+                map.put("merchscroe","中级");
+            }else if(integral.getGrade() == 3){
+                map.put("merchscroe","高级");
+            }else{
+                map.put("merchscroe","特级");
+            }
+            hashMaps.add(map);
+            ResultUtils.write(response,toDateJson(hashMaps));
+        }catch(Exception e){
+            logger.error("getExamineMerchantList e="+e.getMessage());
+            ResultUtils.writeFailed(response);
+        }
+        return null;
+    }
     /**
      * 开店申请
      */
     @RequestMapping("/applyShop.do")
         public String applyShop(HttpServletRequest request, HttpServletResponse response) {
-            logger.info("applyShop");
+        logger.info("applyShop");
         String merchname = request.getParameter("merchname") == null ? "" : request.getParameter("merchname");
         String userinfouid = request.getParameter("userinfouid") == null ? "" : request.getParameter("userinfouid");
         String bondvalue = request.getParameter("bondvalue") == null ? "" : request.getParameter("bondvalue");

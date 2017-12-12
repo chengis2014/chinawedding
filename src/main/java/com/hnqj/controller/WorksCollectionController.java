@@ -6,7 +6,6 @@ import com.hnqj.core.PageData;
 import com.hnqj.core.ResultUtils;
 import com.hnqj.core.TableReturn;
 import com.hnqj.model.Collection;
-import com.hnqj.services.CollectionServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,8 +27,8 @@ import static com.hnqj.core.ResultUtils.toJson;
 @RequestMapping("/adWorksCollectionMgr")
 public class WorksCollectionController  extends  BaseController{
 
-    @Autowired
-    CollectionServices collService;
+    //@Autowired
+    //CollectionServices collService;
 
     //获取收藏信息列表
     @RequestMapping("/getWorksCollectionList.do")
@@ -41,10 +40,10 @@ public class WorksCollectionController  extends  BaseController{
         PageData pageData = new PageData();
         pageData.put("offset",currentPage);
         pageData.put("limit",showCount);
-        List<Collection> list=collService.getAllCollection(pageData);
-        List<Collection> listCount=collService.selectCollectionList();
-        tablereturn.setTotal(listCount.size());
-        tablereturn.setRows(list);
+        //List<Collection> list=collService.getAllCollection(pageData);
+        //List<Collection> listCount=collService.selectCollectionList();
+        //tablereturn.setTotal(listCount.size());
+        //tablereturn.setRows(list);
         ResultUtils.write(response,toJson(tablereturn));
         return null;
     }
@@ -70,7 +69,7 @@ public class WorksCollectionController  extends  BaseController{
          //添加一条记录时需要 更新作品表收藏数+1
         //插入数据库
         try{
-            collService.addCollection(trainPageData);
+            //collService.addCollection(trainPageData);
             ResultUtils.writeSuccess(response);
         } catch (Exception e) {
             logger.error("addWorksCollection e="+e.getMessage());
@@ -88,7 +87,7 @@ public class WorksCollectionController  extends  BaseController{
         String[] idStrs = jsonTxt.split(",");
         try{
             for (String fid:idStrs){
-                collService.delCollectionByFid(fid);
+                //collService.delCollectionByFid(fid);
             }
             //删除一条记录时需要 作品表收藏数-1
             ResultUtils.writeSuccess(response);

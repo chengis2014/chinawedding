@@ -46,6 +46,7 @@ public class DictionariesController extends  BaseController{
     @RequestMapping("/getDictList.do")
     public String getUserList(HttpServletRequest request, HttpServletResponse response, Model model) {
         logger.info("字典查看");
+        String treeId = request.getParameter("treeId") == null ? "" : request.getParameter("treeId");
         int currentPage = request.getParameter("offset") == null ? 0 : Integer.parseInt(request.getParameter("offset"));
         // 每页行数
         int showCount = request.getParameter("limit") == null ? 0 : Integer.parseInt(request.getParameter("limit"));
@@ -53,8 +54,17 @@ public class DictionariesController extends  BaseController{
         PageData pageData = new PageData();
         pageData.put("offset", currentPage);
         pageData.put("limit", showCount);
-        List<Dict> list = dictServices.getAllDict(pageData);
-        List<Dict> listCount = dictServices.selectDictList();
+        List<Dict> list = null;
+        List<Dict> listCount = null;
+        if(treeId.equalsIgnoreCase("")) {//没有选择树节点的查询
+            pageData.put("parentId", "0");
+            list=dictServices.getAllDict(pageData);
+            listCount=dictServices.selectDictList("0");
+        }else{
+            pageData.put("parentId",treeId);
+            list=dictServices.getAllDict(pageData);
+            listCount=dictServices.selectDictList(treeId);
+        }
         List<Map<String, Object>> hashMaps=new ArrayList<>();
         for(Dict dict:list){
             Map<String, Object> map = new HashMap<>();
@@ -210,7 +220,7 @@ public class DictionariesController extends  BaseController{
      */
     @RequestMapping("/getDictTree.do")
     public String getUnitTree(HttpServletRequest request, HttpServletResponse response){
-        List<Dict> dictList=dictServices.selectDictList();//获取所有数据
+        List<Dict> dictList=dictServices.selectDictLists();//获取所有数据
         List<TreeReturn> Trees= new ArrayList<TreeReturn>();
         for(Dict dict:dictList){
             TreeReturn tree=new TreeReturn();

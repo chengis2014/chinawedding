@@ -6,7 +6,6 @@ import com.hnqj.core.PageData;
 import com.hnqj.core.ResultUtils;
 import com.hnqj.core.TableReturn;
 import com.hnqj.model.Train;
-import com.hnqj.services.TrainServices;
 import com.hnqj.services.UserinfoServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -26,8 +25,8 @@ import static com.hnqj.core.ResultUtils.toJson;
 @Controller
 @RequestMapping("/trainMgr")
 public class TrainController  extends  BaseController{
-    @Autowired
-    TrainServices trainService;
+    //@Autowired
+    //TrainServices trainService;
     @Autowired
     UserinfoServices userinfoServices;
 
@@ -48,10 +47,10 @@ public class TrainController  extends  BaseController{
         PageData pageData = new PageData();
         pageData.put("offset",currentPage);
         pageData.put("limit",showCount);
-        List<Train> list=trainService.getAllTrain(pageData);
-        List<Train> listCount=trainService.selectTrainList();
-        tablereturn.setTotal(listCount.size());
-        tablereturn.setRows(list);
+        //List<Train> list=trainService.getAllTrain(pageData);
+        //List<Train> listCount=trainService.selectTrainList();
+        //tablereturn.setTotal(listCount.size());
+        //tablereturn.setRows(list);
         ResultUtils.write(response,toJson(tablereturn));
         return null;
     }
@@ -91,7 +90,7 @@ public static final Object toJSON(Object javaObject); 将JavaBean转换为JSONOb
         trainPageData.put("delflag",0);//删除标志 默认0
         //插入数据库
         try{
-            trainService.addTrain(trainPageData);
+            //trainService.addTrain(trainPageData);
             ResultUtils.writeSuccess(response);
         } catch (Exception e) {
             logger.error("addTrainList e="+e.getMessage());
@@ -113,7 +112,7 @@ public static final Object toJSON(Object javaObject); 将JavaBean转换为JSONOb
         String[] idStrs = jsonTxt.split(",");
         try{
             for (String fid:idStrs){
-                trainService.delTrainByFid(fid);
+                //trainService.delTrainByFid(fid);
             }
             ResultUtils.writeSuccess(response);
         } catch (Exception e) {
@@ -146,7 +145,7 @@ public static final Object toJSON(Object javaObject); 将JavaBean转换为JSONOb
         trainPageData.put("delflag",0);//删除标志 默认0
         //插入数据库
         try{
-            trainService.updateTrain(trainPageData);
+            //trainService.updateTrain(trainPageData);
             ResultUtils.writeSuccess(response);
         } catch (Exception e) {
             logger.error("updateTrain e="+e.getMessage());

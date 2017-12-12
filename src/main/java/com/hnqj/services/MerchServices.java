@@ -101,4 +101,52 @@ protected final Log logger = LogFactory.getLog(getClass());
 		}
 		return iFlag;
 	}
+
+	public List<Merch> getApplyMerch(PageData pageData) {
+		logger.info("分页查询所有申请Merch");
+		List<Merch>	merchList=null;
+		try {
+			merchList = (List<Merch>) daoSupport.findForList("MerchMapper.getApplyMerch",pageData);
+		}catch (Exception e){
+			e.printStackTrace();
+			merchList=null;
+		}
+		return merchList;
+	}
+
+	public List<Merch> selectApplyMerchList() {
+		logger.info("查询所有申请Merch");
+		List<Merch>	merchList=null;
+		try {
+			merchList = (List<Merch>) daoSupport.findForList("MerchMapper.selectApplyMerchList",null);
+		}catch (Exception e){
+			e.printStackTrace();
+			merchList=null;
+		}
+		return merchList;
+	}
+
+	public List<Merch> getAllMerchByCondition(PageData page) {
+		logger.info("根据条件分页搜索商户");
+		List<Merch>	merchList=null;
+		try {
+			merchList = (List<Merch>) daoSupport.findForList("MerchMapper.getAllMerchByCondition",page);
+		}catch (Exception e){
+			e.printStackTrace();
+			merchList=null;
+		}
+		return merchList;
+	}
+
+	public List<Merch> selectMerchListByCondition() {
+		logger.info("根据条件搜索商户");
+		List<Merch>	merchList=null;
+		try {
+			merchList = (List<Merch>) daoSupport.findForList("MerchMapper.selectMerchListByCondition",null);
+		}catch (Exception e){
+			e.printStackTrace();
+			merchList=null;
+		}
+		return merchList;
+	}
 }

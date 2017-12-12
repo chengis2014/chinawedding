@@ -18,7 +18,7 @@ import static com.hnqj.core.ResultUtils.toJson;
 
 /**
  * 张威 2017/11
- * 积分转换
+ * 店铺等级
  */
 @Controller
 @RequestMapping("/integral")
@@ -26,7 +26,7 @@ public class IntegralController extends  BaseController{
     @Autowired
     IntegralServices integralServices;
     /**
-     * 跳转到积分转换管理页面
+     * 跳转到店铺等级管理页面
      * @return
      */
     @RequestMapping("/toIntegralList.do")
@@ -54,13 +54,13 @@ public class IntegralController extends  BaseController{
             map.put("mininum",Integral.getMininum());
             map.put("maxinum",Integral.getMaxinum());
             if(Integral.getGrade() == 1){
-                map.put("grade","一级");
+                map.put("grade","初级店铺");
             }else if(Integral.getGrade() == 2){
-                map.put("grade","二级");
+                map.put("grade","中级店铺");
             }else if(Integral.getGrade() == 3){
-                map.put("grade","三级");
+                map.put("grade","高级店铺");
             }else{
-                map.put("grade","四级");
+                map.put("grade","特级店铺");
             }
             hashMaps.add(map);
         }

@@ -74,11 +74,11 @@ protected final Log logger = LogFactory.getLog(getClass());
 	}
 	 return dictList; 
 	}
-	public List<Dict> selectDictList() {
+	public List<Dict> selectDictList(String parentId) {
 	 logger.info("查询所有Dict");
 	List<Dict>	dictList=null;
 	 try { 
-		dictList = (List<Dict>) daoSupport.findForList("DictMapper.selectDictList",null);
+		dictList = (List<Dict>) daoSupport.findForList("DictMapper.selectDictList",parentId);
 	 }catch (Exception e){ 
 	 e.printStackTrace(); 
 	 dictList=null; 
@@ -107,5 +107,17 @@ protected final Log logger = LogFactory.getLog(getClass());
 			e.printStackTrace();
 			iFlag = 0;
 		}
+	}
+
+	public List<Dict> selectDictLists() {
+		logger.info("查询所有Dict");
+		List<Dict>	dictList=null;
+		try {
+			dictList = (List<Dict>) daoSupport.findForList("DictMapper.selectDictLists",null);
+		}catch (Exception e){
+			e.printStackTrace();
+			dictList=null;
+		}
+		return dictList;
 	}
 }

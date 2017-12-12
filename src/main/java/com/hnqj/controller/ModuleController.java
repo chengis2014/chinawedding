@@ -48,6 +48,7 @@ public class ModuleController extends BaseController{
         pageData.put("offset",offset);
         pageData.put("limit",limit);
         List<Modules> glist=modulesServices.getAllModule(pageData);
+        List<Modules> listCount=modulesServices.getAllModuleCount();
         for (Modules module:glist){
             if(module.getPmId().equalsIgnoreCase("0")){
                 module.setPmId("");
@@ -56,7 +57,7 @@ public class ModuleController extends BaseController{
             }
         }
         tablereturn.setRows(glist);
-        tablereturn.setTotal(glist.size());
+        tablereturn.setTotal(listCount.size());
         ResultUtils.write(response,toJson(tablereturn));
         return null;
     }
