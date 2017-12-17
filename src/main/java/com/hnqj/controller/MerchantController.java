@@ -5,11 +5,14 @@ import com.hnqj.core.ResultUtils;
 import com.hnqj.core.TableReturn;
 import com.hnqj.model.Integral;
 import com.hnqj.model.Merch;
+import com.hnqj.model.Merchdown;
 import com.hnqj.model.Userinfo;
 import com.hnqj.services.IntegralServices;
 import com.hnqj.services.MerchServices;
+import com.hnqj.services.MerchdownServices;
 import com.hnqj.services.UserinfoServices;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
 import static com.hnqj.core.ResultUtils.toDateJson;
+import static com.hnqj.core.ResultUtils.toDateTimeJson;
 import static com.hnqj.core.ResultUtils.toJson;
 
 /**
@@ -34,6 +38,8 @@ public class MerchantController extends  BaseController{
     UserinfoServices userinfoServices;
     @Autowired
     IntegralServices integralServices;
+    @Autowired
+    MerchdownServices merchdownServices;
     /**
      * 跳转到商户管理页面
      * @return
@@ -57,8 +63,28 @@ public class MerchantController extends  BaseController{
     @RequestMapping("/toExamineMerchantList.do")
     public String toExamineMerchantList(HttpServletRequest request, Model model){
         String id = request.getParameter("id") == null ? "" : request.getParameter("id");
+        String statu = request.getParameter("statu") == null ? "" : request.getParameter("statu");
         model.addAttribute("id",id);//商户Id传到页面
+        model.addAttribute("statu",statu);//商户Id传到页面
         return "merchant/examinemerchant";
+    }
+
+    /**
+     * 跳转到商户降级记录页面
+     * @return
+     */
+    @RequestMapping("/toMerchDownList.do")
+    public String toMerchDownList(){
+        return "merchant/merchdownlist";
+    }
+
+    /**
+     * 跳转到结算管理页面
+     * @return
+     */
+    @RequestMapping("/toSettlementList.do")
+    public String toSettlementList(){
+        return "merchant/settlementlist";
     }
 
     /**
@@ -184,6 +210,7 @@ public class MerchantController extends  BaseController{
             }else{
                 map.put("merchscroe","特级");
             }
+            map.put("merchscroes",merch.getMerchscroe());
             hashMaps.add(map);
             ResultUtils.write(response,toDateJson(hashMaps));
         }catch(Exception e){
@@ -276,8 +303,87 @@ public class MerchantController extends  BaseController{
     @RequestMapping("/downgrade.do")
     public String downgrade(HttpServletRequest request, HttpServletResponse response) {
         logger.info("downgrade");
+        String id = request.getParameter("id") == null ? "" : request.getParameter("id");
+        String delmerchscroe = request.getParameter("delmerchscroe") == null ? "" : request.getParameter("delmerchscroe");
+        String merchscroes = request.getParameter("merchscroes") == null ? "" : request.getParameter("merchscroes");
+        try{
+            int merchscroe= Integer.parseInt(merchscroes)-Integer.parseInt(delmerchscroe);
+            //修改店铺的积分值
+            PageData pageData=new PageData();
+            pageData.put("uid",id);
+            pageData.put("merchscroe",merchscroe);
+            merchServices.updateMerchScore(pageData);
+            //向降级表插入降级记录
+            PageData pageDatas=new PageData();
+            pageDatas.put("uid",UUID.randomUUID().toString());
+            pageDatas.put("merchuid",id);
+            pageDatas.put("merchscore",delmerchscroe);
+            pageDatas.put("downdatetime",new Date());
+            pageDatas.put("befermerchscore",merchscroes);
+            pageDatas.put("aftermerchscore",merchscroe);
+            merchdownServices.addMerchdown(pageDatas);
+            ResultUtils.writeSuccess(response);
+        }catch(Exception e){
+            logger.error("downgrade e="+e.getMessage());
+            ResultUtils.writeFailed(response);
+        }
+        return null;
+    }
+    /**
+     * 初始化商户降级列表
+     */
+    @RequestMapping("/getMerchDownList.do")
+    public String getMerchDownList(HttpServletRequest request, HttpServletResponse response) {
+        logger.info("getMerchDownList");
+        String merchname = request.getParameter("merchname") == null ? "" : request.getParameter("merchname");
+        int currentPage = request.getParameter("offset") == null ? 0 : Integer.parseInt(request.getParameter("offset"));
+        int showCount = request.getParameter("limit") == null ? 10 : Integer.parseInt(request.getParameter("limit"));
+        TableReturn tablereturn =new TableReturn();
+        PageData pageData = new PageData();
+        pageData.put("offset",currentPage);
+        pageData.put("limit",showCount);
+        pageData.put("merchname",merchname);
+        try{
+            List<Map<String, Object>> hashMaps=new ArrayList<>();
+            List<Merchdown> list= merchdownServices.getAllMerchdown(pageData);
+            List<Merchdown> listCount=merchdownServices.selectMerchdownList(pageData);
+            for(Merchdown merchdown:list){
+                Map<String, Object> map = new HashMap<>();
+                map.put("uid",merchdown.getUid());
+                map.put("merchname",merchServices.getMerchforId(merchdown.getMerchuid()).getMerchname());
+                map.put("downdatetime",merchdown.getDowndatetime());
+                map.put("befermerchscore",merchdown.getBefermerchscore());
+                map.put("merchscore",merchdown.getMerchscore());
+                map.put("aftermerchscore",merchdown.getAftermerchscore());
+                hashMaps.add(map);
+            }
+            tablereturn.setTotal(listCount.size());
+            tablereturn.setRows(hashMaps);
+            ResultUtils.write(response,toDateTimeJson(tablereturn));
+        }catch(Exception e){
+            logger.error("getMerchDownList e="+e.getMessage());
+            ResultUtils.writeFailed(response);
+        }
+        return null;
+    }
+    /**
+     * 审核时修改商户的抽成周期
+     */
+    @RequestMapping("/updateCycle.do")
+    public String updateCycle(HttpServletRequest request, HttpServletResponse response) {
+        logger.info("updateCycle");
         String uid = request.getParameter("uid") == null ? "" : request.getParameter("uid");
-        String merchscroe = request.getParameter("merchscroe") == null ? "" : request.getParameter("merchscroe");
+        String cycle = request.getParameter("cycle") == null ? "" : request.getParameter("cycle");
+        PageData pageData=new PageData();
+        pageData.put("uid",uid);
+        pageData.put("cycle",cycle);
+        try{
+            merchServices.updateCycle(pageData);
+            ResultUtils.writeSuccess(response);
+        }catch(Exception e){
+            logger.error("updateCycle e="+e.getMessage());
+        ResultUtils.writeFailed(response);
+        }
         return null;
     }
 

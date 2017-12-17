@@ -62,6 +62,8 @@ public class IntegralController extends  BaseController{
             }else{
                 map.put("grade","特级店铺");
             }
+            map.put("divided",Integral.getDivided()+"%");
+            map.put("basedeposit",Integral.getBasedeposit());
             hashMaps.add(map);
         }
         List<Integral> listCount=integralServices.selectIntegralList();
@@ -82,12 +84,16 @@ public class IntegralController extends  BaseController{
         String mininum = request.getParameter("mininum") == null ? "" : request.getParameter("mininum");
         String maxinum=request.getParameter("maxinum") == null ? "" : request.getParameter("maxinum");
         String grade=request.getParameter("grade") == null ? "" : request.getParameter("grade");
+        String divided=request.getParameter("divided") == null ? "" : request.getParameter("divided");
+        String basedeposit=request.getParameter("basedeposit") == null ? "" : request.getParameter("basedeposit");
         PageData PageData = new PageData();
         String uuid= UUID.randomUUID().toString();
         PageData.put("uid",uuid);
         PageData.put("mininum",mininum);
         PageData.put("maxinum",maxinum);
         PageData.put("grade",grade);
+        PageData.put("divided",divided);
+        PageData.put("basedeposit",basedeposit);
         try{
             integralServices.addIntegral(PageData);
             ResultUtils.writeSuccess(response);
@@ -110,11 +116,15 @@ public class IntegralController extends  BaseController{
         String mininum = request.getParameter("mininum") == null ? "" : request.getParameter("mininum");
         String maxinum=request.getParameter("maxinum") == null ? "" : request.getParameter("maxinum");
         String grade=request.getParameter("grade") == null ? "" : request.getParameter("grade");
+        String divided=request.getParameter("divided") == null ? "" : request.getParameter("divided");
+        String basedeposit=request.getParameter("basedeposit") == null ? "" : request.getParameter("basedeposit");
         PageData PageData = new PageData();
         PageData.put("uid",uid);
         PageData.put("mininum",mininum);
         PageData.put("maxinum",maxinum);
         PageData.put("grade",grade);
+        PageData.put("divided",divided);
+        PageData.put("basedeposit",basedeposit);
         try{
             integralServices.updateIntegral(PageData);
             ResultUtils.writeSuccess(response);

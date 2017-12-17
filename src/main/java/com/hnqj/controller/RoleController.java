@@ -1,15 +1,13 @@
 package com.hnqj.controller;
 
-import com.hnqj.model.Rolesmodules;
-import com.hnqj.model.Rolesuser;
-import com.hnqj.model.Userinfo;
+import com.hnqj.model.*;
 import com.hnqj.services.RolesServices;
 import com.hnqj.services.RolesmodulesServices;
 import com.hnqj.services.RolesuserServices;
 import com.hnqj.core.PageData;
 import com.hnqj.core.ResultUtils;
 import com.hnqj.core.TableReturn;
-import com.hnqj.model.Roles;
+import com.hnqj.services.SysusermgrServices;
 import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -34,6 +32,8 @@ public class RoleController extends  BaseController {
     RolesmodulesServices rolesmodulesServices;
     @Autowired
     RolesuserServices rolesuserServices;
+    @Autowired
+    SysusermgrServices sysusermgrServices;
 
     /**
      * 跳转到角色管理页面
@@ -237,13 +237,17 @@ public class RoleController extends  BaseController {
             for(Rolesuser rolesUser:list) {
                 if (lit.contains(rolesUser.getUserId())) {
                     arrayList.remove(rolesUser.getUserId());
+                }else {
+                    PageData pageData = new PageData();
+                    pageData.put("userId", rolesUser.getUserId());
+                    pageData.put("roleId", rolesUser.getRoleId());
+                    rolesuserServices.delRolesUser(pageData);
                 }
             }
             for(String id:arrayList ){
-                Rolesuser rolesUser=new Rolesuser();
                 String fid=UUID.randomUUID().toString();
                 PageData pageData = new PageData();
-                pageData.put("fid",fid);
+                pageData.put("uid",fid);
                 pageData.put("userId",id);
                 pageData.put("roleId",role_id);
                 pageData.put("roleCtime",new Date());
@@ -286,9 +290,9 @@ public class RoleController extends  BaseController {
         List<Map<String,String>> hashMaps=new ArrayList<>();
         for(Rolesuser rolesUser:list){
             Map<String,String> map=new HashedMap();
-            Userinfo user=userinfoServices.getUserInfoByUid(rolesUser.getUserId());
-            map.put("fname",user.getFristname());
-            map.put("fid",user.getUid());
+            Sysusermgr sysusermgr=sysusermgrServices.getSysUserByUid(rolesUser.getUserId());
+            map.put("fname",sysusermgr.getFristname());
+            map.put("fid",sysusermgr.getUid());
             hashMaps.add(map);
         }
         ResultUtils.write(response,toJson(hashMaps));

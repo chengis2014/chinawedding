@@ -60,4 +60,15 @@ protected final Log logger = LogFactory.getLog(getClass());
 		}
 		return rolesUserList;
 	}
+
+	public int delRolesUser(PageData pageData) {
+		int iFlag =0;
+		try {
+			iFlag = (int)daoSupport.delete("RolesUserMapper.delRolesUser",pageData);
+		}catch (Exception e){
+			e.printStackTrace();
+			iFlag=0;
+		}
+		return iFlag;
+	}
 }

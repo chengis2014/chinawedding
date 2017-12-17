@@ -306,6 +306,7 @@
             success:function(data){
                 if(data!=="failed"){
                     successInfo("修改成功!");
+                    $.fn.zTree.init($("#DictTree"), setting);//页面树初始化
                     $('#cusTable').bootstrapTable('refresh');//初始化数据
                     $('#dictForm').data('bootstrapValidator').resetForm(true);
                 }else{

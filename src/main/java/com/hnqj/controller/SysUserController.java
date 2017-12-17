@@ -63,6 +63,16 @@ public class SysUserController extends  BaseController{
         return null;
     }
     /**
+     * 角色关联用户时获取所有后台用户
+     */
+    @RequestMapping("/getSysUser.do")
+    public String getSysUser(HttpServletRequest request, HttpServletResponse response, Model model) {
+        logger.info("getSysUser");
+        List<Sysusermgr> list=sysusermgrServices.selectSysUserList();
+        ResultUtils.write(response,toJson(list));
+        return null;
+    }
+    /**
      * 新增
      * @param request
      * @param response

@@ -35,6 +35,18 @@
     update tb_merch set statu=#{statu},merchname=#{merchname}
     where uid=#{uid}
   </update>
+  <!--修改积分-->
+  <update id="updateMerchScore" parameterType="pd">
+    update tb_merch
+    set merchscroe=#{merchscroe}
+    where uid=#{uid}
+  </update>
+  <!--修改结算周期-->
+  <update id="updateCycle" parameterType="pd">
+    update tb_merch
+    set cycle=#{cycle}
+    where uid=#{uid}
+  </update>
   <!--分页查询-->
   <select id="getAllMerch" resultMap="BaseResultMap" parameterType="pd">
     select * from tb_merch where statu != '0' LIMIT #{offset},#{limit}

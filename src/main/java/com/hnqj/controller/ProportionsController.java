@@ -20,7 +20,7 @@ import static com.hnqj.core.ResultUtils.toJson;
 
 /**
  * 张威 2017/11
- * 提成比例
+ * 分销比例
  */
 @Controller
 @RequestMapping("/proportions")
@@ -35,6 +35,14 @@ public class ProportionsController extends  BaseController{
     @RequestMapping("/toProportionsList.do")
     public String toProportionsList(){
         return "sysparameter/proportionslist";
+    }
+    /**
+     * 分销分销管理页面
+     * @return
+     */
+    @RequestMapping("/toDistributionList.do")
+    public String toDistributionList(){
+        return "sysparameter/distributionlist";
     }
     /**
      *初始化数据

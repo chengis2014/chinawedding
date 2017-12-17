@@ -117,8 +117,9 @@
     }
     //查看店铺明细
     function examine(id){
-        var name = "商户信息审核";
-        var url = "/merchant/toExamineMerchantList.do?id=" + id;
+        var statu="2";
+        var name = "商户信息明细";
+        var url = "/merchant/toExamineMerchantList.do?id=" + id+"&statu="+statu;
         window.parent.addTabs(id, name, url);
     }
     //冻结

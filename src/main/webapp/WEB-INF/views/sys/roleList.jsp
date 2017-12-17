@@ -120,8 +120,6 @@
         //调用函数，初始化表格
         initTable();
         $.fn.zTree.init($("#moduleTree"), setting);
-        //初始化部门树
-        $.fn.zTree.init($("#UnitTree"), setting1);
         initValidate();
         $("button[title='刷新']").hide();
         $("#defaultForm").submit(function(ev){ev.preventDefault();});
@@ -148,57 +146,37 @@
             $("#newUnitUser").modal("hide");
         });
     });
-    //页面部门树
-    var setting1 = {
-        check: {
-            enable: false,
-        },
-        data: {
-            simpleData: {
-                enable: true,
-            }
-        },
-        async: {
-            enable: true,
-            url:"<%=basePath%>/unit/getUnitTree.do"//树数据路径
-        },
-        //回调函数
-        callback: {
-            onClick: getUnit
-        }
-    };
-    //页面部门树回调函数
-    function getUnit(event, treeId, treeNode) {
-        searchUnitUsers(true, treeNode.id);
-    }
-    function searchUnitUsers(showall,unitId){
+    //获取后台用户列表
+    function searchUnitUsers(){
         $(".users").children("ul").html("");
         $.ajax({
             type:"POST",
-            url:"<%=basePath%>/user/getUnitUser.do",
-            data:{
-                showAll:showall,
-                unitId:unitId
-            },
+            url:"<%=basePath%>/sysuser/getSysUser.do",
+            async:false,
             beforeSend:function(){
-                // submitWait();
             },
             error:function(){
-                // hideWait();
                 errorInfo("获取人员失败，请重新操作。");
             },
             success:function(data) {
-                // hideWait();
                 var users = eval("(" + data + ")");
                 var userHtml="";
                 for (var i = 0; i< users.length; i++){
-                    if(users[i].fname != "${user.getFristname()}"){
-                        userHtml += "<li style='list-style-type:none'><span><input name='cb_box' type='checkbox' value='"+users[i].fid+"' userName='"+users[i].fname+"'></input></span>" + users[i].fname + "</li>"
-                    }
+                        userHtml += "<li style='list-style-type:none'><span><input name='cb_box' type='checkbox' value='"+users[i].uid+"' userName='"+users[i].fristname+"'></input></span>" + users[i].fristname + "</li>"
                 }
-                $(".users").children("ul").append(userHtml);
+                $("#sysUsers").append(userHtml);
             }
         });
+        var val = document.getElementById("saveUserId").value.split(",");
+        var boxes = document.getElementsByName("cb_box");
+        for(i=0;i<boxes.length;i++){
+            for(j=0;j<val.length;j++){
+                if(boxes[i].value == val[j]){
+                    boxes[i].checked = true;
+                    break
+                }
+            }
+        }
     }
     //树配置
     var setting = {
@@ -482,12 +460,11 @@
                 var roleid = ids.substring(0, (ids.length - 1));
                 $("#roleId").val(roleid);
                 $.ajax({
-                    type:"post",
+                    type:"POST",
                     url:"<%=basePath%>/role/getUserByRileId.do",
                     data:"roleid="+roleid,
                     success:function(data){
                         var msg=eval("("+data+")");
-
                         var res="";
                         var resId="";
                         for(var i=0;i<msg.length;i++){
@@ -506,14 +483,7 @@
         }
     }
     function addRoleUser(){
-        var UserNames=$("#saveUserName").val();
-        var getUserNames=$("#selectcheck").val();
-        var userIds="";
-        if(UserNames == getUserNames){
-            userIds=$("#saveUserId").val();
-        }else{
-            userIds = $("#selectcheck").data("ids") + "";
-        }
+        var userIds=$("#saveSelectUserId").val();
         var roleId =$('#roleId').val();
         $.ajax({
             type:"post",
@@ -552,6 +522,7 @@
     }
     //选人
     function SelectUser(){
+        searchUnitUsers();
         $("#newUnitUser").modal("show");
     }
     function resetForm(){
@@ -675,7 +646,8 @@
                                 <label>用户信息</label>
                                 <div class="form-group">
                                     <span><input type="text" name="manageUserId" id="selectcheck" readonly style="width: 240px"/></span>
-                                    <i style="margin-left: 250px;margin-top: -20px" class="fa fa-user" onclick="SelectBox.show($('#selectcheck'), false,'user')"></i>
+                                    <i style="margin-left: 250px;margin-top: -20px" class="fa fa-user" onclick="SelectUser()"></i>
+                                    <input type="hidden" id="saveSelectUserId"/>
                                 </div>
 
                             </div>
@@ -699,11 +671,8 @@
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                 <h4 class="modal-title" id="myUnitUser">选择关联用户</h4>
             </div>
-            <div style="width:150px;height:150px">
-                <ul style="background: none;border: none;overflow-y: auto;height: 150px;width: 200px;" id="UnitTree" class="ztree"></ul>
-            </div>
-            <div class="users" style="margin-left:210px;margin-top: -150px;height:151px;overflow: auto">
-                <ul>
+            <div class="users" style="margin-left16px;height:151px;overflow: auto">
+                <ul id="sysUsers">
                 </ul>
             </div>
             <div class="modal-footer">

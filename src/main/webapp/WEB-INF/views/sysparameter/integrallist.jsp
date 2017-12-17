@@ -163,6 +163,8 @@
         $("#uid").val("");
         $("#mininum").val("");
         $("#maxinum").val("");
+        $("#divided").val("");
+        $("#basedeposit").val("");
     }
     //添加窗口
     function newIntegral(){
@@ -175,13 +177,17 @@
         var mininum=$("#mininum").val();
         var maxinum=$("#maxinum").val();
         var grade=$("#grade").val();
+        var divided=$("#divided").val();
+        var basedeposit=$("#basedeposit").val();
         $.ajax({
             type:"POST",
             url:"<%=basePath%>/integral/addIntegral.do",
             data:{
                 mininum:mininum,
                 maxinum:maxinum,
-                grade:grade
+                grade:grade,
+                divided:divided,
+                basedeposit:basedeposit
             },
             success:function(data){
                 if(data!=="failed"){
@@ -219,6 +225,8 @@
                         $("#mininum").val(msg.mininum);
                         $("#maxinum").val(msg.maxinum);
                         $("#grade").val(msg.grade);
+                        $("#divided").val(msg.divided);
+                        $("#basedeposit").val(msg.basedeposit);
                     }
                 });
                 $('#newIntegral').modal('show');
@@ -234,6 +242,8 @@
         var mininum=$("#mininum").val();
         var maxinum=$("#maxinum").val();
         var grade=$("#grade").val();
+        var divided=$("#divided").val();
+        var basedeposit=$("#basedeposit").val();
         $.ajax({
             type:"POST",
             url:"<%=basePath%>/integral/updateIntegral.do",
@@ -241,7 +251,9 @@
                 uid:uid,
                 mininum:mininum,
                 maxinum:maxinum,
-                grade:grade
+                grade:grade,
+                divided:divided,
+                basedeposit:basedeposit
             },
             success:function(data){
                 if(data!=="failed"){
@@ -340,6 +352,8 @@
             <th data-field="mininum" data-editable="false"  align="center">积分最小值</th>
             <th data-field="maxinum" data-editable="false" align="center">积分最大值</th>
             <th data-field="grade" data-editable="false" align="center">等级</th>
+            <th data-field="divided" data-editable="false" align="center">抽成比例</th>
+            <th data-field="basedeposit" data-editable="false" align="center">基础押金</th>
         </tr>
         </thead>
     </table>
@@ -373,6 +387,14 @@
                                     <option value="3">高级</option>
                                     <option value="4">特级</option>
                                 </select>
+                            </div>
+                            <div class="form-group">
+                                <label>抽成比例</label>
+                                <input style="width:315px" class="form-control" id="divided" name="divided">
+                            </div>
+                            <div class="form-group">
+                                <label>基础押金</label>
+                                <input style="width:315px" class="form-control" id="basedeposit" name="basedeposit">
                             </div>
                             <!-- /.form-group -->
                         </div>

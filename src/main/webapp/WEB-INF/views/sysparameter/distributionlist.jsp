@@ -6,7 +6,7 @@
     String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path;
 %>
 <head>
-    <title>申请商户管理</title>
+    <title>分销管理</title>
     <meta charset="utf-8">
     <script src="<%=basePath%>/static/js/jquery-2.2.0.min.js"></script>
     <link rel="stylesheet" href="<%=basePath%>/static/css/trip.css">
@@ -53,14 +53,14 @@
 <script >
 
     //初始化表格
-    function initTable(statu) {
+    function initTable() {
         //先销毁表格
         $('#cusTable').bootstrapTable('destroy');
         //初始化表格,动态从服务器加载数据
         $("#cusTable").bootstrapTable({
             method: "get",  //使用get请求到服务器获取数据
             contentType: "application/x-www-form-urlencoded",
-            url: "<%=basePath%>/merchant/getMerchantList.do", //获取数据的Servlet地址
+            url: "<%=basePath%>/proportions/getDistributionList.do", //获取数据的Servlet地址
             striped: true,  //表格显示条纹
             pagination: true, //启动分页
             toolbar:"#toolbar",
@@ -72,17 +72,15 @@
             search:false,
             idField:"uid",
             sidePagination: "server", //表示服务端请求
-            queryParamsType : "limit",
+            queryParamsType : "proportions",
             queryParams: function queryParams(params) {   //设置查询参数
                 var param = {
-                    limit: params.limit,
-                    offset: params.offset,
-                    statu:statu
+                    proportions: params.proportions,
+                    offset: params.offset
                 };
                 return param;
             },
             onLoadSuccess: function(){  //加载成功时执行
-                $('#cusTable').bootstrapTable('hideColumn', 'statu');
             },
             onLoadError: function(){  //加载失败时执行
             }
@@ -94,21 +92,8 @@
      */
     $(document).ready(function () {
         //调用函数，初始化表格
-        initTable(0);
+        initTable();
     });
-    //添加操作按钮
-    function nameFormatter(value, row, index) {
-        var uids = row.uids;
-        return '<i><a href="javascript:;" onclick="examine(\'' + uids + '\')">查看</a></i>'
-    }
-    //查看店铺明细
-    function examine(id){
-        var statu="1";
-        var name = "商户信息明细";
-        var url = "/merchant/toExamineMerchantList.do?id=" + id+"&statu="+statu;
-        window.parent.addTabs(id, name, url);
-    }
-
 </script>
 <body id="loading" class="style_body">
 <div class=" style_border">
@@ -118,18 +103,16 @@
         <thead>
         <tr>
             <th data-field="uid" data-checkbox="true" align="center"></th>
-            <th data-field="merchname" data-editable="false"  align="center">商铺名称</th>
-            <th data-field="userinfouid" data-editable="false" align="center">会员名称</th>
-            <th data-field="bondvalue" data-editable="false" align="center">保证金金额</th>
-            <th data-field="builddatetime" data-editable="false" align="center">创建时间</th>
-            <th data-field="merchscroe" data-editable="false" align="center">店铺等级</th>
-            <th data-field="status" data-editable="false" align="center">状态</th>
-            <th data-field="uids" data-formatter="nameFormatter">操作</th>
+            <th data-field="dealid" data-editable="false"  align="center">订单号</th>
+            <th data-field="worksid" data-editable="false" align="center">作品名称</th>
+            <th data-field="level" data-editable="false" align="center">分销级别</th>
+            <th data-field="userid" data-editable="false" align="center">分销人员</th>
+            <th data-field="proportion" data-editable="false" align="center">分成比例</th>
+            <th data-field="price" data-editable="false" align="center">分销金额</th>
         </tr>
         </thead>
     </table>
     </div>
-
 <script src="<%=basePath%>/static/bootstrap/js/bootstrap.min.js"></script>
 <%--模态弹窗引用jquery-ui设置可拖动--%>
 <script src="<%=basePath%>/static/js/jquery-ui.min.js"></script>

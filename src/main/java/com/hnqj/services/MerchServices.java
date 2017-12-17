@@ -149,4 +149,28 @@ protected final Log logger = LogFactory.getLog(getClass());
 		}
 		return merchList;
 	}
+
+	public int updateMerchScore(PageData pageData) {
+		logger.info("修改积分");
+		int iFlag =0;
+		try {
+			iFlag = (int) daoSupport.update("MerchMapper.updateMerchScore",pageData);
+		}catch (Exception e){
+			e.printStackTrace();
+			iFlag=0;
+		}
+		return iFlag;
+	}
+
+	public int updateCycle(PageData pageData) {
+		logger.info("修改结算周期");
+		int iFlag =0;
+		try {
+			iFlag = (int) daoSupport.update("MerchMapper.updateCycle",pageData);
+		}catch (Exception e){
+			e.printStackTrace();
+			iFlag=0;
+		}
+		return iFlag;
+	}
 }

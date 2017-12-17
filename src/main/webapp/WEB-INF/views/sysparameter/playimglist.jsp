@@ -6,7 +6,7 @@
     String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path;
 %>
 <head>
-    <title>分销分成比例管理</title>
+    <title>轮播图管理</title>
     <meta charset="utf-8">
     <script src="<%=basePath%>/static/js/jquery-2.2.0.min.js"></script>
     <link rel="stylesheet" href="<%=basePath%>/static/css/trip.css">
@@ -55,7 +55,6 @@
     </style>
 </head>
 <script >
-
     //初始化表格
     function initTable() {
         //先销毁表格
@@ -64,7 +63,7 @@
         $("#cusTable").bootstrapTable({
             method: "get",  //使用get请求到服务器获取数据
             contentType: "application/x-www-form-urlencoded",
-            url: "<%=basePath%>/proportions/getProportionsList.do", //获取数据的Servlet地址
+            url: "<%=basePath%>/integral/getIntegralList.do", //获取数据的Servlet地址
             striped: true,  //表格显示条纹
             pagination: true, //启动分页
             toolbar:"#toolbar",
@@ -76,10 +75,10 @@
             search:false,
             idField:"uid",
             sidePagination: "server", //表示服务端请求
-            queryParamsType : "proportions",
+            queryParamsType : "limit",
             queryParams: function queryParams(params) {   //设置查询参数
                 var param = {
-                    proportions: params.proportions,
+                    limit: params.limit,
                     offset: params.offset
                 };
                 return param;
@@ -99,9 +98,9 @@
         initTable();
         //校验
         initValidate();
-        $("#proportionsForm").submit(function(ev){ev.preventDefault();});//AJAX提交必修使用
+        $("#integralForm").submit(function(ev){ev.preventDefault();});//AJAX提交必修使用
         $('#submitBtn').click(function() {
-            var bootstrapValidator = $("#proportionsForm").data('bootstrapValidator');//必须
+            var bootstrapValidator = $("#integralForm").data('bootstrapValidator');//必须
             bootstrapValidator.validate();
             if(bootstrapValidator.isValid()) {
                 submit();
@@ -111,12 +110,12 @@
             }
         });
         $(".close").click(function (){
-            $('#proportionsForm').data('bootstrapValidator').resetForm(true);
+            $('#integralForm').data('bootstrapValidator').resetForm(true);
         })
     });
     //校验
     function initValidate(){
-        $('#proportionsForm').bootstrapValidator({
+        $('#integralForm').bootstrapValidator({
             message: '值不能为空',
             feedbackIcons: {
                 valid: 'glyphicon glyphicon-ok',
@@ -124,71 +123,87 @@
                 validating: 'glyphicon glyphicon-refresh'
             },
             fields: {
-                dislevel:{
+                mininum:{
                     validators:{
                         notEmpty: {
-                            message: '分销等级不能为空!'
+                            message: '积分最小值不能为空!'
+                        },
+                        regexp: {
+                            regexp: /^[0-9]*$/,
+                            message: '积分最小值只能由整数组成'
                         }
                     }
                 },
-                distprod:{
+                maxinum:{
                     validators:{
                         notEmpty: {
-                            message: '分销比例不能为空!'
+                            message: '积分最大值不能为空!'
+                        },
+                        regexp: {
+                            regexp: /^[0-9]*$/,
+                            message: '积分最大值只能由整数组成'
                         }
                     }
-                }
+                },
             }
         });
     }
     //添加和编辑提交按钮
     function submit(){
-        var proportionsLabel=$("#proportionsLabel").text();//添加编辑用户窗口
-        if(proportionsLabel.indexOf("新增") !=-1){
-            saveProportions();//添加提交
+        var integralLabel=$("#integralLabel").text();//添加编辑用户窗口
+        if(integralLabel.indexOf("新增") !=-1){
+            saveIntegral();//添加提交
         } else{
-            updateProportions();//修改提交
+            updateIntegral();//修改提交
         }
     }
     //初始化表单
     function init(){
         $("#uid").val("");
-        $("#dislevel").val("");
-        $("#distprod").val("");
+        $("#mininum").val("");
+        $("#maxinum").val("");
+        $("#divided").val("");
+        $("#basedeposit").val("");
     }
     //添加窗口
-    function newProportions(){
+    function newIntegral(){
         init();
-        $("#proportionsLabel").html("新增");
-        $('#newProportions').modal('show');
+        $("#integralLabel").html("新增");
+        $('#newIntegral').modal('show');
     }
     //新增提交保存
-    function saveProportions(){
-        var dislevel=$("#dislevel").val();
-        var distprod=$("#distprod").val();
+    function saveIntegral(){
+        var mininum=$("#mininum").val();
+        var maxinum=$("#maxinum").val();
+        var grade=$("#grade").val();
+        var divided=$("#divided").val();
+        var basedeposit=$("#basedeposit").val();
         $.ajax({
             type:"POST",
-            url:"<%=basePath%>/proportions/addProportions.do",
+            url:"<%=basePath%>/integral/addIntegral.do",
             data:{
-                dislevel:dislevel,
-                distprod:distprod
+                mininum:mininum,
+                maxinum:maxinum,
+                grade:grade,
+                divided:divided,
+                basedeposit:basedeposit
             },
             success:function(data){
                 if(data!=="failed"){
                     successInfo("添加成功!");
                     $('#cusTable').bootstrapTable('refresh');//初始化数据
-                    $('#proportionsForm').data('bootstrapValidator').resetForm(true);
+                    $('#integralForm').data('bootstrapValidator').resetForm(true);
                 }else{
                     errorInfo("添加记录失败");
                 }
             }
         });
-        $('#newProportions').modal('hide');
+        $('#newIntegral').modal('hide');
     }
 
     //编辑
-    function editProportions(){
-        $("#proportionsLabel").html("修改");
+    function editIntegral(){
+        $("#integralLabel").html("修改");
         init();
         var arr = $('#cusTable').bootstrapTable('getSelections');
         var uid = getCheckUid();
@@ -199,18 +214,21 @@
             } else {
                 $.ajax({
                     type: "POST",
-                    url: "<%=basePath%>/proportions/getProportionsByUid.do",
+                    url: "<%=basePath%>/integral/getIntegralByUid.do",
                     data: {
                         uid: uid
                     },
                     success: function (data) {
                         var msg = eval("(" + data + ")");
-                        $("#uid").val(uid);
-                        $("#dislevel").val(msg.dislevel);
-                        $("#distprod").val(msg.distprod);
+                        $("#uid").val(uid.replace(",", ""));
+                        $("#mininum").val(msg.mininum);
+                        $("#maxinum").val(msg.maxinum);
+                        $("#grade").val(msg.grade);
+                        $("#divided").val(msg.divided);
+                        $("#basedeposit").val(msg.basedeposit);
                     }
                 });
-                $('#newProportions').modal('show');
+                $('#newIntegral').modal('show');
             }
         }else{
             warningInfo("请选择一条记录");
@@ -218,29 +236,35 @@
     }
 
     //提交更新
-    function updateProportions(){
+    function updateIntegral(){
         var uid=$("#uid").val();
-        var dislevel=$("#dislevel").val();
-        var distprod=$("#distprod").val();
+        var mininum=$("#mininum").val();
+        var maxinum=$("#maxinum").val();
+        var grade=$("#grade").val();
+        var divided=$("#divided").val();
+        var basedeposit=$("#basedeposit").val();
         $.ajax({
             type:"POST",
-            url:"<%=basePath%>/proportions/updateProportions.do",
+            url:"<%=basePath%>/integral/updateIntegral.do",
             data:{
                 uid:uid,
-                dislevel:dislevel,
-                distprod:distprod
+                mininum:mininum,
+                maxinum:maxinum,
+                grade:grade,
+                divided:divided,
+                basedeposit:basedeposit
             },
             success:function(data){
                 if(data!=="failed"){
                     successInfo("修改成功!");
                     $('#cusTable').bootstrapTable('refresh');//初始化数据
-                    $('#proportionsForm').data('bootstrapValidator').resetForm(true);
+                    $('#integralForm').data('bootstrapValidator').resetForm(true);
                 }else{
                     errorInfo("修改记录失败");
                 }
             }
         });
-        $('#newProportions').modal('hide');
+        $('#newIntegral').modal('hide');
     }
 
     function delRow(){
@@ -261,7 +285,7 @@
         var ids = getIdSelections();
         $.ajax({
             type: "POST",
-            url: "<%=basePath%>/proportions/deleteProportionsByUid.do",
+            url: "<%=basePath%>/integral/deleteIntegralByUid.do",
             data: {
                 uid:getCheckUid()
             },
@@ -304,16 +328,16 @@
     }
     //清空校验
     function resetForm(){
-        $('#proportionsForm').data('bootstrapValidator').resetForm(true);
+        $('#integralForm').data('bootstrapValidator').resetForm(true);
     }
 </script>
 <body id="loading" class="style_body">
 <div class=" style_border">
     <div id="toolbar" class="btn-group-sm">
-        <button id="add" class="btn btn-info" onclick="newProportions()">
+        <button id="add" class="btn btn-info" onclick="newIntegral()">
             <i class="glyphicon glyphicon-expand"></i> 增加
         </button>
-        <button id="edit" class="btn btn-info" onclick="editProportions()">
+        <button id="edit" class="btn btn-info" onclick="editIntegral()">
             <i class="glyphicon glyphicon-edit"></i> 修改
         </button>
         <button id="remove" class="btn btn-info" onclick="delRow()">
@@ -324,36 +348,54 @@
         <thead>
         <tr>
             <th data-field="uid" data-checkbox="true" align="center"></th>
-            <th data-field="dislevel" data-editable="false"  align="center">分销级别</th>
-            <th data-field="distprod" data-editable="false" align="center">分成比例</th>
+            <th data-field="mininum" data-editable="false"  align="center">积分最小值</th>
+            <th data-field="maxinum" data-editable="false" align="center">积分最大值</th>
+            <th data-field="grade" data-editable="false" align="center">等级</th>
+            <th data-field="divided" data-editable="false" align="center">抽成比例</th>
+            <th data-field="basedeposit" data-editable="false" align="center">基础押金</th>
         </tr>
         </thead>
     </table>
     </div>
-<div class="modal fade" id="newProportions" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal fade" id="newIntegral" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content" style="width:400px">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title" id="proportionsLabel"></h4>
+                <h4 class="modal-title" id="integralLabel"></h4>
             </div>
             <div class="modal-body">
                 <div class="row">
-                    <div id="proportionsForm">
+                    <div id="integralForm">
                         <div class="col-md-6">
                             <input class="form-control" id="uid" type="hidden">
                             <div class="form-group">
-                                <label>分销级别</label>
-                                <select style="width:315px" class="form-control" id="dislevel" name="dislevel">
-                                    <option value="1">一级</option>
-                                    <option value="2">二级</option>
-                                </select>
+                                <label>积分最小值</label>
+                                <input style="width:315px" class="form-control" id="mininum" name="mininum">
                             </div>
                             <!-- /.form-group -->
                             <div class="form-group">
-                                <label>分成比例</label>
-                                <input style="width:315px" class="form-control" id="distprod" name="distprod">
+                                <label>积分最大值</label>
+                                <input style="width:315px" class="form-control" id="maxinum" name="maxinum">
                             </div>
+                            <div class="form-group">
+                                <label>等级</label>
+                                <select style="width:315px" class="form-control" id="grade" name="grade">
+                                    <option value="1">初级</option>
+                                    <option value="2">中级</option>
+                                    <option value="3">高级</option>
+                                    <option value="4">特级</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>抽成比例</label>
+                                <input style="width:315px" class="form-control" id="divided" name="divided">
+                            </div>
+                            <div class="form-group">
+                                <label>基础押金</label>
+                                <input style="width:315px" class="form-control" id="basedeposit" name="basedeposit">
+                            </div>
+                            <!-- /.form-group -->
                         </div>
                     </div>
                     <!-- /.col -->
