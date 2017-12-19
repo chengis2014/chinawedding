@@ -6,6 +6,7 @@ import com.hnqj.core.PageData;
 import com.hnqj.core.ResultUtils;
 import com.hnqj.core.TableReturn;
 import com.hnqj.model.Playimg;
+import com.hnqj.services.PlayimgServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,11 +25,11 @@ import static com.hnqj.core.ResultUtils.toJson;
 @Controller
 @RequestMapping("/playImageMgr")
 public class PlayImageController  extends  BaseController{
-    //@Autowired
-    //PlayimgServices playimgService;
+    @Autowired
+    PlayimgServices playimgService;
 
     /*
-     *跳转轮播信息管理页面
+     *跳转轮播信息管理页面  /playImageMgr/toPlayimgList.do
      * */
     @RequestMapping("/toPlayimgList.do")
     public String toPlayimgList(){
@@ -45,10 +46,10 @@ public class PlayImageController  extends  BaseController{
         PageData pageData = new PageData();
         pageData.put("offset",currentPage);
         pageData.put("limit",showCount);
-        //List<Playimg> list=playimgService.getAllPlayimg(pageData);
-        //List<Playimg> listCount=playimgService.selectPlayimgList();
-        //tablereturn.setTotal(listCount.size());
-        //tablereturn.setRows(list);
+        List<Playimg> list=playimgService.getAllPlayimg(pageData);
+        List<Playimg> listCount=playimgService.selectPlayimgList();
+        tablereturn.setTotal(listCount.size());
+        tablereturn.setRows(list);
         ResultUtils.write(response,toJson(tablereturn));
         return null;
     }
@@ -77,7 +78,7 @@ public class PlayImageController  extends  BaseController{
         trainPageData.put("delflag",0);//删除标志 默认0
         //插入数据库
         try{
-            //playimgService.addPlayimg(trainPageData);
+            playimgService.addPlayimg(trainPageData);
             ResultUtils.writeSuccess(response);
         } catch (Exception e) {
             logger.error("addPlayimg e="+e.getMessage());
@@ -95,7 +96,7 @@ public class PlayImageController  extends  BaseController{
         String[] idStrs = jsonTxt.split(",");
         try{
             for (String fid:idStrs){
-                //playimgService.delPlayimgByFid(fid);
+                playimgService.delPlayimgByFid(fid);
             }
             ResultUtils.writeSuccess(response);
         } catch (Exception e) {
@@ -128,7 +129,7 @@ public class PlayImageController  extends  BaseController{
         trainPageData.put("delflag",0);//删除标志 默认0
         //插入数据库
         try{
-            //playimgService.updatePlayimg(trainPageData);
+            playimgService.updatePlayimg(trainPageData);
             ResultUtils.writeSuccess(response);
         } catch (Exception e) {
             logger.error("updatePlayimg e="+e.getMessage());

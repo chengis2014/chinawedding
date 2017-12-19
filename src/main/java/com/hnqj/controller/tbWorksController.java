@@ -5,7 +5,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.hnqj.core.PageData;
 import com.hnqj.core.ResultUtils;
 import com.hnqj.core.TableReturn;
-import com.hnqj.model.Works;
 import com.hnqj.services.UserinfoServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
 import java.util.UUID;
 
 import static com.hnqj.core.ResultUtils.toJson;
@@ -30,11 +28,11 @@ public class tbWorksController extends  BaseController{
     @Autowired
     UserinfoServices userinfoServices;
     /*
-   *跳转作品信息管理页面
+   *跳转作品信息管理页面/worksMgr/toWorksList.do
    * */
     @RequestMapping("/toWorksList.do")
     public String toWorksList(){
-        return "business/toWorksList";
+        return "works_manager/toWorksList";
     }
 
     //获取信息列表

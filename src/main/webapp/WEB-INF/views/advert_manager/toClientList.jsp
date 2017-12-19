@@ -1,8 +1,8 @@
-<%--
+<%--广告客户管理
   Created by IntelliJ IDEA.
   User: Admin
   Date: 2017-12-04
-  Time: 0:42
+  Time: 0:44
   To change this template use File | Settings | File Templates.
 --%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -13,7 +13,7 @@
     String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path;
 %>
 <head>
-    <title>轮播图管理</title>
+    <title>广告客户管理</title>
     <meta charset="utf-8">
     <script src="<%=basePath%>/static/js/jquery-2.2.0.min.js"></script>
     <link rel="stylesheet" href="<%=basePath%>/static/css/trip.css">
@@ -71,7 +71,7 @@
         $("#cusTable").bootstrapTable({
             method: "get",  //使用get请求到服务器获取数据
             contentType: "application/x-www-form-urlencoded",
-            url: "<%=basePath%>/playImageMgr/getPlayimgList.do", //获取数据的Servlet地址
+            url: "<%=basePath%>/adClientMgr/getClientList.do", //获取数据的Servlet地址
             striped: true,  //表格显示条纹
             pagination: true, //启动分页
             toolbar:"#toolbar",
@@ -141,7 +141,7 @@
     function newModule(){
         initNewModule();
         $('#newModal').modal('show');
-        $("#myModalLabel").html("新建轮播图");
+        $("#myModalLabel").html("新建客户");
         $.ajax({
             type: "post",
             url: "<%=basePath%>/module/getParentModule.do",
@@ -449,11 +449,11 @@
             <button id="add" class="btn btn-info" onclick="newModule()">
                 <i class="glyphicon glyphicon-expand"></i> 增加
             </button>
-            <button id="edit" class="btn btn-info" onclick="editModule()">
-                <i class="glyphicon glyphicon-edit"></i> 修改
-            </button>
             <button id="remove" class="btn btn-info" onclick="delRow()">
                 <i class="glyphicon glyphicon-remove"></i> 删除
+            </button>
+            <button id="edit" class="btn btn-info" onclick="editModule()">
+                <i class="glyphicon glyphicon-edit"></i> 修改
             </button>
             <button id="refresh" class="btn btn-info" name="refresh" >
                 <i class="glyphicon glyphicon-refresh"></i> 刷新
@@ -462,13 +462,13 @@
         <table id="cusTable" class="table" >
             <thead>
             <tr>
-                <th data-field="uid" data-checkbox="true" align="center"></th>
-                <th data-field="playtype" data-editable="false"  align="center" >轮播图类型</th>
-                <th data-field="imgurl"  data-editable="false" align="center">轮播图地址</th>
-                <th data-field="navurl"  data-editable="false" align="center">导航地址</th>
-                <th data-field="playsort"  data-editable="false" align="center">图片顺序</th>
-                <th data-field="typeremark"  data-editable="false" align="center">图片说明</th>
+                <th data-field="clintuid" data-checkbox="true" align="center"></th>
+                <th data-field="clientname" data-editable="false"  align="center" >客户名称</th>
+                <th data-field="phone"  data-editable="false" align="center">联系电话</th>
+                <th data-field="address"  data-editable="false" align="center">联系地址</th>
+                <th data-field="email"  data-editable="false" align="center">电子邮箱</th>
                 <th data-field="creator"  data-editable="false" align="center">创建人</th>
+                <th data-field="createtime"  data-editable="false" align="center">创建时间</th>
             </tr>
             </thead>
         </table>
@@ -488,51 +488,31 @@
                     <input type="hidden" name="fid" id="fid"/>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label>轮播图类型</label>
-                            <select class="form-control" id="sel_playtype"  name="sel_playtype" >
-                                <option value="1">专题</option>
-                                <option value="2">广告</option>
-                                <option value="3">宣传</option>
-                                <option value="4">其他</option>
-                            </select>
+                            <label>客户名称</label>
+                            <input class="form-control" id="mdName" name="mdName" placeholder="客户名称" type="text">
                         </div>
+                        <!-- /.form-group -->
+                        <div class="form-group">
+                            <label>联系地址</label>
+                            <input class="form-control" id="mdCode"  name="mdCode" placeholder="联系地址"  type="text">
+                        </div>
+                        <!-- /.form-group -->
                     </div>
+                    <!-- /.col -->
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label>轮播图顺序</label>
-                            <input class="form-control" id="playsort"  name="playsort" placeholder="轮播图顺序" type="text">
+                            <label>联系电话</label>
+                            <input class="form-control" id="mdAddress"  name="mdAddress" placeholder="联系电话" type="text">
                         </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6">
+                        <!-- /.form-group -->
                         <div class="form-group">
-                            <label for="up_imgfile">上传轮播图片</label>
-                            <input  id="up_imgfile"  name="up_imgfile"  type="file">
+                            <label>电子邮箱</label>
+                            <input class="form-control" id="mdImg"  name="mdImg" placeholder="电子邮箱" type="text">
                         </div>
+                        <!-- /.form-group -->
                     </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label>图片地址</label>
-                            <input class="form-control" id="txt_imgurl"  name="txt_imgurl" placeholder="可上传或手工输入图片地址" type="text">
-                        </div>
-                    </div>
+                    <!-- /.col -->
                 </div>
-                <div class="row">
-                    <div class="col-md-12">
-                    <div class="form-group">
-                        <label>导航地址</label>
-                        <input class="form-control" id="txt_navurl"  name="txt_navurl" placeholder="可输入或粘贴地址" type="text">
-                    </div></div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12">
-                    <div class="form-group">
-                        <label>图片说明</label>
-                        <input class="form-control" id="txt_remark"  name="txt_remark" placeholder="轮播图片说明信息" type="text">
-                    </div></div>
-                </div>
-
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" onclick="resetForm()" data-dismiss="modal">关闭</button>

@@ -6,6 +6,7 @@ import com.hnqj.core.PageData;
 import com.hnqj.core.ResultUtils;
 import com.hnqj.core.TableReturn;
 import com.hnqj.model.Client;
+import com.hnqj.services.ClientServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -27,14 +28,14 @@ import static com.hnqj.core.ResultUtils.toJson;
 @RequestMapping("/adClientMgr")
 public class AdvertCustomerController  extends  BaseController{
 
-    //@Autowired
-    //ClientServices clientService;
+    @Autowired
+    ClientServices clientService;
 /*
-     *跳转信息管理页面
+     *跳转信息管理页面   /adClientMgr/toClientList.do
      * */
     @RequestMapping("/toClientList.do")
     public String toClientList(){
-        return "business/toClientList";
+        return "advert_manager/toClientList";
     }
 
     //获取信息列表
@@ -47,10 +48,10 @@ public class AdvertCustomerController  extends  BaseController{
         PageData pageData = new PageData();
         pageData.put("offset",currentPage);
         pageData.put("limit",showCount);
-        //List<Client> list=clientService.getAllClient(pageData);
-        //List<Client> listCount=clientService.selectClientList();
-        //tablereturn.setTotal(listCount.size());
-        //tablereturn.setRows(list);
+        List<Client> list=clientService.getAllClient(pageData);
+        List<Client> listCount=clientService.selectClientList();
+        tablereturn.setTotal(listCount.size());
+        tablereturn.setRows(list);
         ResultUtils.write(response,toJson(tablereturn));
         return null;
     }
@@ -73,10 +74,12 @@ public class AdvertCustomerController  extends  BaseController{
         trainPageData.put("phone",jsonObj.getString("phone"));//电话
         trainPageData.put("email",jsonObj.getString("email"));//邮箱
         trainPageData.put("address",jsonObj.getString("address"));//联系地址
+        trainPageData.put("creator",jsonObj.getString("creator"));//联系地址
+        trainPageData.put("createtime",jsonObj.getString("createtime"));//联系地址
 
         //插入数据库
         try{
-            //clientService.addClient(trainPageData);
+            clientService.addClient(trainPageData);
             ResultUtils.writeSuccess(response);
         } catch (Exception e) {
             logger.error("addClient e="+e.getMessage());
@@ -94,7 +97,7 @@ public class AdvertCustomerController  extends  BaseController{
         String[] idStrs = jsonTxt.split(",");
         try{
             for (String fid:idStrs){
-               // clientService.delClientByFid(fid);
+                clientService.delClientByFid(fid);
             }
             ResultUtils.writeSuccess(response);
         } catch (Exception e) {
@@ -121,9 +124,11 @@ public class AdvertCustomerController  extends  BaseController{
         trainPageData.put("phone",jsonObj.getString("phone"));//电话
         trainPageData.put("email",jsonObj.getString("email"));//邮箱
         trainPageData.put("address",jsonObj.getString("address"));//联系地址
+        trainPageData.put("creator",jsonObj.getString("creator"));//联系地址
+        trainPageData.put("createtime",jsonObj.getString("createtime"));//联系地址
         //插入数据库
         try{
-            //clientService.updateClient(trainPageData);
+            clientService.updateClient(trainPageData);
             ResultUtils.writeSuccess(response);
         } catch (Exception e) {
             logger.error("updateClient e="+e.getMessage());
