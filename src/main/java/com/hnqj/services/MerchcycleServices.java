@@ -74,11 +74,11 @@ protected final Log logger = LogFactory.getLog(getClass());
 	}
 	 return merchcycleList; 
 	}
-	public List<Merchcycle> selectMerchcycleList() {
+	public List<Merchcycle> selectMerchcycleList(PageData pageData) {
 	 logger.info("查询所有Merchcycle");
 	List<Merchcycle>	merchcycleList=null;
 	 try { 
-		merchcycleList = (List<Merchcycle>) daoSupport.findForList("MerchcycleMapper.selectMerchcycleList",null);
+		merchcycleList = (List<Merchcycle>) daoSupport.findForList("MerchcycleMapper.selectMerchcycleList",pageData);
 	 }catch (Exception e){ 
 	 e.printStackTrace(); 
 	 merchcycleList=null; 

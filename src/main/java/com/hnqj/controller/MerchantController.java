@@ -3,14 +3,8 @@ package com.hnqj.controller;
 import com.hnqj.core.PageData;
 import com.hnqj.core.ResultUtils;
 import com.hnqj.core.TableReturn;
-import com.hnqj.model.Integral;
-import com.hnqj.model.Merch;
-import com.hnqj.model.Merchdown;
-import com.hnqj.model.Userinfo;
-import com.hnqj.services.IntegralServices;
-import com.hnqj.services.MerchServices;
-import com.hnqj.services.MerchdownServices;
-import com.hnqj.services.UserinfoServices;
+import com.hnqj.model.*;
+import com.hnqj.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -34,6 +28,8 @@ import static com.hnqj.core.ResultUtils.toJson;
 public class MerchantController extends  BaseController{
     @Autowired
     MerchServices merchServices;
+    @Autowired
+    MerchcycleServices merchcycleServices;
     @Autowired
     UserinfoServices userinfoServices;
     @Autowired
@@ -211,6 +207,7 @@ public class MerchantController extends  BaseController{
                 map.put("merchscroe","特级");
             }
             map.put("merchscroes",merch.getMerchscroe());
+            map.put("statu",merch.getStatu());
             hashMaps.add(map);
             ResultUtils.write(response,toDateJson(hashMaps));
         }catch(Exception e){
@@ -384,6 +381,37 @@ public class MerchantController extends  BaseController{
             logger.error("updateCycle e="+e.getMessage());
         ResultUtils.writeFailed(response);
         }
+        return null;
+    }
+    //初始化商户结算数据
+    @RequestMapping("/getSettlementList.do")
+    public String getSettlementList(HttpServletRequest request, HttpServletResponse response, Model model){
+        logger.info("getSettlementList");
+        int offset = request.getParameter("offset") == null ? 0 : Integer.parseInt(request.getParameter("offset"));
+        int limit = request.getParameter("limit") == null ? 0 : Integer.parseInt(request.getParameter("limit"));
+        String merchname = request.getParameter("merchname") == null ? "" : request.getParameter("merchname");
+        TableReturn tablereturn =new TableReturn();
+        PageData pageData = new PageData();
+        pageData.put("offset",offset);
+        pageData.put("limit",limit);
+        pageData.put("merchname",merchname);
+        List<Merchcycle> list=merchcycleServices.getAllMerchcycle(pageData);
+        List<Merchcycle> listCount=merchcycleServices.selectMerchcycleList(pageData);
+        tablereturn.setTotal(listCount.size());
+        List<Map<String, Object>> hashMaps=new ArrayList<>();
+        for(Merchcycle merchcycle:list){
+            Map<String, Object> map = new HashMap<>();
+            map.put("uid",merchcycle.getUid());
+            map.put("accountprice",merchcycle.getAccountprice());
+            map.put("addtime",merchcycle.getAddtime());
+            map.put("prevture",merchcycle.getPrevture());
+            map.put("fcbl",merchcycle.getFcbl());
+            map.put("merchname",merchServices.getMerchforId(merchcycle.getMerchid()).getMerchname());
+            hashMaps.add(map);
+        }
+        tablereturn.setTotal(listCount.size());
+        tablereturn.setRows(hashMaps);
+        ResultUtils.write(response,toDateTimeJson(tablereturn));
         return null;
     }
 

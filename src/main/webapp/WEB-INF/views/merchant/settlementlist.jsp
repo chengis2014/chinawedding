@@ -48,6 +48,7 @@
     </style>
 </head>
 <script >
+    var merchname="";
     //初始化表格
     function initTable() {
         //先销毁表格
@@ -72,7 +73,8 @@
             queryParams: function queryParams(params) {   //设置查询参数
                 var param = {
                     limit: params.limit,
-                    offset: params.offset
+                    offset: params.offset,
+                    merchname:merchname
                 };
                 return param;
             },
@@ -92,6 +94,7 @@
     });
     function selectDate(){
         //调用函数，初始化表格
+        merchname=$("#merchname").val();
         initTable();
     }
 </script>

@@ -64,7 +64,7 @@
         }else{
             $("#submitBtns").css("display","none");
             $("#submitBtnss").css("display","none");
-            $("#font14Rows").css("display","none")
+            $("#font14Rows").css("display","none");
         }
         $.ajax({
             url:"<%=basePath%>/merchant/getExamineMerchantList.do",
@@ -83,6 +83,10 @@
                     $("#builddatetime").text(msg[0].builddatetime);
                     $("#merchscroe").text(msg[0].merchscroe);
                     $("#merchscroes").text(msg[0].merchscroes);
+                    if(msg[0].statu != 1){
+                        $("#font14Row").css("display","none");
+                        $("#submitBtn").css("display","none");
+                    }
                 }else{
                     errorInfo("获取数据失败");
                 }
@@ -232,6 +236,7 @@
                 </div>
             </div>
         </div>
+        <!--
         <div class="font14_row">
             <h4 class="font14">账户信息</h4>
             <div id="parentDiv" style="overflow:auto;">
@@ -255,6 +260,7 @@
                     </div>
             </div>
         </div>
+        -->
         <div class=" font14_row" style="height:85px;line-height:25px;margin-bottom: 20px;padding:25px 20px">
             <h4 class="font14">店铺信息</h4>
             <div class="col-md-2" style="width:50%">
