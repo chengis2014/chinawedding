@@ -75,7 +75,7 @@ public class DictionariesController extends  BaseController{
             if(dict.getParentid().equalsIgnoreCase("0")){
                 map.put("parentid","");
             }else{
-                map.put("parentid",dictServices.getDictforId(dict.getParentid()).getGroupname());
+                map.put("parentid",dictServices.getDictforId(dict.getParentid()).getKeyname());
             }
             map.put("remarket",dict.getRemarket());
             hashMaps.add(map);
@@ -226,7 +226,7 @@ public class DictionariesController extends  BaseController{
             TreeReturn tree=new TreeReturn();
             tree.setId(dict.getUid());
             tree.setpId(dict.getParentid());
-            tree.setName(dict.getGroupname());
+            tree.setName(dict.getKeyname());
             Trees.add(tree);
         }
         ResultUtils.write(response,Trees);
