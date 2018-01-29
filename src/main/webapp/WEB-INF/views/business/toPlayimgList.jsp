@@ -139,52 +139,17 @@
 
     //显示新建窗口
     function newModule(){
-        initNewModule();
+        //initNewModule();
         $('#newModal').modal('show');
         $("#myModalLabel").html("新建轮播图");
-        $.ajax({
-            type: "post",
-            url: "<%=basePath%>/module/getParentModule.do",
-            data: {},
-            success: function (data) {
-                $("#pmId").find("option").remove();
-                if(data!=="failed"){
-                    var msg = eval("(" + data + ")");
-                    $.each(msg, function(name, value) {
-                        var varItem2 = new Option(value.mdName,value.uid);
-                        $("#pmId").append(varItem2);
-                    });
-                }else{
-                    errorInfo("保存失败");
-                    $('#cusTable').bootstrapTable('refresh');//初始化数据
-                }
-            }
-        });
+        $('#up_imgfile').val('');
+        $('#txt_imgurl').val('');
+    $('#playsort').val('');
+    $('#txt_navurl').val('');
+    $('#sel_playtype').val('');
+    $('#txt_remark').val('');
     }
-    //初始化父菜单
-    function initParentModule(pm_id){
-        $.ajax({
-            type: "post",
-            url: "<%=basePath%>/module/getParentModule.do",
-            data: {},
-            success: function (data) {
-                $("#pmId").find("option").remove();
-                if(data!=="failed"){
-                    var msg = eval("(" + data + ")");
-                    $.each(msg, function(name, value) {
-                        var varItem2 = new Option(value.mdName,value.uid);
-                        if(pm_id==value.fid){
-                            $(varItem2).attr("selected","selected");
-                        }
-                        $("#pmId").append(varItem2);
-                    });
-                }else{
-                    errorInfo("保存失败");
-                    $('#cusTable').bootstrapTable('refresh');//初始化数据
-                }
-            }
-        });
-    }
+
     //添加和编辑提交按钮
     function submit(){
         var UserLabel=$("#myModalLabel").text();//添加编辑用户窗口
@@ -193,17 +158,6 @@
         } else{
             updateModule();//修改提交
         }
-    }
-    //初始化新建菜单表单
-    function initNewModule(){
-        $('#fid').val("");
-        $('#mdName').val("");
-        $('#mdCode').val("");
-        $('#mdOrdernum').val("");
-        $('#mdAddress').val("");
-        $('#mdImg').val("");
-        $('#mdMethod').val("");
-        $('#mdIschild').val("");
     }
 
     function initValidate(){
@@ -215,89 +169,65 @@
                 validating: 'glyphicon glyphicon-refresh'
             },
             fields: {
-                mdName: {
+                sel_playtype: {
                     validators: {
                         notEmpty: {
-                            message: '菜单名称不能为空'
+                            message: '轮播图类型不能为空'
                         }
                     }
                 },
-                mdCode: {
+                playsort: {
                     validators: {
                         notEmpty: {
-                            message: '模块代码不能为空'
-                        }
-                    }
-                },
-                mdOrdernum: {
-                    validators: {
-                        notEmpty: {
-                            message: '显示顺序不能为空'
-                        }
-                    }
-                },
-                mdAddress: {
-                    validators: {
-                        notEmpty: {
-                            message: '模块地址不能为空'
-                        }
-                    }
-                },
-                mdImg: {
-                    validators: {
-                        notEmpty: {
-                            message: '图标不能为空'
+                            message: '轮播图顺序不能为空'
                         }
                     }
                 }
             }
         });
     }
-    /*
-     * 是否有子节点
-     * */
-    function ischecked(obj){
 
-    }
     //提交保存
     function saveModule(){
-        var obj =document.getElementById("mdIschild");
-        var pmId="";
-        if(obj.checked){
-            $('#mdIschild').val(true);
-            pmId=$("#pmId").val();
-        }else{
-            $('#mdIschild').val(false);
-            pmId=0;
+        var files =document.getElementById('up_imgfile').files;
+        if(files.length==0 && $('#txt_imgurl').val()=='')
+        {
+            alert("请选择上传图片或输入图片路径!!");
+            return;
         }
 
-        // var opurl=$('#fid').val()==""?"/module/addModule.do":"/module/updateModule.do";
-        $.ajax({
-            type:"post",
-            url: "<%=basePath%>/module/addModule.do",
-            data:{
-                fid:$('#fid').val(),
-                mdName:$('#mdName').val(),
-                mdCode: $('#mdCode').val(),
-                pmId:  pmId,
-                mdOrdernum:$('#mdOrdernum').val(),
-                mdAddress: $('#mdAddress').val(),
-                mdImg: $('#mdImg').val(),
-                mdMethod: $('#mdMethod').val(),
-                mdIschild: $('#mdIschild').val()
-            },
-            success: function(data){
-                hideWait();
-                if(data!=="failed"){
-                    successInfo("保存成功!")
-                    $('#defaultForm').data('bootstrapValidator').resetForm(true);
-                    $('#cusTable').bootstrapTable('refresh');//初始化数据
-                }else{
-                    errorInfo("保存失败");
-                    $('#cusTable').bootstrapTable('refresh');//初始化数据
+        if(window.FormData) {
+            var formData = new FormData();
+            // 建立一个upload表单项，值为上传的文件
+            formData.append('upload', document.getElementById('up_imgfile').files[0]);
+            formData.append('worksid', $('#txt_imgurl').val());
+            formData.append('playsort', $('#playsort').val());
+            formData.append('navurl',  $('#txt_navurl').val());
+            formData.append('playtype',$('#sel_playtype').find("option:selected").text());//$('#sel_playtype').val()
+            formData.append('typeremark', $('#txt_remark').val());
+            $.ajax({
+                type: "POST",
+                url: "<%=basePath%>/playImageMgr/addPlayimg.do",
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function (data) {
+                    hideWait();
+                    if(data!=="failed"){
+                        successInfo("保存成功!")
+                        $('#defaultForm').data('bootstrapValidator').resetForm(true);
+                        $('#cusTable').bootstrapTable('refresh');//初始化数据
+                    }else{
+                        errorInfo("保存失败");
+                        $('#cusTable').bootstrapTable('refresh');//初始化数据
+                    }
                 }
-            }
-        });
+            });
+            return;
+        }
+        else
+            alert("请更换浏览器，当前浏览器不支持文件上传!!");
+
         $('#newModal').modal('hide');
     }
     //编辑
@@ -308,29 +238,18 @@
             if(fid.length>1){
                 warningInfo("请选择一条记录");
             }else {
-                $.ajax({
-                    type: "post",
-                    url: "<%=basePath%>/module/findModuleByFid.do",
-                    data: {fid: getCheckFid()},
-                    success: function (data) {
-                        if (data !== "failed") {
-                            $('#newModal').modal('show');
-                            $("#myModalLabel").html("修改菜单");
-                            var msg = eval("(" + data + ")");
-                            $('#fid').val(msg.uid);
-                            $('#mdName').val(msg.mdName);
-                            $('#mdCode').val(msg.mdCode);
-                            initParentModule(msg.pmId);
-                            $('#mdOrdernum').val(msg.mdOrdernum);
-                            $('#mdAddress').val(msg.mdAddress);
-                            $('#mdImg').val(msg.mdImg);
-                            $('#mdMethod').val(msg.mdMethod);
-                            if (msg.mdIschild == "true") {
-                                $('#mdIschild').attr("checked", "checked");
-                            }
-                        }
-                    }
-                })
+                $('#newModal').modal('show');
+                $("#myModalLabel").html("修改轮播图");
+                $.map($('#cusTable').bootstrapTable('getAllSelections'), function (row) {
+                    $('#fuid').val(row.playuid);
+                    $('#txt_imgurl').val(row.imgurl);
+                    $('#playsort').val(row.playsort);
+                    $("#sel_playtype").find("option[text='"+row.playtype+"']").attr("selected",true);
+                    //$('#sel_playtype').text();
+                    $('#txt_navurl').val(row.navurl);
+                    $('#txt_remark').val(row.typeremark);
+                });
+
             }
         } else{
             warningInfo("请选择要修改的记录");
@@ -338,44 +257,57 @@
     }
     //更新
     function updateModule(){
-        var obj =document.getElementById("mdIschild");
-        var pmId="";
-        if(obj.checked){
-            $('#mdIschild').val(true);
-            pmId=$("#pmId").val();
-        }else{
-            $('#mdIschild').val(false);
-            pmId=0;
+        var files =document.getElementById('up_imgfile').files;
+        if(files.length==0 && $('#txt_imgurl').val()=='')
+        {
+            alert("请选择上传图片或输入图片路径!!");
+            return;
         }
-        $.ajax({
-            type:"post",
-            url:  "<%=basePath%>/module/updateModule.do",
-            data:{
-                fid:$('#fid').val(),
-                mdName:$('#mdName').val(),
-                mdCode: $('#mdCode').val(),
-                pmId:  pmId,
-                mdOrdernum:$('#mdOrdernum').val(),
-                mdAddress: $('#mdAddress').val(),
-                mdImg: $('#mdImg').val(),
-                mdMethod: $('#mdMethod').val(),
-                mdIschild: $('#mdIschild').val()
-            },
-            success: function(data){
-                hideWait();
-                if(data!=="failed"){
-                    successInfo("保存成功!")
-                    $('#defaultForm').data('bootstrapValidator').resetForm(true);
-                    $('#cusTable').bootstrapTable('refresh');//初始化数据
-                }else{
-                    errorInfo("保存失败");
-                    $('#cusTable').bootstrapTable('refresh');//初始化数据
+
+        if(window.FormData) {
+            var formData = new FormData();
+            // 建立一个upload表单项，值为上传的文件
+            formData.append('upload', document.getElementById('up_imgfile').files[0]);
+            formData.append('worksid', $('#txt_imgurl').val());
+            formData.append('playsort', $('#playsort').val());
+            formData.append('navurl',  $('#txt_navurl').val());
+            formData.append('playtype',$('#sel_playtype').find("option:selected").text());//$('#sel_playtype').val()
+            formData.append('typeremark', $('#txt_remark').val());
+            formData.append('fuid', $('#fuid').val());
+            $.ajax({
+                type: "POST",
+                url: "<%=basePath%>/playImageMgr/updatePlayimg.do",
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function (data) {
+                    hideWait();
+                    if(data!=="failed"){
+                        successInfo("保存成功!")
+                        $('#defaultForm').data('bootstrapValidator').resetForm(true);
+                        $('#cusTable').bootstrapTable('refresh');//初始化数据
+                    }else{
+                        errorInfo("保存失败");
+                        $('#cusTable').bootstrapTable('refresh');//初始化数据
+                    }
                 }
-            }
-        });
+            });
+            return;
+        }
+        else
+            alert("请更换浏览器，当前浏览器不支持文件上传!!");
+
+
         $('#newModal').modal('hide');
     }
 
+    function getCheckUid(){
+        var uids="";
+        $.map($('#cusTable').bootstrapTable('getAllSelections'), function (row) {
+            uids += row.playuid+',';
+        });
+        return uids;
+    }
     function delRow(){
         var arr = $('#cusTable').bootstrapTable('getSelections');
         if(arr.length>0){
@@ -391,12 +323,12 @@
     //删除
     function deleteModule(){
         console.info("deleteModule");
-        var ids = getIdSelections();
+        var delids = getIdSelections();
         $.ajax({
             type: "POST",
-            url: "<%=basePath%>/module/delModulefIds.do",
+            url: "<%=basePath%>/playImageMgr/delPlayimgList.do",
             data: {
-                ids:getCheckFid()
+                ids:getCheckUid()
             },
             beforeSend : function() {
                 submitWait();
@@ -410,7 +342,7 @@
                 if(data!=="failed"){
                     $('#cusTable').bootstrapTable('remove', {
                         field: 'uid',
-                        values: ids
+                        values: delids
                     });
                     successInfo("删除成功!")
                     $('#cusTable').bootstrapTable('refresh');//初始化数据
@@ -429,14 +361,7 @@
             return row.uid;
         });
     }
-    //获取FID用于后台操作
-    function getCheckFid(){
-        var fids="";
-        $('#cusTable').find('input[name="btSelectItem"]:checked').each(function(){
-            fids += $(this).val()+',';
-        });
-        return fids;
-    }
+
     function resetForm(){
         $('#defaultForm').data('bootstrapValidator').resetForm(true);
     }
@@ -485,7 +410,7 @@
             </div>
             <div class="modal-body" id="defaultForm" method="post">
                 <div class="row">
-                    <input type="hidden" name="fid" id="fid"/>
+                    <input type="hidden" name="fuid" id="fuid"/>
                     <div class="col-md-6">
                         <div class="form-group">
                             <label>轮播图类型</label>
@@ -508,7 +433,7 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="up_imgfile">上传轮播图片</label>
-                            <input  id="up_imgfile"  name="up_imgfile"  type="file">
+                            <input  id="up_imgfile"  name="up_imgfile"  type="file" accept=".jpg,.jpeg,.gif,.png">
                         </div>
                     </div>
                     <div class="col-md-6">

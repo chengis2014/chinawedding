@@ -56,7 +56,7 @@ protected final Log logger = LogFactory.getLog(getClass());
 	 logger.info("通过ID查询Playimg");
 	Playimg	playimg=null;
 	 try { 
-		playimg = (Playimg) daoSupport.findForObject("PlayimgMapper.getPlayimgForId",fid);
+		playimg = (Playimg) daoSupport.findForObject("PlayimgMapper.selectPlayimgList",fid);
 	 }catch (Exception e){ 
 	 e.printStackTrace(); 
 	 playimg=null; 
