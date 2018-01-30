@@ -5,7 +5,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.hnqj.core.PageData;
 import com.hnqj.core.ResultUtils;
 import com.hnqj.core.TableReturn;
+import com.hnqj.model.Works;
 import com.hnqj.services.UserinfoServices;
+import com.hnqj.services.WorksServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 import java.util.UUID;
 
 import static com.hnqj.core.ResultUtils.toJson;
@@ -23,8 +26,8 @@ import static com.hnqj.core.ResultUtils.toJson;
 @Controller
 @RequestMapping("/worksMgr")
 public class tbWorksController extends  BaseController{
-    //@Autowired
-    //WorksServices worksService;
+    @Autowired
+    WorksServices worksService;
     @Autowired
     UserinfoServices userinfoServices;
     /*
@@ -40,15 +43,18 @@ public class tbWorksController extends  BaseController{
     public String getWorksList(HttpServletRequest request, HttpServletResponse response){
         logger.info("getWorksList");
         int currentPage = request.getParameter("offset") == null ? 0 : Integer.parseInt(request.getParameter("offset"));
-        int showCount = request.getParameter("limit") == null ? 50 : Integer.parseInt(request.getParameter("limit"));
+        int showCount = request.getParameter("limit") == null ? 20 : Integer.parseInt(request.getParameter("limit"));
+        String displayFlag = request.getParameter("displayFlag") == null ? null : request.getParameter("displayFlag");
         TableReturn tablereturn =new TableReturn();
         PageData pageData = new PageData();
+        pageData.put("displayflag",displayFlag);
         pageData.put("offset",currentPage);
         pageData.put("limit",showCount);
-        //List<Works> list=worksService.getAllWorks(pageData);
-        //List<Works> listCount=worksService.selectWorksList();
-        //tablereturn.setTotal(listCount.size());
-        //tablereturn.setRows(list);
+        List<Works> list=worksService.getAllWorks(pageData);
+        pageData.put("limit",0);
+        List<Works> listCount=worksService.getAllWorks(pageData);
+        tablereturn.setTotal(listCount.size());
+        tablereturn.setRows(list);
         ResultUtils.write(response,toJson(tablereturn));
         return null;
     }
@@ -66,7 +72,7 @@ public class tbWorksController extends  BaseController{
         JSONObject jsonObj = JSON.parseObject(jsonTxt );
         //转换为作品Model
         PageData trainPageData = new PageData();
-        trainPageData.put("teruid", UUID.randomUUID().toString());
+        trainPageData.put("uid", UUID.randomUUID().toString());
         trainPageData.put("workstype",jsonObj.getString("workstype"));//作品类型
         trainPageData.put("worksname",jsonObj.getString("worksname"));//作品名称
         trainPageData.put("uptime",jsonObj.getString("uptime"));//上传时间
@@ -92,7 +98,7 @@ public class tbWorksController extends  BaseController{
         trainPageData.put("delflag",0);//删除标志 默认0
         //插入数据库
         try{
-            //worksService.addWorks(trainPageData);
+            worksService.addWorks(trainPageData);
             ResultUtils.writeSuccess(response);
         } catch (Exception e) {
             logger.error("addWorksList e="+e.getMessage());
@@ -110,7 +116,7 @@ public class tbWorksController extends  BaseController{
         String[] idStrs = jsonTxt.split(",");
         try{
             for (String fid:idStrs){
-                //worksService.delWorksByFid(fid);
+                worksService.delWorksByFid(fid);
             }
             ResultUtils.writeSuccess(response);
         } catch (Exception e) {
@@ -132,7 +138,7 @@ public class tbWorksController extends  BaseController{
 
         //转换为作品Model
         PageData trainPageData = new PageData();
-        trainPageData.put("teruid", jsonObj.getString("teruid"));
+        trainPageData.put("uid", jsonObj.getString("teruid"));
         trainPageData.put("workstype",jsonObj.getString("workstype"));//作品类型
         trainPageData.put("worksname",jsonObj.getString("worksname"));//作品名称
         trainPageData.put("uptime",jsonObj.getString("uptime"));//上传时间
@@ -149,7 +155,7 @@ public class tbWorksController extends  BaseController{
         trainPageData.put("checkuser",jsonObj.getString("checkuser"));//审核人
         trainPageData.put("chacktime",jsonObj.getString("chacktime"));//审核时间
 
-        trainPageData.put("userid",jsonObj.getString("userid"));//作品所有人
+        trainPageData.put("merchid",jsonObj.getString("userid"));//作品所有人
         trainPageData.put("ticknums",jsonObj.getString("ticknums"));//点击量
         trainPageData.put("oknums",jsonObj.getString("oknums"));//点赞量
         trainPageData.put("workremark",jsonObj.getString("workremark"));//作品说明
@@ -158,7 +164,7 @@ public class tbWorksController extends  BaseController{
         trainPageData.put("delflag",0);//删除标志 默认0
         //插入数据库
         try{
-            //worksService.updateWorks(trainPageData);
+            worksService.updateWorks(trainPageData);
             ResultUtils.writeSuccess(response);
         } catch (Exception e) {
             logger.error("updateWorks e="+e.getMessage());

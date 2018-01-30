@@ -52,6 +52,7 @@ protected final Log logger = LogFactory.getLog(getClass());
 	}
 	 return iFlag; 
 	}
+
 	public Works getWorksforId(String fid) {
 	 logger.info("通过ID查询Works");
 	Works	works=null;
@@ -74,15 +75,15 @@ protected final Log logger = LogFactory.getLog(getClass());
 	}
 	 return worksList; 
 	}
-	public List<Works> selectWorksList() {
-	 logger.info("查询所有Works");
-	List<Works>	worksList=null;
-	 try { 
-		worksList = (List<Works>) daoSupport.findForList("WorksMapper.selectWorksList",null);
-	 }catch (Exception e){ 
-	 e.printStackTrace(); 
-	 worksList=null; 
-	}
-	 return worksList; 
-	}
+//	public List<Works> selectWorksList() {
+//	 logger.info("查询所有Works");
+//	List<Works>	worksList=null;
+//	 try {
+//		worksList = (List<Works>) daoSupport.findForList("WorksMapper.selectWorksList",null);
+//	 }catch (Exception e){
+//	 e.printStackTrace();
+//	 worksList=null;
+//	}
+//	 return worksList;
+//	}
 }

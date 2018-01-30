@@ -38,7 +38,7 @@ public class Works {
      *
      * @mbg.generated Tue Dec 12 11:10:02 CST 2017
      */
-    private Date uptime;
+    private String uptime;
 
     /**
      *
@@ -155,7 +155,7 @@ public class Works {
      *
      * @mbg.generated Tue Dec 12 11:10:02 CST 2017
      */
-    private Date chacktime;
+    private String chacktime;
 
     /**
      *
@@ -164,7 +164,7 @@ public class Works {
      *
      * @mbg.generated Tue Dec 12 11:10:02 CST 2017
      */
-    private String userid;
+    private String merchid;
 
     /**
      *
@@ -291,7 +291,7 @@ public class Works {
      *
      * @mbg.generated Tue Dec 12 11:10:02 CST 2017
      */
-    public Date getUptime() {
+    public String getUptime() {
         return uptime;
     }
 
@@ -303,7 +303,7 @@ public class Works {
      *
      * @mbg.generated Tue Dec 12 11:10:02 CST 2017
      */
-    public void setUptime(Date uptime) {
+    public void setUptime(String uptime) {
         this.uptime = uptime;
     }
 
@@ -603,7 +603,7 @@ public class Works {
      *
      * @mbg.generated Tue Dec 12 11:10:02 CST 2017
      */
-    public Date getChacktime() {
+    public String getChacktime() {
         return chacktime;
     }
 
@@ -615,7 +615,7 @@ public class Works {
      *
      * @mbg.generated Tue Dec 12 11:10:02 CST 2017
      */
-    public void setChacktime(Date chacktime) {
+    public void setChacktime(String chacktime) {
         this.chacktime = chacktime;
     }
 
@@ -627,8 +627,8 @@ public class Works {
      *
      * @mbg.generated Tue Dec 12 11:10:02 CST 2017
      */
-    public String getUserid() {
-        return userid;
+    public String getMerchid() {
+        return merchid;
     }
 
     /**
@@ -639,8 +639,8 @@ public class Works {
      *
      * @mbg.generated Tue Dec 12 11:10:02 CST 2017
      */
-    public void setUserid(String userid) {
-        this.userid = userid == null ? null : userid.trim();
+    public void setMerchid(String merchid) {
+        this.merchid = merchid == null ? null : merchid.trim();
     }
 
     /**

@@ -80,9 +80,9 @@
         $('#cusTable').bootstrapTable('destroy');
         //初始化表格,动态从服务器加载数据
         $("#cusTable").bootstrapTable({
-            method: "get",  //使用get请求到服务器获取数据
+            method: "post",  //使用get请求到服务器获取数据
             contentType: "application/x-www-form-urlencoded",
-            url: "<%=basePath%>/role/getRoleList.do", //获取数据的Servlet地址
+            url: "<%=basePath%>/worksMgr/getWorksList.do", //获取数据的Servlet地址
             striped: true,  //表格显示条纹
             pagination: true, //启动分页
             toolbar:"#toolbar",
@@ -104,7 +104,8 @@
             queryParams: function queryParams(params) {   //设置查询参数
                 var param = {
                     limit: params.limit,
-                    offset: params.offset
+                    offset: params.offset,
+                    displayFlag:'0'
                 };
                 return param;
             },
@@ -126,10 +127,6 @@
     $(document).ready(function () {
         //调用函数，初始化表格
         initTable();
-
-        $("button[title='刷新']").hide();
-        $("#defaultForm").submit(function(ev){ev.preventDefault();});
-
         //$('#Modal').modal('show');
         //newModule();
     });
@@ -231,7 +228,7 @@
             <thead>
             <tr>
                 <th data-field="uid" data-checkbox="true" align="center"></th>
-                <th data-field="workstype" data-editable="false"  align="center" >作品类型</th>
+                <th data-field="workstypename" data-editable="false"  align="center" >作品类型</th>
                 <th data-field="worksname" data-editable="false"  align="center" >作品名称</th>
                 <th data-field="dpinum" data-editable="false"  align="center" >分辨率</th>
                 <th data-field="imgsize" data-editable="false"  align="center" >图片大小</th>
@@ -239,7 +236,7 @@
                 <th data-field="colrmodel" data-editable="false"  align="center" >颜色模式</th>
                 <th data-field="worklabel" data-editable="false"  align="center" >作品标签</th>
                 <th data-field="workremark" data-editable="false"  align="center" >作品简介</th>
-                <th data-field="userid" data-editable="false"  align="center" >作品所有人</th>
+                <th data-field="merchid" data-editable="false"  align="center" >作品所有人</th>
                 <th data-field="uptime" data-editable="false"  align="center" >上传时间</th>
             </tr>
             </thead>
