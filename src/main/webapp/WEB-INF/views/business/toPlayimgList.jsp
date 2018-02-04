@@ -190,7 +190,7 @@
     //提交保存
     function saveModule(){
         var files =document.getElementById('up_imgfile').files;
-        if(files.length==0 && $('#txt_imgurl').val()=='')
+        if(files.length==0&&$('#txt_imgurl').val()=='')
         {
             alert("请选择上传图片或输入图片路径!!");
             return;
@@ -258,7 +258,7 @@
     //更新
     function updateModule(){
         var files =document.getElementById('up_imgfile').files;
-        if(files.length==0 && $('#txt_imgurl').val()=='')
+        if(files.length==0&&$('#txt_imgurl').val()=='')
         {
             alert("请选择上传图片或输入图片路径!!");
             return;

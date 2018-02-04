@@ -116,8 +116,6 @@
 
             }
         });
-
-
     }
     var $table = $('#cusTable');
 
@@ -127,82 +125,98 @@
     $(document).ready(function () {
         //调用函数，初始化表格
         initTable();
-        //$('#Modal').modal('show');
-        //newModule();
     });
 
-    //显示新建窗口
-    function newModule(){
-       /* $('#roleName').val("");
-        $('#roleDescription').val("");
-        $('#roleCreator').val("");*/
-        $("#myModalLabel").html("新建角色");
-        $('#newModal').modal('show');
-    }
-    function initValidate(){
-        $('#defaultForm').bootstrapValidator({
-            message: '值不能为空',
-            feedbackIcons: {
-                valid: 'glyphicon glyphicon-ok',
-                invalid: 'glyphicon glyphicon-remove',
-                validating: 'glyphicon glyphicon-refresh'
-            },
-            fields: {
-                roleName: {
-                    validators: {
-                        notEmpty: {
-                            message: '角色名不能为空'
-                        }
-                    }
-                },
-                roleDescription: {
-                    validators: {
-                        notEmpty: {
-                            message: '角色描述不能为空'
-                        }
-                    }
-                },
-                roleCreator: {
-                    validators: {
-                        notEmpty: {
-                            message: '创建者不能为空'
-                        }
-                    }
-                }
-            }
-        });
-    }
+
     //提交保存
     function saveModule(){
-        var opurl=$('#fid').val()==""?"<%=basePath%>/role/addRole.do":"<%=basePath%>/role/updateRole.do";
+
         $.ajax({
             type:"post",
-            url: opurl,
+            async:false,
+            url: "<%=basePath%>/worksMgr/updateWorksState.do",
             data:{
-                fid:$('#fid').val(),
-                roleName:$('#roleName').val(),
-                roleDescription: $('#roleDescription').val(),
-                roleCreator:  $('#roleCreator').val(),
-                roleCtime:$('#roleCtime').val(),
-                roleEnabled: $('#roleEnabled').val(),
+                uid:$('#fid').val(),
+                displayFlag:'2'
             },
             success: function(data){
                 hideWait();
                 if(data!=="failed"){
-                    successInfo("保存成功!")
-                    $('#defaultForm').data('bootstrapValidator').resetForm(true);
+                    successInfo("审核成功!")
                     $('#cusTable').bootstrapTable('refresh');//初始化数据
                 }else{
                     errorInfo("保存失败");
-                    $('#defaultForm').data('bootstrapValidator').resetForm(true);
+
                     $('#cusTable').bootstrapTable('refresh');//初始化数据
                 }
             }
         });
         $('#newModal').modal('hide');
     }
+    //审核
+    function editModule() {
+        var arr = $('#cusTable').bootstrapTable('getSelections');
+        if(arr.length==1) {
+            //var row = getSelection();
+            $("#myModalLabel").html("审核作品信息");
+            $('#txt_workname').html("<span class='label label-primary'>" + arr[0].worksname + "</span>");
+            $('#txt_worklabel').html("<span class='label label-primary'>" + arr[0].worklabel + "</span>");
+            $('#txt_workremark').html(arr[0].workremark);
+            $('#fid').val(arr[0].uid);
+            $("#img_sh").attr('src', '<%=basePath%>/' + arr[0].worksurl);
+            $('#newModal').modal('show');
+        } else  warningInfo("请选择单条记录!");
+    }
+    //退回
+    function delRow() {
+        var arr = $('#cusTable').bootstrapTable('getSelections');
+        if(arr.length==1){
 
+            $.ajax({
+                type:"post",
+                async:false,
+                url: "<%=basePath%>/worksMgr/updateWorksState.do",
+                data:{
+                    uid:arr[0].uid,
+                    displayFlag:'1'
+                },
+                success: function(data){
+                    hideWait();
+                    if(data!=="failed"){
+                        successInfo("退回成功!")
+                        $('#cusTable').bootstrapTable('refresh');//初始化数据
+                    }else{
+                        errorInfo("退回失败,请重试");
 
+                        $('#cusTable').bootstrapTable('refresh');//初始化数据
+                    }
+                }
+            });
+        }else  warningInfo("请选择单条记录!");
+    }
+    //查看图片
+    function viewImage() {
+        var arr = $('#cusTable').bootstrapTable('getSelections');
+        if(arr.length==1){
+
+            $("#img_info").attr('src','<%=basePath%>/'+arr[0].worksurl);
+            $('#viewImgModel').modal('show');
+        }
+        else  warningInfo("请选择单条记录!");
+
+    }
+    //取表格行数
+    function getIdSelections() {
+        return $.map($('#cusTable').bootstrapTable('getAllSelections'), function (row) {
+            return row.uuid;
+        });
+    }
+    //获取选择行数据
+    function getSelection() {
+        return $.map($('#cusTable').bootstrapTable('getAllSelections'), function (row) {
+            return row;
+        });
+    }
 </script>
 <body id="loading" class="style_body">
 <div class="style_border">
@@ -227,7 +241,7 @@
         <table id="cusTable" class="table" >
             <thead>
             <tr>
-                <th data-field="uid" data-checkbox="true" align="center"></th>
+                <th data-field="uuid" data-checkbox="true" align="center"></th>
                 <th data-field="workstypename" data-editable="false"  align="center" >作品类型</th>
                 <th data-field="worksname" data-editable="false"  align="center" >作品名称</th>
                 <th data-field="dpinum" data-editable="false"  align="center" >分辨率</th>
@@ -245,59 +259,76 @@
 
     <div class="modal fade" id="newModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >
         <div class="modal-dialog">
-            <div class="modal-content" style="width:700px;">
+            <div class="modal-content" style="width:980px;">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                     <h4 class="modal-title" id="myModalLabel"></h4>
                 </div>
-                <div class="modal-body" id="defaultForm" method="post">
+                <div class="modal-body" id="defaultForm" method="post" style="    overflow-y: auto;height: 580px;">
                     <div class="row">
                         <input type="hidden" name="fid" id="fid"/>
-                        <div style="float: left;width: 450px;display:inline;margin-top: 5px;">
-                            <img style="display:block;margin:0px auto;max-width: 450px;position: relative;"
-                                 src="http://pic101.huitu.com/res/20171123/1576175_20171123133605269016_1.jpg" alt="我的图片"/>
+                        <div class="col-md-12">
+                            <img id="img_sh" src="" style="width:900px;height: 500px;">
                         </div>
-                        <div style="float: right;width: 220px;display:inline;margin-top: 0px;">
-                            <div style="background: #fff;float: left;border:1px solid #E2E1DC;">
-                                <h3 style="height:41px;background:#fafafa;border-bottom:1px solid #E2E1DF;font:16px/41px 微软雅黑;padding-left:15px;">作品信息</h3>
-                                <ul style="padding: 20px;list-style: none;">
-                                    <li style="margin-top:-5px;">标题：<span>佛家练防火</span></li>
-                                    <li>编号：<span id="picCodeNum">20171123133605269016</span></li>
-                                    <li>分辨率：<span>300 DPI</span></li>
-                                    <li>像素：<span>5001×4214 (PX)</span></li>
-                                    <li> 大小：<span>9.06 MB</span></li>
-                                    <li>格式：<span>JPG</span></li>
-                                    <li>颜色模式：<span>RGB</span></li>
-                                    <li>发布时间：<span>2017/11/24</span></li>
-                                    <li>下载数：<span id="downloadnumI">0</span></li>
-                                </ul>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6" style="padding-top: 15px;">
+                            <div class="panel panel-default">
+                                <div class="panel-body">
+                                    <label for="txt_workname">作品名称：</label>
+                                    <div id="txt_workname"></div>
+
+                                </div>
                             </div>
                         </div>
+                        <div class="col-md-6" style="padding-top: 15px;">
+                            <div class="panel panel-default">
+                                <div class="panel-body">
+                                    <label for="txt_worklabel">作品标签：</label>
+                                    <div id="txt_worklabel"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-md-12">
+                            <div class="panel panel-info">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title">作品简介</h3>
+                                </div>
+                                <div class="panel-body" id="txt_workremark">
+
+                                </div>
+                            </div>
+
+                        </div>
+
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal"  onclick="resetForm()">关闭</button>
-                    <button type="button" class="btn btn-primary" id="validateBtn">提交</button>
+                    <button type="button" class="btn btn-primary" id="validateBtn" onclick="saveModule()">审核通过</button>
                 </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal -->
     </div>
 
-    <div class="modal fade" id="Modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal fade" id="viewImgModel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-dialog">
-            <div class="modal-content">
+            <div class="modal-content" style="width: 900px;height: 580px;">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title" id="roleUserModalLabel">关联用户</h4>
+                    <h4 class="modal-title" id="vi_title">查看图片</h4>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body" style="height: 460px;overflow-y: auto;overflow-x: auto;">
+                    <img id="img_info" src="">
+                </div>
 
-                </div>
-                <input type="hidden" name="roleId" id="roleId"/>
-                <input type="hidden" name="user_id" id="user_id"/>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                    <button type="button" class="btn btn-primary" onclick="addRoleUser()">提交</button>
+                    <%--<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>--%>
                 </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal -->

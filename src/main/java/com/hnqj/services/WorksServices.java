@@ -75,6 +75,19 @@ protected final Log logger = LogFactory.getLog(getClass());
 	}
 	 return worksList; 
 	}
+
+	public int UpdateWorkState(PageData pagedata)
+	{
+		logger.info("UpdateWorkState");
+		int iFlag =0;
+		try {
+			iFlag = (int) daoSupport.update("WorksMapper.updateWorksState",pagedata);
+		}catch (Exception e){
+			e.printStackTrace();
+			iFlag=0;
+		}
+		return iFlag;
+	}
 //	public List<Works> selectWorksList() {
 //	 logger.info("查询所有Works");
 //	List<Works>	worksList=null;

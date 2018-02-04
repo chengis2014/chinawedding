@@ -6,6 +6,7 @@ import com.hnqj.core.PageData;
 import com.hnqj.core.ResultUtils;
 import com.hnqj.core.TableReturn;
 import com.hnqj.model.Works;
+import com.hnqj.services.MerchServices;
 import com.hnqj.services.UserinfoServices;
 import com.hnqj.services.WorksServices;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,8 @@ public class tbWorksController extends  BaseController{
     WorksServices worksService;
     @Autowired
     UserinfoServices userinfoServices;
+    @Autowired
+    MerchServices merchServices;
     /*
    *跳转作品信息管理页面/worksMgr/toWorksList.do
    * */
@@ -58,6 +61,35 @@ public class tbWorksController extends  BaseController{
         ResultUtils.write(response,toJson(tablereturn));
         return null;
     }
+
+
+    //更新作品状态/worksMgr/updateWorksState.do?uid=&displayFlag=
+    @RequestMapping("/updateWorksState.do")
+    public String updateWorksState(HttpServletRequest request, HttpServletResponse response){
+        logger.info("updateWorksState");
+        String strUid = request.getParameter("uid") == null ? "" : request.getParameter("uid");
+        String displayFlag = request.getParameter("displayFlag") == null ? null : request.getParameter("displayFlag");
+
+        PageData pageData = new PageData();
+        pageData.put("displayflag",displayFlag);
+        pageData.put("uid",strUid);
+        try
+        {
+            if(worksService.UpdateWorkState(pageData)>0)
+            {
+                ResultUtils.writeSuccess(response);
+                return null;
+            }
+
+        }
+        catch (Exception ee)
+        {
+            ee.printStackTrace();
+        }
+        ResultUtils.writeFailed(response);
+        return null;
+    }
+
     //添加一条作品记录
     /*
     **/

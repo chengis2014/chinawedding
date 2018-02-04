@@ -322,4 +322,9 @@
       price = #{price,jdbcType=DECIMAL}
     where uid = #{uid,jdbcType=VARCHAR}
   </update>
+  <!-- 更新作品状态 -->
+  <update id="updateWorksState" parameterType="pd">
+    update tb_works SET displayflag = #{displayflag,jdbcType=VARCHAR}
+    where uid = #{uid,jdbcType=VARCHAR}
+  </update>
 </mapper>
