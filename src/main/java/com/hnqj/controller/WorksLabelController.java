@@ -37,14 +37,18 @@ public class WorksLabelController extends  BaseController{
     @RequestMapping("/getLabelList.do")
     public String getLabelList(HttpServletRequest request, HttpServletResponse response){
         logger.info("getLabelList");
+
         int currentPage = request.getParameter("offset") == null ? 0 : Integer.parseInt(request.getParameter("offset"));
-        int showCount = request.getParameter("limit") == null ? 50 : Integer.parseInt(request.getParameter("limit"));
+        int showCount = request.getParameter("limit") == null ? 20 : Integer.parseInt(request.getParameter("limit"));
+        String lblCodeid = request.getParameter("codeid") == null ? null : request.getParameter("codeid");
         TableReturn tablereturn =new TableReturn();
         PageData pageData = new PageData();
         pageData.put("offset",currentPage);
         pageData.put("limit",showCount);
+        pageData.put("codeid",lblCodeid);
         List<Worklabel> list=labelService.getAllWorklabel(pageData);
-        List<Worklabel> listCount=labelService.selectWorklabelList();
+        pageData.put("limit",0);
+        List<Worklabel> listCount=labelService.getAllWorklabel(pageData);
         tablereturn.setTotal(listCount.size());
         tablereturn.setRows(list);
         ResultUtils.write(response,toJson(tablereturn));
@@ -106,6 +110,7 @@ public class WorksLabelController extends  BaseController{
         if(jsonTxt.equals("")){
             ResultUtils.writeFailed(response);
         }
+
         JSONObject jsonObj = JSON.parseObject(jsonTxt );
 
         //转换为作品Model

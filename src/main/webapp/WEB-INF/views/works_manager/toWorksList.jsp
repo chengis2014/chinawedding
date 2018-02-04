@@ -242,7 +242,7 @@
             <thead>
             <tr>
                 <th data-field="uuid" data-checkbox="true" align="center"></th>
-                <th data-field="workstypename" data-editable="false"  align="center" >作品类型</th>
+                <th data-field="worktypename" data-editable="false"  align="center" >作品类型</th>
                 <th data-field="worksname" data-editable="false"  align="center" >作品名称</th>
                 <th data-field="dpinum" data-editable="false"  align="center" >分辨率</th>
                 <th data-field="imgsize" data-editable="false"  align="center" >图片大小</th>
@@ -250,7 +250,7 @@
                 <th data-field="colrmodel" data-editable="false"  align="center" >颜色模式</th>
                 <th data-field="worklabel" data-editable="false"  align="center" >作品标签</th>
                 <th data-field="workremark" data-editable="false"  align="center" >作品简介</th>
-                <th data-field="merchid" data-editable="false"  align="center" >作品所有人</th>
+                <th data-field="merchname" data-editable="false"  align="center" >作品所有人</th>
                 <th data-field="uptime" data-editable="false"  align="center" >上传时间</th>
             </tr>
             </thead>

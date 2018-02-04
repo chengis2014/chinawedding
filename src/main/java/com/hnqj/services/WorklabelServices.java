@@ -74,15 +74,15 @@ protected final Log logger = LogFactory.getLog(getClass());
 	}
 	 return worklabelList; 
 	}
-	public List<Worklabel> selectWorklabelList() {
-	 logger.info("查询所有Worklabel");
-	List<Worklabel>	worklabelList=null;
-	 try { 
-		worklabelList = (List<Worklabel>) daoSupport.findForList("WorklabelMapper.selectWorklabelList",null);
-	 }catch (Exception e){ 
-	 e.printStackTrace(); 
-	 worklabelList=null; 
-	}
-	 return worklabelList; 
-	}
+//	public List<Worklabel> selectWorklabelList() {
+//	 logger.info("查询所有Worklabel");
+//	List<Worklabel>	worklabelList=null;
+//	 try {
+//		worklabelList = (List<Worklabel>) daoSupport.findForList("WorklabelMapper.selectWorklabelList",null);
+//	 }catch (Exception e){
+//	 e.printStackTrace();
+//	 worklabelList=null;
+//	}
+//	 return worklabelList;
+//	}
 }

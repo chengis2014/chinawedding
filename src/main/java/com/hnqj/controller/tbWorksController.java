@@ -73,6 +73,7 @@ public class tbWorksController extends  BaseController{
         PageData pageData = new PageData();
         pageData.put("displayflag",displayFlag);
         pageData.put("uid",strUid);
+        pageData.put("checkuser",getUser().getUid());
         try
         {
             if(worksService.UpdateWorkState(pageData)>0)

@@ -8,26 +8,132 @@
     <result column="telephone" jdbcType="VARCHAR" property="telephone" />
     <result column="iccode" jdbcType="VARCHAR" property="iccode" />
     <result column="usrpicurl" jdbcType="VARCHAR" property="usrpicurl" />
-    <!--
-    <result column="idpic" jdbcType="LONGVARCHAR" property="idpic" />
-    <result column="idpicback" jdbcType="LONGVARCHAR" property="idpicback" />
-    -->
+    <result column="idpic" jdbcType="VARCHAR" property="idpic" />
+    <result column="idpicback" jdbcType="VARCHAR" property="idpicback" />
+    <result property="smname" jdbcType="VARCHAR" column="smname" />
+    <result property="email" jdbcType="VARCHAR" column="email" />
+    <result property="qqid" jdbcType="VARCHAR" column="qqid" />
+    <result property="msnid" jdbcType="VARCHAR" column="msnid" />
+    <result property="ofphone" jdbcType="VARCHAR" column="ofphone" />
+    <result property="zhiye" jdbcType="VARCHAR" column="zhiye" />
+    <result property="label" jdbcType="VARCHAR" column="label" />
+    <result property="address" jdbcType="VARCHAR" column="address" />
+    <result property="weibo" jdbcType="VARCHAR" column="weibo" />
+    <result property="bankcode" jdbcType="VARCHAR" column="bankcode" />
+    <result property="bankaddr" jdbcType="VARCHAR" column="bankaddr" />
+    <result property="sex" jdbcType="VARCHAR" column="sex" />
+    <result property="sfzdate" jdbcType="VARCHAR" column="sfzdate" />
   </resultMap>
   <!-- 会员用户注册 -->
   <insert id="userInfoRegister" parameterType="pd">
-    insert into tb_userinfo (uid, fristname, telephone,iccode, usrpicurl)
-    values (#{uid,jdbcType=VARCHAR}, #{fristname,jdbcType=VARCHAR}, #{telephone,jdbcType=VARCHAR},
-      #{iccode,jdbcType=VARCHAR}, #{usrpicurl,jdbcType=VARCHAR})
+--     insert into tb_userinfo (uid, fristname, telephone,iccode, usrpicurl)
+--     values (#{uid,jdbcType=VARCHAR}, #{fristname,jdbcType=VARCHAR}, #{telephone,jdbcType=VARCHAR},
+--       #{iccode,jdbcType=VARCHAR}, #{usrpicurl,jdbcType=VARCHAR})
+    insert into tb_userinfo (uid
+    <if test="fristname != null">        ,fristname     </if>
+    <if test="telephone != null">        ,telephone    </if>
+    <if test="iccode != null">        ,iccode     </if>
+    <if test="usrpicurl != null">        ,usrpicurl    </if>
+    <if test="idpic != null">        ,idpic    </if>
+    <if test="idpicback != null">        ,idpicback    </if>
+    <if test="smname != null">        ,smname    </if>
+    <if test="email != null and email!=''" >        ,  email   </if>
+    <if test="qqid != null">        ,  qqid    </if>
+    <if test="msnid != null">        , msnid    </if>
+    <if test="ofphone != null">        ,ofphone    </if>
+    <if test="zhiye != null">        ,zhiye    </if>
+    <if test="label != null">      ,  label   </if>
+    <if test="address != null">      ,address     </if>
+    <if test="weibo != null">      ,weibo     </if>
+    <if test="bankcode != null">      ,bankcode    </if>
+    <if test="bankaddr != null">      , bankaddr   </if>
+    <if test="sex != null">      ,sex    </if>
+    <if test="sfzdate != null">      ,sfzdate    </if>
+    )
+    values (#{uid,jdbcType=VARCHAR}
+    <if test="fristname != null">      , #{fristname,jdbcType=VARCHAR}   </if>
+    <if test="telephone != null">      , #{telephone,jdbcType=VARCHAR}   </if>
+    <if test="iccode != null">      ,#{iccode,jdbcType=VARCHAR}    </if>
+    <if test="usrpicurl != null">      ,#{usrpicurl,jdbcType=VARCHAR}    </if>
+    <if test="idpic != null">      ,#{idpic,jdbcType=VARCHAR}    </if>
+    <if test="idpicback != null">      , #{idpicback,jdbcType=VARCHAR}   </if>
+    <if test="smname != null">      , #{smname,jdbcType=VARCHAR}   </if>
+    <if test="email != null and email!=''" >      ,#{email,jdbcType=VARCHAR}    </if>
+    <if test="qqid != null">      ,#{qqid,jdbcType=VARCHAR}    </if>
+    <if test="msnid != null">      ,#{msnid,jdbcType=VARCHAR}    </if>
+    <if test="ofphone != null">      ,#{ofphone,jdbcType=VARCHAR}    </if>
+    <if test="zhiye != null">      ,#{zhiye,jdbcType=VARCHAR}    </if>
+    <if test="label != null">      ,#{label,jdbcType=VARCHAR}    </if>
+    <if test="address != null">      ,#{address,jdbcType=VARCHAR}    </if>
+    <if test="weibo != null">      ,#{weibo,jdbcType=VARCHAR}    </if>
+    <if test="bankcode != null">      ,#{bankcode,jdbcType=VARCHAR}    </if>
+    <if test="bankaddr != null">      ,#{bankaddr,jdbcType=VARCHAR}    </if>
+    <if test="sex != null">      ,   #{sex,jdbcType=VARCHAR} </if>
+    <if test="sfzdate != null">      ,#{sfzdate,jdbcType=VARCHAR}    </if>
+    )
   </insert>
   <!--会员信息修改-->
   <update id="updateUserInfo" parameterType="pd">
     update tb_userinfo
-    set fristname = #{fristname,jdbcType=VARCHAR},
-    telephone = #{telephone,jdbcType=VARCHAR},
-    iccode = #{iccode,jdbcType=VARCHAR},
-    usrpicurl = #{usrpicurl,jdbcType=SMALLINT},
-    idpic = #{idpic,jdbcType=LONGVARCHAR},
-    idpicback = #{idpicback,jdbcType=LONGVARCHAR}
+    <set>
+      <if test="fristname != null">
+        fristname = #{fristname,jdbcType=VARCHAR},
+      </if>
+      <if test="telephone != null">
+        telephone = #{telephone,jdbcType=VARCHAR},
+      </if>
+      <if test="iccode != null">
+        iccode = #{iccode,jdbcType=VARCHAR},
+      </if>
+      <if test="usrpicurl != null">
+        usrpicurl = #{usrpicurl,jdbcType=VARCHAR},
+      </if>
+      <if test="idpic != null">
+        idpic = #{idpic,jdbcType=VARCHAR},
+      </if>
+      <if test="idpicback != null">
+        idpicback = #{idpicback,jdbcType=VARCHAR},
+      </if>
+      <if test="smname != null">
+        smname = #{smname,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null and email!=''" >
+        email = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="qqid != null">
+        qqid = #{qqid,jdbcType=VARCHAR},
+      </if>
+      <if test="msnid != null">
+        msnid = #{msnid,jdbcType=VARCHAR},
+      </if>
+      <if test="ofphone != null">
+        ofphone = #{ofphone,jdbcType=VARCHAR},
+      </if>
+      <if test="zhiye != null">
+        zhiye = #{zhiye,jdbcType=VARCHAR},
+      </if>
+      <if test="label != null">
+        label = #{label,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null">
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="weibo != null">
+        weibo = #{weibo,jdbcType=VARCHAR},
+      </if>
+      <if test="bankcode != null">
+        bankcode = #{bankcode,jdbcType=VARCHAR},
+      </if>
+      <if test="bankaddr != null">
+        bankaddr = #{bankaddr,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null">
+        sex = #{sex,jdbcType=VARCHAR},
+      </if>
+      <if test="sfzdate != null">
+        sfzdate = #{sfzdate,jdbcType=VARCHAR}
+      </if>
+    </set>
     where uid = #{uid,jdbcType=VARCHAR}
   </update>
 

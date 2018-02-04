@@ -9,12 +9,60 @@
     <result column="state" jdbcType="SMALLINT" property="state" />
     <result column="usemobile" jdbcType="SMALLINT" property="usemobile" />
     <result column="usertype" jdbcType="SMALLINT" property="usertype" />
+    <result property="extend_1" jdbcType="VARCHAR" column="extend_1" />
+    <result property="extend_2" jdbcType="VARCHAR" column="extend_2" />
+    <result property="extend_3" jdbcType="VARCHAR" column="extend_3" />
+    <result property="extend_4" jdbcType="VARCHAR" column="extend_4" />
+    <result property="extend_5" jdbcType="VARCHAR" column="extend_5" />
+    <result property="extend_6" jdbcType="VARCHAR" column="extend_6" />
+    <result property="extend_7" jdbcType="VARCHAR" column="extend_7" />
+    <result property="extend_8" jdbcType="VARCHAR" column="extend_8" />
   </resultMap>
   <!-- 添加信息 -->
   <insert id="addAccount" parameterType="pd">
-    insert into tb_account (uid, account, passwd,  userid, state, usemobile,usertype )
+--     insert into tb_account (uid, account, passwd,  userid, state, usemobile,usertype )
+--     values (#{uid,jdbcType=VARCHAR}, #{account,jdbcType=VARCHAR}, #{passwd,jdbcType=VARCHAR},
+--     #{userid,jdbcType=VARCHAR}, #{state,jdbcType=SMALLINT}, #{usemobile,jdbcType=SMALLINT}, #{usertype,jdbcType=SMALLINT}
+--     )
+    insert into tb_account (uid, account, passwd,
+    userid, state, usertype,
+    usemobile
+    <if test="extend_1 != null and extend_1 != ''">
+      ,extend_1</if>
+    <if test="extend_2 != null and extend_2 != ''">
+      ,  extend_2</if>
+    <if test="extend_3 != null and extend_3 != ''">
+      ,  extend_3</if>
+    <if test="extend_4 != null and extend_4 != ''">
+      ,  extend_4</if>
+    <if test="extend_5 != null and extend_5 != ''">
+      ,  extend_5</if>
+    <if test="extend_6 != null and extend_6 != ''">
+      ,  extend_6</if>
+    <if test="extend_7 != null and extend_7 != ''">
+      ,  extend_7</if>
+    <if test="extend_8 != null and extend_8 != ''">
+      ,  extend_8</if>
+    )
     values (#{uid,jdbcType=VARCHAR}, #{account,jdbcType=VARCHAR}, #{passwd,jdbcType=VARCHAR},
-    #{userid,jdbcType=VARCHAR}, #{state,jdbcType=SMALLINT}, #{usemobile,jdbcType=SMALLINT}, #{usertype,jdbcType=SMALLINT}
+    #{userid,jdbcType=VARCHAR}, #{state,jdbcType=SMALLINT}, #{usertype,jdbcType=SMALLINT},
+    #{usemobile,jdbcType=SMALLINT}
+    <if test="extend_1 != null and extend_1 != ''">
+      , #{extend_1,jdbcType=VARCHAR}</if>
+    <if test="extend_2 != null and extend_2 != ''">
+      , #{extend_2,jdbcType=VARCHAR}</if>
+    <if test="extend_3 != null and extend_3 != ''">
+      ,#{extend_3,jdbcType=VARCHAR}</if>
+    <if test="extend_4 != null and extend_4 != ''">
+      , #{extend_4,jdbcType=VARCHAR}</if>
+    <if test="extend_5 != null and extend_5 != ''">
+      , #{extend_5,jdbcType=VARCHAR}</if>
+    <if test="extend_6 != null and extend_6 != ''">
+      , #{extend_6,jdbcType=VARCHAR}</if>
+    <if test="extend_7 != null and extend_7 != ''">
+      ,#{extend_7,jdbcType=VARCHAR}</if>
+    <if test="extend_8 != null and extend_8 != ''">
+      , #{extend_8,jdbcType=VARCHAR}</if>
     )
   </insert>
 
@@ -33,6 +81,22 @@
     state = #{state,jdbcType=SMALLINT},
     usemobile = #{usemobile,jdbcType=SMALLINT},
     usertype = #{usertype,jdbcType=SMALLINT}
+    <if test="extend_1 != null and extend_1 != ''">
+      , extend_1= #{extend_1,jdbcType=VARCHAR}</if>
+    <if test="extend_2 != null and extend_2 != ''">
+      , extend_2= #{extend_2,jdbcType=VARCHAR}</if>
+    <if test="extend_3 != null and extend_3 != ''">
+      ,extend_3= #{extend_3,jdbcType=VARCHAR}</if>
+    <if test="extend_4 != null and extend_4 != ''">
+      , extend_4= #{extend_4,jdbcType=VARCHAR}</if>
+    <if test="extend_5 != null and extend_5 != ''">
+      , extend_5= #{extend_5,jdbcType=VARCHAR}</if>
+    <if test="extend_6 != null and extend_6 != ''">
+      , extend_6= #{extend_6,jdbcType=VARCHAR}</if>
+    <if test="extend_7 != null and extend_7 != ''">
+      ,extend_7= #{extend_7,jdbcType=VARCHAR}</if>
+    <if test="extend_8 != null and extend_8 != ''">
+      , extend_8=#{extend_8,jdbcType=VARCHAR}</if>
     where uid = #{uid,jdbcType=VARCHAR}
   </update>
 

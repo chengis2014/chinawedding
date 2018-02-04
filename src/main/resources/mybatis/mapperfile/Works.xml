@@ -26,6 +26,8 @@
     <result column="workremark" jdbcType="VARCHAR" property="workremark" />
     <result column="worklabel" jdbcType="VARCHAR" property="worklabel" />
     <result column="price" jdbcType="DECIMAL" property="price" />
+    <result column="worktypename" jdbcType="VARCHAR" property="worktypename" />
+    <result column="merchname" jdbcType="VARCHAR" property="merchname" />
   </resultMap>
   <sql id="Base_Column_List">
     
@@ -43,7 +45,8 @@
   <select id="getAllWorks" parameterType="pd" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
---     ,(select keyname from tb_dict where keyvalue=tb_works.workstype) as workstypename
+    ,(select keyname from tb_dict where keyvalue=tb_works.workstype) as worktypename
+    ,(select merchname from tb_merch where uid=tb_works.merchid) as merchname
     from tb_works  where 1=1
     <if test="displayflag != null and displayflag != ''">
        AND  displayflag = #{displayflag,jdbcType=VARCHAR}
@@ -324,7 +327,7 @@
   </update>
   <!-- 更新作品状态 -->
   <update id="updateWorksState" parameterType="pd">
-    update tb_works SET displayflag = #{displayflag,jdbcType=VARCHAR}
+    update tb_works SET displayflag = #{displayflag,jdbcType=VARCHAR},chacktime=now(),checkuser=#{checkuser,jdbcType=VARCHAR}
     where uid = #{uid,jdbcType=VARCHAR}
   </update>
 </mapper>
