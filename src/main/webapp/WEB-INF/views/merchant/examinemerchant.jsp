@@ -4,6 +4,7 @@
 <%
     String path = request.getContextPath();
     String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path;
+    String basePaths = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort();
 %>
 <head>
     <title>商户审核管理</title>
@@ -83,6 +84,10 @@
                     $("#builddatetime").text(msg[0].builddatetime);
                     $("#merchscroe").text(msg[0].merchscroe);
                     $("#merchscroes").text(msg[0].merchscroes);
+                    $("#bankaddress").text(msg[0].bankaddress);
+                    $("#bankaccount").text(msg[0].bankaccount);
+                    $("#bankname").text(msg[0].bankname);
+                    $("#idpic").attr("src","<%=basePaths%>"+msg[0].idpic);
                     if(msg[0].statu != 1){
                         $("#font14Row").css("display","none");
                         $("#submitBtn").css("display","none");
@@ -212,7 +217,7 @@
         <input type="hidden" id="statu" value="<%= request.getAttribute("statu")%>">
         <div class=" font14_row">
             <div>
-                <h4 class="font14 control-label" >会员信息</h4>
+                <h4 class="font14 control-label" >基本资料</h4>
                 <div>
                     <div class="col-md-2" style="width:20%">
                         <div class="control-group">
@@ -236,31 +241,38 @@
                 </div>
             </div>
         </div>
-        <!--
+        <div class=" font14_row">
+            <div>
+                <h4 class="font14 control-label" >认证信息</h4>
+                <div>
+                    <img id="idpic">
+                </div>
+            </div>
+        </div>
         <div class="font14_row">
             <h4 class="font14">账户信息</h4>
             <div id="parentDiv" style="overflow:auto;">
-                    <div class="col-md-2">
-                        <div class="control-group">
-                            <label>银行开户名:</label>
-                            <label class="control-label" id="itemname"></label>
-                        </div>
+
+                <div class="col-md-2" style="width:20%">
+                    <div class="control-group">
+                        <label>银行名称:</label>
+                        <label class="control-label" id="bankname"></label>
                     </div>
-                    <div class="col-md-2">
+                </div>
+                    <div class="col-md-2" style="width:30%">
                         <div class="control-group">
                             <label>银行账号:</label>
-                            <label class="control-label" id="itemname1"></label>
+                            <label class="control-label" id="bankaccount"></label>
                         </div>
                     </div>
-                    <div class="col-md-2">
-                        <div class="control-group">
-                            <label>银行名称:</label>
-                            <label class="control-label" id="itemname2"></label>
-                        </div>
+                <div class="col-md-2" style="width:40%">
+                    <div class="control-group">
+                        <label>银行地址:</label>
+                        <label class="control-label" id="bankaddress"></label>
                     </div>
+                </div>
             </div>
         </div>
-        -->
         <div class=" font14_row" style="height:85px;line-height:25px;margin-bottom: 20px;padding:25px 20px">
             <h4 class="font14">店铺信息</h4>
             <div class="col-md-2" style="width:50%">
@@ -300,7 +312,7 @@
             <div class="col-md-2" style="width:50%">
                 <div class="control-group">
                     <label>扣除积分:</label>
-                    <select id="delmerchscroe">
+                    <select style="margin-left: 70px;margin-top: -35px" class="form-control" id="delmerchscroe">
                         <option value="0">0</option>
                         <option value="500">500</option>
                         <option value="500">1000</option>
@@ -313,7 +325,7 @@
             <div class="col-md-2" style="width:20%">
                 <div class="control-group">
                     <label>结算周期:</label>
-                    <select id="cycle">
+                    <select style="margin-left: 70px;margin-top: -35px" class="form-control" id="cycle">
                         <option value="0">周</option>
                         <option value="1">月</option>
                         <option value="2">季度</option>

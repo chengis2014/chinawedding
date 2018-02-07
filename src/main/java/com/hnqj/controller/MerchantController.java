@@ -5,6 +5,7 @@ import com.hnqj.core.ResultUtils;
 import com.hnqj.core.TableReturn;
 import com.hnqj.model.*;
 import com.hnqj.services.*;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -189,6 +190,21 @@ public class MerchantController extends  BaseController{
             map.put("uid",merch.getUid());
             map.put("merchname",merch.getMerchname());
             Userinfo userinfo=userinfoServices.getUserInfoByUid(merch.getUserinfouid());
+            if(!StringUtils.isBlank(userinfo.getBankaddr())){
+                String[] banks=userinfo.getBankaddr().split(",");
+                map.put("bankaddress",banks[0]);
+                map.put("bankname",banks[1]);
+                map.put("bankaccount",userinfo.getBankcode());
+            }else{
+                map.put("bankaddress","");
+                map.put("bankname","");
+                map.put("bankaccount","");
+            }
+            if(!StringUtils.isBlank(userinfo.getIdpic())){
+                map.put("idpic",userinfo.getIdpic());
+            }else{
+                map.put("idpic","");
+            }
             map.put("username",userinfo.getFristname());
             map.put("userIcCode",userinfo.getIccode());
             map.put("telephone",userinfo.getTelephone());

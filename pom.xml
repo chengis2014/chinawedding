@@ -243,6 +243,12 @@
             <artifactId>guava</artifactId>
             <version>23.4-jre</version>
         </dependency>
+        <!--生成二维码-->
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>javase</artifactId>
+            <version>3.0.0</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
