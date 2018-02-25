@@ -13,6 +13,8 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * 张威 2017/11
@@ -42,5 +44,16 @@ public class BaseController {
         Sysusermgr user = (Sysusermgr) request.getSession().getAttribute("user");
         return user;
     }
+    /**
+     * 获取当前系统时间
+     *
+     * @return
+     */
+    public String getCurrentTime() {
 
+        Date dNow = new Date( );
+        SimpleDateFormat ft =new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String strCurrent=ft.format(dNow);
+        return strCurrent;
+    }
 }

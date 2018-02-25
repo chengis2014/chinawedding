@@ -1,8 +1,8 @@
-<%--
+<%--广告位管理
   Created by IntelliJ IDEA.
   User: Admin
-  Date: 2017-12-04
-  Time: 0:42
+  Date: 2018-02-13
+  Time: 0:44
   To change this template use File | Settings | File Templates.
 --%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -13,7 +13,7 @@
     String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path;
 %>
 <head>
-    <title>轮播图管理</title>
+    <title>广告位管理</title>
     <meta charset="utf-8">
     <script src="<%=basePath%>/static/js/jquery-2.2.0.min.js"></script>
     <link rel="stylesheet" href="<%=basePath%>/static/css/trip.css">
@@ -62,7 +62,32 @@
     </style>
 </head>
 <script >
+    /**
+     * 初始化
+     */
+    $(document).ready(function () {
 
+        //调用函数，初始化表格
+        initTable();
+        initValidate();
+        $("button[title='刷新']").hide();
+        $("#defaultForm").submit(function(ev){ev.preventDefault();});
+        $('#validateBtn').click(function() {
+            var bootstrapValidator = $("#defaultForm").data('bootstrapValidator');//必须
+            bootstrapValidator.validate();
+            if(bootstrapValidator.isValid()) {
+                var val=$("input[name='adName']").val();
+                var val=$("input[name='adprice']").val();
+                var val=$("input[name='adwidth']").val();
+                var val=$("input[name='adheight']").val();
+                submit();
+            }else{
+                alert("请按照要求填写");
+                return;
+            }
+        });
+
+    });
     //初始化表格
     function initTable() {
         //先销毁表格
@@ -71,7 +96,7 @@
         $("#cusTable").bootstrapTable({
             method: "get",  //使用get请求到服务器获取数据
             contentType: "application/x-www-form-urlencoded",
-            url: "<%=basePath%>/playImageMgr/getPlayimgList.do", //获取数据的Servlet地址
+            url: "<%=basePath%>/advert_pos/getAdPositionList.do", //获取数据的Servlet地址
             striped: true,  //表格显示条纹
             pagination: true, //启动分页
             toolbar:"#toolbar",
@@ -105,45 +130,16 @@
             }
         });
     }
-    // var $table = $('#cusTable');
 
-    /**
-     * 初始化
-     */
-    $(document).ready(function () {
 
-        //调用函数，初始化表格
-        initTable();
-        initValidate();
-        $("button[title='刷新']").hide();
-        $("#defaultForm").submit(function(ev){ev.preventDefault();});
-        $('#validateBtn').click(function() {
-            var bootstrapValidator = $("#defaultForm").data('bootstrapValidator');//必须
-            bootstrapValidator.validate();
-            if(bootstrapValidator.isValid()) {
-
-                //  saveModule();
-                submit();
-            }else{
-                alert("请按照要求填写");
-                return;
-            }
-        });
-
-    });
 
 
     //显示新建窗口
     function newModule(){
-        //initNewModule();
+        initNewModule();
         $('#newModal').modal('show');
-        $("#myModalLabel").html("新建轮播图");
-        $('#up_imgfile').val('');
-        $('#txt_imgurl').val('');
-    $('#playsort').val('');
-    $('#txt_navurl').val('');
-    $('#sel_playtype').val('');
-    $('#txt_remark').val('');
+        $("#myModalLabel").html("新建广告位置");
+
     }
 
     //添加和编辑提交按钮
@@ -155,6 +151,14 @@
             updateModule();//修改提交
         }
     }
+    //初始化新建表单
+    function initNewModule(){
+        $('#fid').val("");
+        $('#adName').val("");
+        $('#adprice').val("");
+        $('#adwidth').val("");
+        $('#adheight').val("");
+    }
 
     function initValidate(){
         $('#defaultForm').bootstrapValidator({
@@ -165,17 +169,31 @@
                 validating: 'glyphicon glyphicon-refresh'
             },
             fields: {
-                sel_playtype: {
+                adName: {
                     validators: {
                         notEmpty: {
-                            message: '轮播图类型不能为空'
+                            message: '广告位名称不能为空'
                         }
                     }
                 },
-                playsort: {
+                adprice: {
                     validators: {
                         notEmpty: {
-                            message: '轮播图顺序不能为空'
+                            message: '价格不能为空'
+                        }
+                    }
+                },
+                adwidth: {
+                    validators: {
+                        notEmpty: {
+                            message: '宽度不能为空'
+                        }
+                    }
+                },
+                adheight: {
+                    validators: {
+                        notEmpty: {
+                            message: '高度不能为空'
                         }
                     }
                 }
@@ -185,45 +203,27 @@
 
     //提交保存
     function saveModule(){
-        var files =document.getElementById('up_imgfile').files;
-        if(files.length==0&&$('#txt_imgurl').val()=='')
-        {
-            alert("请选择上传图片或输入图片路径!!");
-            return;
-        }
-
-        if(window.FormData) {
-            var formData = new FormData();
-            // 建立一个upload表单项，值为上传的文件
-            formData.append('upload', document.getElementById('up_imgfile').files[0]);
-            formData.append('worksid', $('#txt_imgurl').val());
-            formData.append('playsort', $('#playsort').val());
-            formData.append('navurl',  $('#txt_navurl').val());
-            formData.append('playtype',$('#sel_playtype').find("option:selected").text());//$('#sel_playtype').val()
-            formData.append('typeremark', $('#txt_remark').val());
-            $.ajax({
-                type: "POST",
-                url: "<%=basePath%>/playImageMgr/addPlayimg.do",
-                data: formData,
-                contentType: false,
-                processData: false,
-                success: function (data) {
-                    hideWait();
-                    if(data!=="failed"){
-                        successInfo("保存成功!")
-                        $('#defaultForm').data('bootstrapValidator').resetForm(true);
-                        $('#cusTable').bootstrapTable('refresh');//初始化数据
-                    }else{
-                        errorInfo("保存失败");
-                        $('#cusTable').bootstrapTable('refresh');//初始化数据
-                    }
+        $.ajax({
+            type:"post",
+            url: "<%=basePath%>/advert_pos/addAdvert.do",
+            data:{
+                adname:$('#adName').val(),
+                adprice: $('#adprice').val(),
+                adwidth:  $('#adwidth').val(),
+                adheight:$('#adheight').val()
+            },
+            success: function(data){
+                hideWait();
+                if(data!=="failed"){
+                    successInfo("保存成功!")
+                    $('#defaultForm').data('bootstrapValidator').resetForm(true);
+                    $('#cusTable').bootstrapTable('refresh');//初始化数据
+                }else{
+                    errorInfo("保存失败");
+                    $('#cusTable').bootstrapTable('refresh');//初始化数据
                 }
-            });
-            return;
-        }
-        else
-            alert("请更换浏览器，当前浏览器不支持文件上传!!");
-
+            }
+        });
         $('#newModal').modal('hide');
     }
     //编辑
@@ -234,18 +234,16 @@
             if(fid.length>1){
                 warningInfo("请选择一条记录");
             }else {
-                $('#newModal').modal('show');
-                $("#myModalLabel").html("修改轮播图");
-                $.map($('#cusTable').bootstrapTable('getAllSelections'), function (row) {
-                    $('#fuid').val(row.playuid);
-                    $('#txt_imgurl').val(row.imgurl);
-                    $('#playsort').val(row.playsort);
-                    $("#sel_playtype").find("option[text='"+row.playtype+"']").attr("selected",true);
-                    //$('#sel_playtype').text();
-                    $('#txt_navurl').val(row.navurl);
-                    $('#txt_remark').val(row.typeremark);
-                });
 
+                $('#newModal').modal('show');
+                $("#myModalLabel").html("修改广告位信息");
+                $.map($('#cusTable').bootstrapTable('getAllSelections'), function (row) {
+                    $('#fid').val(getCheckFid().replace(',',''));
+                    $('#adName').val(row.adposition);
+                    $('#adprice').val(row.adprice);
+                    $('#adwidth').val(row.adwidth);
+                    $('#adheight').val(row.adheight);
+                });
             }
         } else{
             warningInfo("请选择要修改的记录");
@@ -253,57 +251,32 @@
     }
     //更新
     function updateModule(){
-        var files =document.getElementById('up_imgfile').files;
-        if(files.length==0&&$('#txt_imgurl').val()=='')
-        {
-            alert("请选择上传图片或输入图片路径!!");
-            return;
-        }
 
-        if(window.FormData) {
-            var formData = new FormData();
-            // 建立一个upload表单项，值为上传的文件
-            formData.append('upload', document.getElementById('up_imgfile').files[0]);
-            formData.append('worksid', $('#txt_imgurl').val());
-            formData.append('playsort', $('#playsort').val());
-            formData.append('navurl',  $('#txt_navurl').val());
-            formData.append('playtype',$('#sel_playtype').find("option:selected").text());//$('#sel_playtype').val()
-            formData.append('typeremark', $('#txt_remark').val());
-            formData.append('fuid', $('#fuid').val());
-            $.ajax({
-                type: "POST",
-                url: "<%=basePath%>/playImageMgr/updatePlayimg.do",
-                data: formData,
-                contentType: false,
-                processData: false,
-                success: function (data) {
-                    hideWait();
-                    if(data!=="failed"){
-                        successInfo("保存成功!")
-                        $('#defaultForm').data('bootstrapValidator').resetForm(true);
-                        $('#cusTable').bootstrapTable('refresh');//初始化数据
-                    }else{
-                        errorInfo("保存失败");
-                        $('#cusTable').bootstrapTable('refresh');//初始化数据
-                    }
+        $.ajax({
+            type:"post",
+            url:  "<%=basePath%>/advert_pos/updateAdvert.do",
+            data:{
+                uid:$('#fid').val(),
+                adname:$('#adName').val(),
+                adprice: $('#adprice').val(),
+                adwidth:$('#adwidth').val(),
+                adheight: $('#adheight').val()
+            },
+            success: function(data){
+                hideWait();
+                if(data!=="failed"){
+                    successInfo("保存成功!")
+                    $('#defaultForm').data('bootstrapValidator').resetForm(true);
+                    $('#cusTable').bootstrapTable('refresh');//初始化数据
+                }else{
+                    errorInfo("保存失败");
+                    $('#cusTable').bootstrapTable('refresh');//初始化数据
                 }
-            });
-            return;
-        }
-        else
-            alert("请更换浏览器，当前浏览器不支持文件上传!!");
-
-
+            }
+        });
         $('#newModal').modal('hide');
     }
 
-    function getCheckUid(){
-        var uids="";
-        $.map($('#cusTable').bootstrapTable('getAllSelections'), function (row) {
-            uids += row.playuid+',';
-        });
-        return uids;
-    }
     function delRow(){
         var arr = $('#cusTable').bootstrapTable('getSelections');
         if(arr.length>0){
@@ -319,12 +292,12 @@
     //删除
     function deleteModule(){
         console.info("deleteModule");
-        var delids = getIdSelections();
+        var ids = getIdSelections();
         $.ajax({
             type: "POST",
-            url: "<%=basePath%>/playImageMgr/delPlayimgList.do",
+            url: "<%=basePath%>/advert_pos/delAdvert.do",
             data: {
-                ids:getCheckUid()
+                ids:getCheckFid()
             },
             beforeSend : function() {
                 submitWait();
@@ -338,7 +311,7 @@
                 if(data!=="failed"){
                     $('#cusTable').bootstrapTable('remove', {
                         field: 'uid',
-                        values: delids
+                        values: ids
                     });
                     successInfo("删除成功!")
                     $('#cusTable').bootstrapTable('refresh');//初始化数据
@@ -357,7 +330,14 @@
             return row.uid;
         });
     }
-
+    //获取FID用于后台操作
+    function getCheckFid(){
+        var fids="";
+        $('#cusTable').find('input[name="btSelectItem"]:checked').each(function(){
+            fids += $(this).val()+',';
+        });
+        return fids;
+    }
     function resetForm(){
         $('#defaultForm').data('bootstrapValidator').resetForm(true);
     }
@@ -370,11 +350,11 @@
             <button id="add" class="btn btn-info" onclick="newModule()">
                 <i class="glyphicon glyphicon-expand"></i> 增加
             </button>
-            <button id="edit" class="btn btn-info" onclick="editModule()">
-                <i class="glyphicon glyphicon-edit"></i> 修改
-            </button>
             <button id="remove" class="btn btn-info" onclick="delRow()">
                 <i class="glyphicon glyphicon-remove"></i> 删除
+            </button>
+            <button id="edit" class="btn btn-info" onclick="editModule()">
+                <i class="glyphicon glyphicon-edit"></i> 修改
             </button>
             <button id="refresh" class="btn btn-info" name="refresh" >
                 <i class="glyphicon glyphicon-refresh"></i> 刷新
@@ -384,12 +364,10 @@
             <thead>
             <tr>
                 <th data-field="uid" data-checkbox="true" align="center"></th>
-                <th data-field="playtype" data-editable="false"  align="center" >轮播图类型</th>
-                <th data-field="imgurl"  data-editable="false" align="center">轮播图地址</th>
-                <th data-field="navurl"  data-editable="false" align="center">导航地址</th>
-                <th data-field="playsort"  data-editable="false" align="center">图片顺序</th>
-                <th data-field="typeremark"  data-editable="false" align="center">图片说明</th>
-                <th data-field="creator"  data-editable="false" align="center">创建人</th>
+                <th data-field="adposition" data-editable="false"  align="center" >广告位名称</th>
+                <th data-field="adprice"  data-editable="false" align="center">广告位价格</th>
+                <th data-field="adwidth"  data-editable="false" align="center">广告位宽度</th>
+                <th data-field="adheight"  data-editable="false" align="center">广告位高度</th>
             </tr>
             </thead>
         </table>
@@ -406,54 +384,34 @@
             </div>
             <div class="modal-body" id="defaultForm" method="post">
                 <div class="row">
-                    <input type="hidden" name="fuid" id="fuid"/>
+                    <input type="hidden" name="fid" id="fid"/>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label>轮播图类型</label>
-                            <select class="form-control" id="sel_playtype"  name="sel_playtype" >
-                                <option value="1">专题</option>
-                                <option value="2">广告</option>
-                                <option value="3">宣传</option>
-                                <option value="4">其他</option>
-                            </select>
+                            <label>广告位名称</label>
+                            <input class="form-control" id="adName" name="adName" placeholder="广告位置(如首页-中间，二级页面-中间，左停靠，右停靠等)" type="text">
                         </div>
+                        <!-- /.form-group -->
+                        <div class="form-group">
+                            <label>广告位价格</label>
+                            <input class="form-control" id="adprice"  name="adprice" placeholder="输入价格"  type="text">
+                        </div>
+                        <!-- /.form-group -->
                     </div>
+                    <!-- /.col -->
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label>轮播图顺序</label>
-                            <input class="form-control" id="playsort"  name="playsort" placeholder="轮播图顺序" type="text">
+                            <label>位置宽度</label>
+                            <input class="form-control" id="adwidth"  name="adwidth" placeholder="输入整数，根据广告位实际大小输入" type="text">
                         </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6">
+                        <!-- /.form-group -->
                         <div class="form-group">
-                            <label for="up_imgfile">上传轮播图片</label>
-                            <input  id="up_imgfile"  name="up_imgfile"  type="file" accept=".jpg,.jpeg,.gif,.png">
+                            <label>位置高度</label>
+                            <input class="form-control" id="adheight"  name="adheight" placeholder="输入整数，根据广告位实际大小输入" type="text">
                         </div>
+                        <!-- /.form-group -->
                     </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label>图片地址</label>
-                            <input class="form-control" id="txt_imgurl"  name="txt_imgurl" placeholder="可上传或手工输入图片地址" type="text">
-                        </div>
-                    </div>
+                    <!-- /.col -->
                 </div>
-                <div class="row">
-                    <div class="col-md-12">
-                    <div class="form-group">
-                        <label>导航地址</label>
-                        <input class="form-control" id="txt_navurl"  name="txt_navurl" placeholder="可输入或粘贴地址" type="text">
-                    </div></div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12">
-                    <div class="form-group">
-                        <label>图片说明</label>
-                        <input class="form-control" id="txt_remark"  name="txt_remark" placeholder="轮播图片说明信息" type="text">
-                    </div></div>
-                </div>
-
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" onclick="resetForm()" data-dismiss="modal">关闭</button>

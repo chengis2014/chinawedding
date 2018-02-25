@@ -5,14 +5,24 @@ import com.alibaba.fastjson.JSONObject;
 import com.hnqj.core.PageData;
 import com.hnqj.core.ResultUtils;
 import com.hnqj.core.TableReturn;
+import com.hnqj.model.Train;
+import com.hnqj.services.TrainServices;
 import com.hnqj.services.UserinfoServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.support.DefaultMultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import static com.hnqj.core.ResultUtils.toJson;
@@ -23,8 +33,8 @@ import static com.hnqj.core.ResultUtils.toJson;
 @Controller
 @RequestMapping("/trainMgr")
 public class TrainController  extends  BaseController{
-    //@Autowired
-    //TrainServices trainService;
+    @Autowired
+    TrainServices trainService;
     @Autowired
     UserinfoServices userinfoServices;
 
@@ -45,51 +55,88 @@ public class TrainController  extends  BaseController{
         PageData pageData = new PageData();
         pageData.put("offset",currentPage);
         pageData.put("limit",showCount);
-        //List<Train> list=trainService.getAllTrain(pageData);
-        //List<Train> listCount=trainService.selectTrainList();
-        //tablereturn.setTotal(listCount.size());
-        //tablereturn.setRows(list);
+        List<Train> list=trainService.getAllTrain(pageData);
+        pageData.put("limit",0);
+        List<Train> listCount=trainService.getAllTrain(pageData);
+        tablereturn.setTotal(listCount.size());
+        tablereturn.setRows(list);
         ResultUtils.write(response,toJson(tablereturn));
         return null;
     }
     //添加一条名师记录
     /*
-    * Fastjson API入口类是com.alibaba.fastjson.JSON，常用的序列化操作都可以在JSON类上的静态方法直接完成。
-
-public static final Object parse(String text); // 把JSON文本parse为JSONObject或者JSONArray
-*public static final JSONObject parseObject(String text)； // 把JSON文本parse成JSONObject
-*public static final  T parseObject(String text, Class clazz); // 把JSON文本parse为JavaBean
-*public static final JSONArray parseArray(String text); // 把JSON文本parse成JSONArray
-*public static final  List parseArray(String text, Class clazz); //把JSON文本parse成JavaBean集合
-*public static final String toJSONString(Object object); // 将JavaBean序列化为JSON文本
-public static final String toJSONString(Object object, boolean prettyFormat); // 将JavaBean序列化为带格式的JSON文本
-public static final Object toJSON(Object javaObject); 将JavaBean转换为JSONObject或者JSONArray。
+    *trainMgr/addTrain.do
     * */
     @RequestMapping("/addTrain.do")
     public String addTrainList(HttpServletRequest request, HttpServletResponse response, Model model){
         //获取提交参数
         logger.info("addTrainList");
-        String jsonTxt = request.getParameter("jsontxt") == null ? "" : request.getParameter("jsontxt");
-        if(jsonTxt.equals("")){
-            ResultUtils.writeFailed(response);
+
+        String trainname = request.getParameter("trainname") == null ? "" : request.getParameter("trainname");
+        String traintime = request.getParameter("traintime") == null ? "" : request.getParameter("traintime");
+        String trainaddress = request.getParameter("trainaddress") == null ? "" : request.getParameter("trainaddress");
+        String phone = request.getParameter("phone") == null ? "" : request.getParameter("phone");
+        String logoimg = request.getParameter("logoimg") == null ? "" : request.getParameter("logoimg");
+        String topflag = request.getParameter("topflag") == null ? "-1" : request.getParameter("topflag");
+        String price = request.getParameter("price") == null ? "0" : request.getParameter("price");
+        String delflag = request.getParameter("delflag") == null ? "0" : request.getParameter("delflag");
+        String legtime = request.getParameter("legtime") == null ? "" : request.getParameter("legtime");
+        String coursename = request.getParameter("coursename") == null ? "" : request.getParameter("coursename");
+        String trainclass = request.getParameter("trainclass") == null ? "" : request.getParameter("trainclass");
+        String trainmethod = request.getParameter("trainmethod") == null ? "" : request.getParameter("trainmethod");
+        String traincontent = request.getParameter("traincontent") == null ? "" : request.getParameter("traincontent");
+        String endtime = request.getParameter("endtime") == null ? "" : request.getParameter("endtime");
+        String uuid=UUID.randomUUID().toString();
+        if(topflag.equals("")) topflag="-1";
+        MultiValueMap<String, MultipartFile> multFiles = ((DefaultMultipartHttpServletRequest)request).getMultiFileMap();
+        String trainLogImg="";
+        List<MultipartFile> files =multFiles.get("upload");
+        String HOMEPATH = request.getSession().getServletContext().getRealPath("/") + "static/uploadImg/trainLogoImg/";
+        // 如果目录不存在则创建
+        File uploadDir = new File(HOMEPATH);
+        if (!uploadDir.exists()) {
+            uploadDir.mkdir();
         }
-        JSONObject jsonObj = JSON.parseObject(jsonTxt );
+        for(MultipartFile file:files){//读取文件并上保存
+            try{
+                String myFileName = file.getOriginalFilename();
+                long fileSize = file.getSize();
+                String newFileName=uuid+myFileName.substring(myFileName.lastIndexOf("."));
+                //保存文件
+                File localFile = new File(HOMEPATH + newFileName);
+                file.transferTo(localFile);
+                trainLogImg= "/static/uploadImg/trainLogoImg/"+newFileName;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
         //转换为名师Model
         PageData trainPageData = new PageData();
-        trainPageData.put("teruid", UUID.randomUUID().toString());
-        trainPageData.put("trainname",jsonObj.getString("trainname"));//培训内容名称
-        trainPageData.put("traintime",jsonObj.getString("traintime"));//培训时间
-        trainPageData.put("trainaddress",jsonObj.getString("trainaddress"));//培训地址
-        trainPageData.put("phone",jsonObj.getString("phone"));//联系电话
-        trainPageData.put("logoimg",jsonObj.getString("logoimg"));//logo 图片地址
-        trainPageData.put("topflag",jsonObj.getString("topflag"));//是否置顶  0 否 1 2 3置顶顺序 ，不可以有同一顺序位
-        trainPageData.put("price",jsonObj.getString("price"));//投标价格
-        trainPageData.put("legtime",jsonObj.getString("legtime"));//有效期
-        trainPageData.put("delflag",0);//删除标志 默认0
+        trainPageData.put("teruid", uuid);
+        trainPageData.put("trainname",trainname);//培训名称
+        trainPageData.put("traintime",traintime);//培训时间
+        trainPageData.put("trainaddress",trainaddress);//培训地址
+        trainPageData.put("phone",phone);//联系电话
+        trainPageData.put("logoimg",trainLogImg);//logo 图片地址
+        trainPageData.put("topflag",topflag);//是否置顶  0 否 1 2 3置顶顺序 ，不可以有同一顺序位
+        trainPageData.put("price",price);//投标价格
+        trainPageData.put("legtime",legtime);//有效期
+        trainPageData.put("coursename",coursename);//培训课程名称
+        trainPageData.put("trainclass",trainclass);//培训课时
+        trainPageData.put("trainmethod",trainmethod);//培训方式
+        trainPageData.put("traincontent",traincontent);//培训内容
+        trainPageData.put("endtime",legtime);//培训截止时间
+        trainPageData.put("creator",getUser().getFristname());//发布人
+        trainPageData.put("createtime",getCurrentTime());//发布时间
+        trainPageData.put("delflag",delflag);//删除标志 默认0
         //插入数据库
         try{
-            //trainService.addTrain(trainPageData);
-            ResultUtils.writeSuccess(response);
+            if(trainService.addTrain(trainPageData)>0)
+                ResultUtils.writeSuccess(response);
+            else
+                ResultUtils.writeFailed(response);
+
         } catch (Exception e) {
             logger.error("addTrainList e="+e.getMessage());
             ResultUtils.writeFailed(response);
@@ -110,7 +157,7 @@ public static final Object toJSON(Object javaObject); 将JavaBean转换为JSONOb
         String[] idStrs = jsonTxt.split(",");
         try{
             for (String fid:idStrs){
-                //trainService.delTrainByFid(fid);
+                trainService.delTrainByFid(fid);
             }
             ResultUtils.writeSuccess(response);
         } catch (Exception e) {
@@ -124,27 +171,76 @@ public static final Object toJSON(Object javaObject); 将JavaBean转换为JSONOb
     public String updateTrain(HttpServletRequest request, HttpServletResponse response){
         //获取提交参数
         logger.info("updateTrain");
-        String jsonTxt = request.getParameter("jsontxt") == null ? "" : request.getParameter("jsontxt");
-        if(jsonTxt.equals("")){
+        String strUid = request.getParameter("uid") == null ? "" : request.getParameter("uid");
+        String trainname = request.getParameter("trainname") == null ? "" : request.getParameter("trainname");
+        String traintime = request.getParameter("traintime") == null ? "" : request.getParameter("traintime");
+        String trainaddress = request.getParameter("trainaddress") == null ? "" : request.getParameter("trainaddress");
+        String phone = request.getParameter("phone") == null ? "" : request.getParameter("phone");
+        String logoimg = request.getParameter("logoimg") == null ? "" : request.getParameter("logoimg");
+        String topflag = request.getParameter("topflag") == null ? "-1" : request.getParameter("topflag");
+        String price = request.getParameter("price") == null ? "0" : request.getParameter("price");
+        String delflag = request.getParameter("delflag") == null ? "0" : request.getParameter("delflag");
+        String legtime = request.getParameter("legtime") == null ? "" : request.getParameter("legtime");
+        String coursename = request.getParameter("coursename") == null ? "" : request.getParameter("coursename");
+        String trainclass = request.getParameter("trainclass") == null ? "" : request.getParameter("trainclass");
+        String trainmethod = request.getParameter("trainmethod") == null ? "" : request.getParameter("trainmethod");
+        String traincontent = request.getParameter("traincontent") == null ? "" : request.getParameter("traincontent");
+        String endtime = request.getParameter("endtime") == null ? "" : request.getParameter("endtime");
+        if(strUid.isEmpty()) {
             ResultUtils.writeFailed(response);
+            return "";
         }
-        JSONObject jsonObj = JSON.parseObject(jsonTxt );
+         if(topflag.equals("")) topflag="-1";
+        MultiValueMap<String, MultipartFile> multFiles = ((DefaultMultipartHttpServletRequest)request).getMultiFileMap();
+        String trainLogImg=logoimg;
+        List<MultipartFile> files =multFiles.get("upload");
+        String HOMEPATH = request.getSession().getServletContext().getRealPath("/") + "static/uploadImg/trainLogoImg/";
+        // 如果目录不存在则创建
+        File uploadDir = new File(HOMEPATH);
+        if (!uploadDir.exists()) {
+            uploadDir.mkdir();
+        }
+        if(files!=null) {
+            for (MultipartFile file : files) {//读取文件并上保存
+                try {
+                    String myFileName = file.getOriginalFilename();
+                    long fileSize = file.getSize();
+                    String newFileName = strUid + myFileName.substring(myFileName.lastIndexOf("."));
+                    //保存文件
+                    File localFile = new File(HOMEPATH + newFileName);
+                    file.transferTo(localFile);
+                    trainLogImg = "/static/uploadImg/trainLogoImg/" + newFileName;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
         //转换为名师Model
         PageData trainPageData = new PageData();
-        trainPageData.put("teruid", jsonObj.getString("teruid"));
-        trainPageData.put("trainname",jsonObj.getString("trainname"));//培训内容名称
-        trainPageData.put("traintime",jsonObj.getString("traintime"));//培训时间
-        trainPageData.put("trainaddress",jsonObj.getString("trainaddress"));//培训地址
-        trainPageData.put("phone",jsonObj.getString("phone"));//联系电话
-        trainPageData.put("logoimg",jsonObj.getString("logoimg"));//logo 图片地址
-        trainPageData.put("topflag",jsonObj.getString("topflag"));//是否置顶  0 否 1 2 3置顶顺序 ，不可以有同一顺序位
-        trainPageData.put("price",jsonObj.getString("price"));//投标价格
-        trainPageData.put("legtime",jsonObj.getString("legtime"));//有效期
-        trainPageData.put("delflag",0);//删除标志 默认0
+        trainPageData.put("teruid",strUid);
+        trainPageData.put("trainname",trainname);//培训名称
+        trainPageData.put("traintime",traintime);//培训时间
+        trainPageData.put("trainaddress",trainaddress);//培训地址
+        trainPageData.put("phone",phone);//联系电话
+        trainPageData.put("logoimg",trainLogImg);//logo 图片地址
+        trainPageData.put("topflag",topflag);//是否置顶  0 否 1 2 3置顶顺序 ，不可以有同一顺序位
+        trainPageData.put("price",price);//投标价格
+        trainPageData.put("legtime",legtime);//有效期
+        trainPageData.put("coursename",coursename);//培训课程名称
+        trainPageData.put("trainclass",trainclass);//培训课时
+        trainPageData.put("trainmethod",trainmethod);//培训方式
+        trainPageData.put("traincontent",traincontent);//培训内容
+        trainPageData.put("endtime",legtime);//培训截止时间
+        trainPageData.put("creator",getUser().getFristname());//发布人
+        trainPageData.put("createtime",getCurrentTime());//发布时间
+        trainPageData.put("delflag",delflag);//删除标志 默认0
         //插入数据库
         try{
-            //trainService.updateTrain(trainPageData);
-            ResultUtils.writeSuccess(response);
+            if(trainService.updateTrain(trainPageData)>0)
+                ResultUtils.writeSuccess(response);
+            else
+                ResultUtils.writeFailed(response);
+
         } catch (Exception e) {
             logger.error("updateTrain e="+e.getMessage());
             ResultUtils.writeFailed(response);

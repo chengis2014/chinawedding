@@ -19,7 +19,7 @@ public class Playimg {
      *
      * @mbg.generated Tue Dec 12 11:10:02 CST 2017
      */
-    private Date createtime;
+    private String createtime;
 
     /**
      *
@@ -116,7 +116,7 @@ public class Playimg {
      *
      * @mbg.generated Tue Dec 12 11:10:02 CST 2017
      */
-    public Date getCreatetime() {
+    public String getCreatetime() {
         return createtime;
     }
 
@@ -128,7 +128,7 @@ public class Playimg {
      *
      * @mbg.generated Tue Dec 12 11:10:02 CST 2017
      */
-    public void setCreatetime(Date createtime) {
+    public void setCreatetime(String createtime) {
         this.createtime = createtime;
     }
 

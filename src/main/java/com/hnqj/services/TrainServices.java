@@ -74,15 +74,4 @@ protected final Log logger = LogFactory.getLog(getClass());
 	}
 	 return trainList; 
 	}
-	public List<Train> selectTrainList() {
-	 logger.info("查询所有Train");
-	List<Train>	trainList=null;
-	 try { 
-		trainList = (List<Train>) daoSupport.findForList("TrainMapper.selectTrainList",null);
-	 }catch (Exception e){ 
-	 e.printStackTrace(); 
-	 trainList=null; 
-	}
-	 return trainList; 
-	}
 }

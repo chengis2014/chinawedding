@@ -103,9 +103,7 @@ public class PlayImageController  extends  BaseController{
         trainPageData.put("playtype",playtype);//轮播图片类型
         trainPageData.put("typeremark",typeremark);//类型说明
         trainPageData.put("creator",getUser().getFristname());//创建人ID
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
-        df.format(new Date());// new Date()为获取当前系统时间
-        trainPageData.put("createtime",df.format(new Date()));//创建时间
+        trainPageData.put("createtime",getCurrentTime());//创建时间
         trainPageData.put("delflg",0);//删除标志 默认0
         //插入数据库
         try{
