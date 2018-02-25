@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="WorksMapper">
-  <resultMap id="BaseResultMap" type="com.hnqj.model.Works">
-    
+  <resultMap id="BaseResultMap" type="Works">
     <id column="uid" jdbcType="VARCHAR" property="uid" />
     <result column="workstype" jdbcType="VARCHAR" property="workstype" />
     <result column="worksname" jdbcType="VARCHAR" property="worksname" />
@@ -11,7 +10,7 @@
     <result column="worksurl" jdbcType="VARCHAR" property="worksurl" />
     <result column="watermakeurl" jdbcType="VARCHAR" property="watermakeurl" />
     <result column="dpinum" jdbcType="VARCHAR" property="dpinum" />
-    <result column="imgsize" jdbcType="DOUBLE" property="imgsize" />
+    <result column="imgsize" jdbcType="VARCHAR" property="imgsize" />
     <result column="imgformart" jdbcType="VARCHAR" property="imgformart" />
     <result column="colrmodel" jdbcType="VARCHAR" property="colrmodel" />
     <result column="downcount" jdbcType="INTEGER" property="downcount" />
@@ -30,14 +29,12 @@
     <result column="merchname" jdbcType="VARCHAR" property="merchname" />
   </resultMap>
   <sql id="Base_Column_List">
-    
-    uid, workstype, worksname, uptime, samllurl, worksurl, watermakeurl, dpinum, imgsize, 
+    uid, workstype, worksname, uptime, samllurl, worksurl, watermakeurl, dpinum, imgsize,
     imgformart, colrmodel, downcount, favcount, displayflag, delflag, checkuser, chacktime, 
     merchid, ticknums, oknums, workremark, worklabel, price
   </sql>
   <select id="getWorksForId" parameterType="java.lang.String" resultMap="BaseResultMap">
-
-    select 
+    select
     <include refid="Base_Column_List" />
     from tb_works
     where uid = #{uid,jdbcType=VARCHAR}
@@ -72,7 +69,7 @@
       worklabel, price)
     values (#{uid,jdbcType=VARCHAR}, #{workstype,jdbcType=VARCHAR}, #{worksname,jdbcType=VARCHAR}, 
       #{uptime,jdbcType=TIMESTAMP}, #{samllurl,jdbcType=VARCHAR}, #{worksurl,jdbcType=VARCHAR}, 
-      #{watermakeurl,jdbcType=VARCHAR}, #{dpinum,jdbcType=VARCHAR}, #{imgsize,jdbcType=DOUBLE}, 
+      #{watermakeurl,jdbcType=VARCHAR}, #{dpinum,jdbcType=VARCHAR}, #{imgsize,jdbcType=VARCHAR},
       #{imgformart,jdbcType=VARCHAR}, #{colrmodel,jdbcType=VARCHAR}, #{downcount,jdbcType=INTEGER}, 
       #{favcount,jdbcType=INTEGER}, #{displayflag,jdbcType=VARCHAR}, #{delflag,jdbcType=VARCHAR}, 
       #{checkuser,jdbcType=VARCHAR}, #{chacktime,jdbcType=TIMESTAMP}, #{merchid,jdbcType=VARCHAR},
@@ -179,7 +176,7 @@
         #{dpinum,jdbcType=VARCHAR},
       </if>
       <if test="imgsize != null">
-        #{imgsize,jdbcType=DOUBLE},
+        #{imgsize,jdbcType=VARCHAR},
       </if>
       <if test="imgformart != null">
         #{imgformart,jdbcType=VARCHAR},
@@ -251,7 +248,7 @@
         dpinum = #{dpinum,jdbcType=VARCHAR},
       </if>
       <if test="imgsize != null">
-        imgsize = #{imgsize,jdbcType=DOUBLE},
+        imgsize = #{imgsize,jdbcType=VARCHAR},
       </if>
       <if test="imgformart != null">
         imgformart = #{imgformart,jdbcType=VARCHAR},
@@ -308,7 +305,7 @@
       worksurl = #{worksurl,jdbcType=VARCHAR},
       watermakeurl = #{watermakeurl,jdbcType=VARCHAR},
       dpinum = #{dpinum,jdbcType=VARCHAR},
-      imgsize = #{imgsize,jdbcType=DOUBLE},
+      imgsize = #{imgsize,jdbcType=VARCHAR},
       imgformart = #{imgformart,jdbcType=VARCHAR},
       colrmodel = #{colrmodel,jdbcType=VARCHAR},
       downcount = #{downcount,jdbcType=INTEGER},

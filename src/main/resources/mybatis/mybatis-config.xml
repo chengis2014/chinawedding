@@ -26,6 +26,7 @@
         <typeAlias type="com.hnqj.model.Dealrecord" alias="Dealrecord"/>
         <typeAlias type="com.hnqj.model.Dict" alias="Dict"/>
         <typeAlias type="com.hnqj.model.Distribution" alias="Distribution"/>
+        <typeAlias type="com.hnqj.model.Distrirecord" alias="Distrirecord"/>
         <typeAlias type="com.hnqj.model.Findimg" alias="Findimg"/>
         <typeAlias type="com.hnqj.model.Groomapply" alias="Groomapply"/>
         <typeAlias type="com.hnqj.model.Merch" alias="Merch"/>

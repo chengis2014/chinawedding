@@ -60,7 +60,7 @@
         $("#cusTable").bootstrapTable({
             method: "get",  //使用get请求到服务器获取数据
             contentType: "application/x-www-form-urlencoded",
-            url: "<%=basePath%>/proportions/getDistributionList.do", //获取数据的Servlet地址
+            url: "<%=basePath%>/distrirecord/getDistrirecordList.do", //获取数据的Servlet地址
             striped: true,  //表格显示条纹
             pagination: true, //启动分页
             toolbar:"#toolbar",
@@ -103,12 +103,12 @@
         <thead>
         <tr>
             <th data-field="uid" data-checkbox="true" align="center"></th>
-            <th data-field="dealid" data-editable="false"  align="center">订单号</th>
-            <th data-field="worksid" data-editable="false" align="center">作品名称</th>
+            <th data-field="workname" data-editable="false" align="center">作品名称</th>
+            <th data-field="parentname" data-editable="false" align="center">推荐人员</th>
             <th data-field="level" data-editable="false" align="center">分销级别</th>
-            <th data-field="userid" data-editable="false" align="center">分销人员</th>
+            <th data-field="username" data-editable="false" align="center">分销人员</th>
             <th data-field="proportion" data-editable="false" align="center">分成比例</th>
-            <th data-field="price" data-editable="false" align="center">分销金额</th>
+            <th data-field="price" data-editable="false" align="center">分成金额</th>
         </tr>
         </thead>
     </table>

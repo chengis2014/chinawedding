@@ -87,7 +87,9 @@
                     $("#bankaddress").text(msg[0].bankaddress);
                     $("#bankaccount").text(msg[0].bankaccount);
                     $("#bankname").text(msg[0].bankname);
-                    $("#idpic").attr("src","<%=basePaths%>"+msg[0].idpic);
+                    if(msg[0].idpic != ""){
+                        $("#idpic").html("<img src='<%=basePaths%>"+msg[0].idpic+"'>");
+                    }
                     if(msg[0].statu != 1){
                         $("#font14Row").css("display","none");
                         $("#submitBtn").css("display","none");
@@ -244,8 +246,7 @@
         <div class=" font14_row">
             <div>
                 <h4 class="font14 control-label" >认证信息</h4>
-                <div>
-                    <img id="idpic">
+                <div id="idpic">
                 </div>
             </div>
         </div>

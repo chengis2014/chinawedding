@@ -139,4 +139,10 @@
     from tb_account
     where account = #{uid,jdbcType=VARCHAR} and state='1'
   </select>
+    <!--通过用户编码获取账号-->
+    <select id="getAccountByRecord" resultMap="AccountResultMap">
+        select *
+        from tb_account
+        where extend_1 = #{extend_1,jdbcType=VARCHAR}
+    </select>
 </mapper>

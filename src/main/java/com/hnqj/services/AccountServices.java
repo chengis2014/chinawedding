@@ -121,4 +121,15 @@ protected final Log logger = LogFactory.getLog(getClass());
 		}
 		return iFlag;
 	}
+
+	public Account getAccountByRecord(String referee) {
+		Account account = null;
+		try {
+			account =(Account) daoSupport.findForObject("AccountMapper.getAccountByRecord",referee);
+		}catch (Exception e){
+			e.printStackTrace();
+			account =null;
+		}
+		return account;
+	}
 }
