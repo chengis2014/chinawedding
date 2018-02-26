@@ -22,7 +22,7 @@
     </if>
     ORDER BY labelnum DESC
     <if test="limit != null and limit >0 ">
-    LIMIT offest,limit
+     LIMIT #{offset},#{limit}
     </if>
 
   </select>
