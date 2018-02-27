@@ -10,10 +10,15 @@ import com.hnqj.services.ReleaseadvertServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.support.DefaultMultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
@@ -45,7 +50,8 @@ public class ReleaseadvertController extends BaseController{
         pageData.put("offset",currentPage);
         pageData.put("limit",showCount);
         List<Releaseadvert> list=adServices.getAllReleaseadvert(pageData);
-        List<Releaseadvert> listCount=adServices.selectReleaseadvertList();
+        pageData.put("limit",0);
+        List<Releaseadvert> listCount=adServices.getAllReleaseadvert(pageData);
         tablereturn.setTotal(listCount.size());
         tablereturn.setRows(list);
         ResultUtils.write(response,toJson(tablereturn));
@@ -58,29 +64,62 @@ public class ReleaseadvertController extends BaseController{
     public String addAdvertInfoList(HttpServletRequest request, HttpServletResponse response, Model model){
         //获取提交参数
         logger.info("addAdvertInfoList");
-        String jsonTxt = request.getParameter("jsontxt") == null ? "" : request.getParameter("jsontxt");
-        if(jsonTxt.equals("")){
-            ResultUtils.writeFailed(response);
+        String adpositionid = request.getParameter("adpositionid") == null ? "" : request.getParameter("adpositionid");
+        String adprice = request.getParameter("adprice") == null ? "" : request.getParameter("adprice");
+        String imgurl = request.getParameter("imgurl") == null ? "" : request.getParameter("imgurl");
+        String adurl = request.getParameter("adurl") == null ? "" : request.getParameter("adurl");
+        String clickcount = request.getParameter("clickcount") == null ? "0" : request.getParameter("clickcount");
+        String clientuid = request.getParameter("clientuid") == null ? "" : request.getParameter("clientuid");
+        String adstarttime = request.getParameter("adstarttime") == null ? "" : request.getParameter("adstarttime");
+        String adendtime = request.getParameter("adendtime") == null ? "" : request.getParameter("adendtime");
+        String adtype = request.getParameter("adtype") == null ? "" : request.getParameter("adtype");
+        String strUid=UUID.randomUUID().toString();
+        MultiValueMap<String, MultipartFile> multFiles = ((DefaultMultipartHttpServletRequest)request).getMultiFileMap();
+        String trainLogImg=imgurl;
+        List<MultipartFile> files =multFiles.get("upload");
+        String HOMEPATH = request.getSession().getServletContext().getRealPath("/") + "static/uploadImg/advertImg/";
+        // 如果目录不存在则创建
+        File uploadDir = new File(HOMEPATH);
+        if (!uploadDir.exists()) {
+            uploadDir.mkdir();
         }
-        JSONObject jsonObj = JSON.parseObject(jsonTxt );
+        if(files!=null) {
+            for (MultipartFile file : files) {//读取文件并上保存
+                try {
+                    String myFileName = file.getOriginalFilename();
+                    long fileSize = file.getSize();
+                    String newFileName = strUid + myFileName.substring(myFileName.lastIndexOf("."));
+                    //保存文件
+                    File localFile = new File(HOMEPATH + newFileName);
+                    file.transferTo(localFile);
+                    trainLogImg = "/static/uploadImg/advertImg/" + newFileName;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
         //转换为广告信息Model
         PageData adPageData = new PageData();
-        adPageData.put("aduid", UUID.randomUUID().toString());
-        adPageData.put("adpositionid",jsonObj.getString("adpositionid"));//所属广告位ID
-        adPageData.put("adprice",jsonObj.getString("adprice"));//广告价格
-        adPageData.put("imgurl",jsonObj.getString("imgurl"));//广告位展示资源URL
-        adPageData.put("adurl",jsonObj.getString("adurl"));//广告位导航URL
-        adPageData.put("clickcount",jsonObj.getString("clickcount"));//点击量
-        adPageData.put("clientuid",jsonObj.getString("clientuid"));//客户信息ID
-        adPageData.put("adstarttime",jsonObj.getString("adstarttime"));//开始时间
-        adPageData.put("adendtime",jsonObj.getString("adendtime"));//结束时间
-        adPageData.put("creator",jsonObj.getString("creator"));//创建人
-        adPageData.put("createtime",jsonObj.getString("createtime"));//创建时间
+        adPageData.put("aduid", strUid);
+        adPageData.put("adpositionid",adpositionid);//所属广告位ID
+        adPageData.put("adprice",adprice);//广告价格
+        adPageData.put("imgurl",trainLogImg);//广告位展示资源URL
+        adPageData.put("adurl",adurl);//广告位导航URL
+        adPageData.put("clickcount",clickcount);//点击量
+        adPageData.put("clientuid",clientuid);//客户信息ID
+        adPageData.put("starttime",adstarttime);//开始时间
+        adPageData.put("endtime",adendtime);//结束时间
+        adPageData.put("adtype",adtype);
+        adPageData.put("creator",getUser().getFristname());//创建人
+        adPageData.put("createtime",getCurrentTime());//创建时间
         //adPageData.put("delflag",0);//删除标志 默认0
         //插入数据库
         try{
-            adServices.addReleaseadvert(adPageData);
+            if(adServices.addReleaseadvert(adPageData)>0)
             ResultUtils.writeSuccess(response);
+            else
+                ResultUtils.writeFailed(response);
         } catch (Exception e) {
             logger.error("addAdvertInfoList e="+e.getMessage());
             ResultUtils.writeFailed(response);
@@ -111,26 +150,56 @@ public class ReleaseadvertController extends BaseController{
     public String updateAdvertInfo(HttpServletRequest request, HttpServletResponse response){
         //获取提交参数
         logger.info("updateAdvertInfo");
-        String jsonTxt = request.getParameter("jsontxt") == null ? "" : request.getParameter("jsontxt");
-        if(jsonTxt.equals("")){
-            ResultUtils.writeFailed(response);
+        String strUid = request.getParameter("uid") == null ? "" : request.getParameter("uid");
+        String adpositionid = request.getParameter("adpositionid") == null ? "" : request.getParameter("adpositionid");
+        String adprice = request.getParameter("adprice") == null ? "" : request.getParameter("adprice");
+        String imgurl = request.getParameter("imgurl") == null ? "" : request.getParameter("imgurl");
+        String adurl = request.getParameter("adurl") == null ? "" : request.getParameter("adurl");
+        String clickcount = request.getParameter("clickcount") == null ? "0" : request.getParameter("clickcount");
+        String clientuid = request.getParameter("clientuid") == null ? "" : request.getParameter("clientuid");
+        String adstarttime = request.getParameter("adstarttime") == null ? "" : request.getParameter("adstarttime");
+        String adendtime = request.getParameter("adendtime") == null ? "" : request.getParameter("adendtime");
+        String adtype = request.getParameter("adtype") == null ? "" : request.getParameter("adtype");
+
+        MultiValueMap<String, MultipartFile> multFiles = ((DefaultMultipartHttpServletRequest)request).getMultiFileMap();
+        String trainLogImg=imgurl;
+        List<MultipartFile> files =multFiles.get("upload");
+        String HOMEPATH = request.getSession().getServletContext().getRealPath("/") + "static/uploadImg/advertImg/";
+        // 如果目录不存在则创建
+        File uploadDir = new File(HOMEPATH);
+        if (!uploadDir.exists()) {
+            uploadDir.mkdir();
         }
-        JSONObject jsonObj = JSON.parseObject(jsonTxt );
+        if(files!=null) {
+            for (MultipartFile file : files) {//读取文件并上保存
+                try {
+                    String myFileName = file.getOriginalFilename();
+                    long fileSize = file.getSize();
+                    String newFileName = strUid + myFileName.substring(myFileName.lastIndexOf("."));
+                    //保存文件
+                    File localFile = new File(HOMEPATH + newFileName);
+                    file.transferTo(localFile);
+                    trainLogImg = "/static/uploadImg/advertImg/" + newFileName;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
 
-        //转换为作品Model
-
+        //转换为广告信息Model
         PageData adPageData = new PageData();
-        adPageData.put("aduid", jsonObj.getString("aduid"));
-        adPageData.put("adpositionid",jsonObj.getString("adpositionid"));//所属广告位ID
-        adPageData.put("adprice",jsonObj.getString("adprice"));//广告价格
-        adPageData.put("imgurl",jsonObj.getString("imgurl"));//广告位展示资源URL
-        adPageData.put("adurl",jsonObj.getString("adurl"));//广告位导航URL
-        adPageData.put("clickcount",jsonObj.getString("clickcount"));//点击量
-        adPageData.put("clientuid",jsonObj.getString("clientuid"));//客户信息ID
-        adPageData.put("adstarttime",jsonObj.getString("adstarttime"));//开始时间
-        adPageData.put("adendtime",jsonObj.getString("adendtime"));//结束时间
-        adPageData.put("creator",jsonObj.getString("creator"));//创建人
-        adPageData.put("createtime",jsonObj.getString("createtime"));//创建时间
+        adPageData.put("aduid", strUid);
+        adPageData.put("adpositionid",adpositionid);//所属广告位ID
+        adPageData.put("adprice",adprice);//广告价格
+        adPageData.put("imgurl",trainLogImg);//广告位展示资源URL
+        adPageData.put("adurl",adurl);//广告位导航URL
+        adPageData.put("clickcount",clickcount);//点击量
+        adPageData.put("clientuid",clientuid);//客户信息ID
+        adPageData.put("starttime",adstarttime);//开始时间
+        adPageData.put("endtime",adendtime);//结束时间
+        adPageData.put("adtype",adtype);
+        adPageData.put("creator",getUser().getFristname());//创建人
+        adPageData.put("createtime",getCurrentTime());//创建时间
         //adPageData.put("delflag",0);//删除标志 默认0
         //插入数据库
         try{

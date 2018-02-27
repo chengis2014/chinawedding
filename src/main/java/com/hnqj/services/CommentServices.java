@@ -74,15 +74,15 @@ protected final Log logger = LogFactory.getLog(getClass());
 	}
 	 return commentList; 
 	}
-	public List<Comment> selectCommentList() {
-	 logger.info("查询所有Comment");
-	List<Comment>	commentList=null;
-	 try { 
-		commentList = (List<Comment>) daoSupport.findForList("CommentMapper.selectCommentList",null);
-	 }catch (Exception e){ 
-	 e.printStackTrace(); 
-	 commentList=null; 
-	}
-	 return commentList; 
-	}
+//	public List<Comment> selectCommentList() {
+//	 logger.info("查询所有Comment");
+//	List<Comment>	commentList=null;
+//	 try {
+//		commentList = (List<Comment>) daoSupport.findForList("CommentMapper.selectCommentList",null);
+//	 }catch (Exception e){
+//	 e.printStackTrace();
+//	 commentList=null;
+//	}
+//	 return commentList;
+//	}
 }
