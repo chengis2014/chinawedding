@@ -7,10 +7,11 @@
     <result column="labelname" jdbcType="VARCHAR" property="labelname" />
     <result column="labelnum" jdbcType="INTEGER" property="labelnum" />
     <result column="codeid" jdbcType="VARCHAR" property="codeid" />
+    <result column="codename" jdbcType="VARCHAR" property="codename" />
   </resultMap>
   <sql id="Base_Column_List">
 
-    uid, labelname, labelnum, codeid
+    uid, labelname, labelnum, codeid,(select keyname from tb_dict where codeid=uid) as codename
   </sql>
   <select id="getAllWorklabel" parameterType="pd" resultMap="BaseResultMap">
 

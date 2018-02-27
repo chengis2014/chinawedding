@@ -120,4 +120,15 @@ protected final Log logger = LogFactory.getLog(getClass());
 		}
 		return dictList;
 	}
+	public List<Dict> getDictForKeys(String keys) {
+		logger.info("查询指定Dict");
+		List<Dict>	dictList=null;
+		try {
+			dictList = (List<Dict>) daoSupport.findForList("DictMapper.getDictForKeys",keys);
+		}catch (Exception e){
+			e.printStackTrace();
+			dictList=null;
+		}
+		return dictList;
+	}
 }

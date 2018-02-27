@@ -16,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import sun.reflect.generics.tree.Tree;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -46,6 +47,7 @@ public class DictionariesController extends  BaseController{
     @RequestMapping("/getDictList.do")
     public String getUserList(HttpServletRequest request, HttpServletResponse response, Model model) {
         logger.info("字典查看");
+
         String treeId = request.getParameter("treeId") == null ? "" : request.getParameter("treeId");
         int currentPage = request.getParameter("offset") == null ? 0 : Integer.parseInt(request.getParameter("offset"));
         // 每页行数
@@ -232,5 +234,39 @@ public class DictionariesController extends  BaseController{
         ResultUtils.write(response,Trees);
         return null;
     }
+    /**
+     * 获取节点及子节点
+     * @param request
+     * @param response
+     * @return
+     */
+    @RequestMapping("/getDictForKeyval.do")
+    public String getDictForKeyval(HttpServletRequest request, HttpServletResponse response){
+        String ids = request.getParameter("keys") == null ? "" : request.getParameter("keys");
+        List<Dict> list=dictServices.getDictForKeys(ids);//获取所有数据
+        List<TreeReturn> Trees= new ArrayList<TreeReturn>();
+        for(Dict dict:list){
+            TreeReturn tree=new TreeReturn();
+            tree.setId(dict.getUid());
+            tree.setpId(dict.getParentid());
+            tree.setName(dict.getKeyname());
+            getTreeChilds(dict.getUid(),Trees);
+            Trees.add(tree);
+        }
+        ResultUtils.write(response,Trees);
+        return null;
+    }
+    private void getTreeChilds(String treeId, List<TreeReturn> trees){
+        List<Dict> list=dictServices.selectDictList(treeId);//获取子节点
 
+        for(Dict dict:list){
+            TreeReturn tree=new TreeReturn();
+            tree.setId(dict.getUid());
+            tree.setpId(dict.getParentid());
+            tree.setName(dict.getKeyname());
+            getTreeChilds(dict.getUid(),trees);
+            trees.add(tree);
+        }
+
+    }
 }

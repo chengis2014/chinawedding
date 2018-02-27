@@ -39,9 +39,7 @@
     <link rel="stylesheet" href="<%=basePath%>/static/bootstrap/validate/css/bootstrapValidator.min.css"/>
     <script type="text/javascript" src="<%=basePath%>/static/bootstrap/validate/js/bootstrapValidator.js"></script>
     <script type="text/javascript" src="<%=basePath%>/static/bootstrap/validate/js/language/zh_CN.js"></script>
-    <%-- <script type="text/javascript"  src="<%=basePath%>/static/js/ztree3d5/js/jquery.ztree.all.js"></script>
-    <link rel="stylesheet" href="<%=basePath%>/static/js/ztree3d5/css/zTreeStyle/zTreeStyle.css" type="text/css" />
-       <link rel="stylesheet" href="<%=basePath%>/js/ztree3d5/css/demo.css" type="text/css" />--%>
+
     <link href="<%=basePath%>/static/css/selectuser.css" rel="stylesheet">
     <%--自建公共js文件--%>
     <script type="text/javascript" src="<%=basePath%>/static/js/common-creat.js"></script>
@@ -100,7 +98,6 @@
             //设置为undefined可以获取pageNumber，pageSize，searchText，sortName，sortOrder
             //设置为limit可以获取limit, offset, search, sort, order
             queryParamsType : "limit",
-
             queryParams: function queryParams(params) {   //设置查询参数
                 var param = {
                     limit: params.limit,
@@ -128,53 +125,20 @@
         initTable();
 
         $("button[title='刷新']").hide();
-        $("#defaultForm").submit(function(ev){ev.preventDefault();});
-
-        //$('#Modal').modal('show');
-        //newModule();
+//        $("#defaultForm").submit(function(ev){ev.preventDefault();});
     });
-
+    function cxExit() {
+        $('#modal').modal('hide');
+    }
+    function cxGo() {
+        $('#modal').modal('hide');
+    }
     //显示新建窗口
     function newModule(){
-        /* $('#roleName').val("");
-         $('#roleDescription').val("");
-         $('#roleCreator').val("");*/
-        $("#myModalLabel").html("新建角色");
-        $('#newModal').modal('show');
+        //$("#myModalLabel").html("审核");
+        $('#modal').modal('show');
     }
-    function initValidate(){
-        $('#defaultForm').bootstrapValidator({
-            message: '值不能为空',
-            feedbackIcons: {
-                valid: 'glyphicon glyphicon-ok',
-                invalid: 'glyphicon glyphicon-remove',
-                validating: 'glyphicon glyphicon-refresh'
-            },
-            fields: {
-                roleName: {
-                    validators: {
-                        notEmpty: {
-                            message: '角色名不能为空'
-                        }
-                    }
-                },
-                roleDescription: {
-                    validators: {
-                        notEmpty: {
-                            message: '角色描述不能为空'
-                        }
-                    }
-                },
-                roleCreator: {
-                    validators: {
-                        notEmpty: {
-                            message: '创建者不能为空'
-                        }
-                    }
-                }
-            }
-        });
-    }
+
     //提交保存
     function saveModule(){
         var opurl=$('#fid').val()==""?"<%=basePath%>/role/addRole.do":"<%=basePath%>/role/updateRole.do";
@@ -183,11 +147,7 @@
             url: opurl,
             data:{
                 fid:$('#fid').val(),
-                roleName:$('#roleName').val(),
-                roleDescription: $('#roleDescription').val(),
-                roleCreator:  $('#roleCreator').val(),
-                roleCtime:$('#roleCtime').val(),
-                roleEnabled: $('#roleEnabled').val(),
+                roleName:$('#roleName').val()
             },
             success: function(data){
                 hideWait();
@@ -214,12 +174,12 @@
             <!--<button id="add" class="btn btn-info" onclick="newModule()">
                 <i class="glyphicon glyphicon-expand"></i> 增加
             </button>-->
-            <button id="edit" class="btn btn-info" onclick="editModule()">
+            <button id="edit" class="btn btn-info" onclick="newModule()">
                 <i class="glyphicon glyphicon-edit"></i> 审核
             </button>
-            <button id="remove" class="btn btn-info" onclick="delRow()">
-                <i class="glyphicon glyphicon-remove"></i> 查看
-            </button>
+            <%--<button id="remove" class="btn btn-info" onclick="delRow()">--%>
+                <%--<i class="glyphicon glyphicon-remove"></i> 查看--%>
+            <%--</button>--%>
             <button id="refresh" class="btn btn-info" name="refresh" >
                 <i class="glyphicon glyphicon-refresh"></i> 刷新
             </button>
@@ -228,33 +188,15 @@
             <thead>
             <tr>
                 <th data-field="uid" data-checkbox="true" align="center"></th>
-                <th data-field="workstype" data-editable="false"  align="center" >评论作品</th>
-                <th data-field="worksname" data-editable="false"  align="center" >评论人</th>
-                <th data-field="imgsize" data-editable="false"  align="center" >评论时间</th>
-                <th data-field="imgformart" data-editable="false"  align="center" >评论内容</th>
-                <th data-field="dpinum" data-editable="false"  align="center" >被评论内容</th>
-                <th data-field="colrmodel" data-editable="false"  align="center" >评论点赞数</th>
+                <th data-field="worksid" data-editable="false"  align="center" >评论作品</th>
+                <th data-field="commentuserid" data-editable="false"  align="center" >评论人</th>
+                <th data-field="commenttime" data-editable="false"  align="center" >评论时间</th>
+                <th data-field="commentinfo" data-editable="false"  align="center" >评论内容</th>
+                <%--<th data-field="dpinum" data-editable="false"  align="center" >被评论内容</th>--%>
+                <th data-field="oknums" data-editable="false"  align="center" >评论点赞数</th>
             </tr>
             </thead>
         </table>
-    </div>
-
-    <div class="modal fade" id="newModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >
-        <div class="modal-dialog">
-            <div class="modal-content" style="width:700px;">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title" id="myModalLabel"></h4>
-                </div>
-                <div class="modal-body" id="defaultForm" method="post">
-
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal"  onclick="resetForm()">关闭</button>
-                    <%--<button type="button" class="btn btn-primary" id="validateBtn">提交</button>--%>
-                </div>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal -->
     </div>
 
     <div class="modal fade" id="Modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -262,16 +204,16 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title" id="roleUserModalLabel">关联用户</h4>
+                    <h4 class="modal-title" id="roleUserModalLabel">评论审核</h4>
                 </div>
                 <div class="modal-body">
-
+                    评论是否符合要求?
                 </div>
                 <input type="hidden" name="roleId" id="roleId"/>
                 <input type="hidden" name="user_id" id="user_id"/>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                    <button type="button" class="btn btn-primary" onclick="addRoleUser()">提交</button>
+                    <button type="button" class="btn btn-default"  onclick="cxExit()">退回</button>
+                    <button type="button" class="btn btn-primary" onclick="cxGo()">通过</button>
                 </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal -->

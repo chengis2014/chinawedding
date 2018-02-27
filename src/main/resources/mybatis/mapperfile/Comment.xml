@@ -28,7 +28,9 @@
     select
     <include refid="Base_Column_List" />
     from tb_comment
+    <if test="delflg != null and delflg!=''">
      where delflg=#{delflg,jdbcType=CHAR}
+    </if>
     ORDER BY commenttime desc
     <if test="limit != null and limit>0">
       LIMIT #{offset},#{limit}

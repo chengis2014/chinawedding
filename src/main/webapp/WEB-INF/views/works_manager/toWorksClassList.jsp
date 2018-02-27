@@ -142,7 +142,7 @@
         },
         async: {
             enable: true,
-            url:"<%=basePath%>/dictionaries/getDictTree.do"//树数据路径
+            url:"<%=basePath%>/dictionaries/getDictForKeyval.do?keys=00,10,20,30"//树数据路径
         },
         //回调函数
         callback: {
@@ -396,7 +396,10 @@
 <div style="padding:0 5px;float: left;">
     <div class="panel panel-primary" style="margin-top: 10px;height:100%;width:180px;">
         <div class="panel-heading">作品分类</div>
-        <ul style="background: none;border: none;" id="DictTree" class="ztree"></ul>
+        <div style="width: 100%;height: 600px;overflow-y: auto;">
+            <ul style="background: none;border: none;" id="DictTree" class="ztree"></ul>
+        </div>
+
     </div>
 </div>
 <div class=" style_border">

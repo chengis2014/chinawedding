@@ -56,7 +56,10 @@ public class WorksClassController extends  BaseController{
             listCount=dictServices.selectDictList(treeId);
         }
         List<Map<String, Object>> hashMaps=new ArrayList<>();
+        String pStr="00,10,20,30";
         for(Dict dict:list){
+            if(treeId.equalsIgnoreCase("")&& !pStr.contains(dict.getKeyvalue()))
+                continue;
             Map<String, Object> map = new HashMap<>();
             map.put("uid",dict.getUid());
             map.put("groupname",dict.getGroupname());

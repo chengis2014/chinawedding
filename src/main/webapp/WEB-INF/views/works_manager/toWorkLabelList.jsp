@@ -88,14 +88,14 @@
             exportDataType : "all",
             clickToSelect:true,
             search:false,
-            idField:"uid",
+            idField:"ffid",
             sidePagination: "server", //表示服务端请求
             queryParamsType : "limit",
             queryParams: function queryParams(params) {   //设置查询参数
                 var param = {
                     limit: params.limit,
                     offset: params.offset,
-                    treeId:treeId
+                    codeid:treeId
                 };
                 return param;
             },
@@ -112,7 +112,7 @@
     $(document).ready(function () {
         $.fn.zTree.init($("#DictTree"), setting);//页面树初始化
         //调用函数，初始化表格
-        initTable();
+        initTable("");
         //校验
         initValidate();
         $("#dictForm").submit(function(ev){ev.preventDefault();});//AJAX提交必修使用
@@ -142,7 +142,7 @@
         },
         async: {
             enable: true,
-            url:"<%=basePath%>/dictionaries/getDictTree.do"//树数据路径
+            url:"<%=basePath%>/dictionaries/getDictForKeyval.do?keys=00,10,20,30"//树数据路径
         },
         //回调函数
         callback: {
@@ -152,8 +152,7 @@
     //树单击事件
     function getDict(event, treeId, treeNode) {
         initTable(treeNode.id);
-        $("#saveparentid").val(treeNode.id);
-        $("#saveparentname").val(treeNode.name);
+        $("#codeid").val(treeNode.id);
     }
     //校验
     function initValidate(){
@@ -165,27 +164,13 @@
                 validating: 'glyphicon glyphicon-refresh'
             },
             fields: {
-                groupname:{
+                labelname:{
                     validators:{
                         notEmpty: {
-                            message: '组名不能为空!'
+                            message: '标签名称不能为空!'
                         }
                     }
-                },
-                keyname:{
-                    validators:{
-                        notEmpty: {
-                            message: '键名不能为空!'
-                        }
-                    }
-                },
-                keyvalue:{
-                    validators:{
-                        notEmpty: {
-                            message: '键值不能为空!'
-                        }
-                    }
-                },
+                }
             }
         });
     }
@@ -201,45 +186,36 @@
     //初始化表单
     function init(){
         $("#uid").val("");
-        $("#groupname").val("");
-        $("#keyname").val("");
-        $("#parentid").val("");
-        $("#keyvalue").val("");
-        $("#remarket").val("");
+        $("#codeid").val("");
+        $("#labelname").val("");
     }
     //添加窗口
     function newDict(){
         init();
-        var parentid=$("#saveparentid").val();
-        var parentname=$("#saveparentname").val();
-        if(parentid == ""){
-            $("#saveparentid").val("0");
+        var treeObj = $.fn.zTree.getZTreeObj("DictTree");
+        var nodes = treeObj.getSelectedNodes();
+        if(nodes.length>0) {
+            $("#codeid").val(nodes[0].id);
+            $("#myDictLabel").html("添加");
+            $('#newDict').modal('show');
         }
-        $("#parentid").val(parentname);
-        $("#myDictLabel").html("添加");
-        $('#newDict').modal('show');
+        else
+            alert("请选择左侧树节点!!!");
     }
     //添加用户提交保存
     function saveDict(){
-        var groupname=$("#groupname").val();
-        var keyname=$("#keyname").val();
-        var parentid=$("#saveparentid").val();
-        var keyvalue=$("#keyvalue").val();
-        var remarket=$("#remarket").val();
         $.ajax({
             type:"POST",
-            url:"<%=basePath%>/dictionaries/addDict.do",
+            url:"<%=basePath%>/worksLabelMgr/addLabel.do",
             data:{
-                groupname:groupname,
-                keyname:keyname,
-                parentid:parentid,
-                keyvalue:keyvalue,
-                remarket:remarket
+                uid:$("#uid").val(),
+                codeid:$("#codeid").val(),
+                labelname:$("#labelname").val(),
+                labelnum:$("#reqNum").val()
             },
             success:function(data){
                 if(data!=="failed"){
                     successInfo("添加成功!");
-                    $.fn.zTree.init($("#DictTree"), setting);//页面树初始化
                     $('#cusTable').bootstrapTable('refresh');//初始化数据
                     $('#dictForm').data('bootstrapValidator').resetForm(true);
                 }else{
@@ -260,30 +236,14 @@
             if (uids.length > 1) {
                 warningInfo("请选择一条记录");
             } else {
-                $.ajax({
-                    type: "POST",
-                    url: "<%=basePath%>/dictionaries/getDictById.do",
-                    data: {
-                        ids: ids
-                    },
-                    success: function (data) {
-                        var msg = eval("(" + data + ")");
-                        $("#uid").val(ids);
-                        $("#groupname").val(msg[0].groupname);
-                        $("#keyname").val(msg[0].keyname);
-                        $("#keyvalue").val(msg[0].keyvalue);
-                        $("#saveparentid").val(msg[0].parentid);
-                        $("#parentid").find("option").remove();
-                        var varItem2="";
-                        if(msg[0].parentName == ""){
-                            varItem2 = new Option("无","");
-                        }else{
-                            varItem2 = new Option(msg[0].parentName,"");
-                        }
-                        $("#parentid").append(varItem2);
-                        $("#remarket").val(msg[0].remarket);
-                    }
+
+                $.map($('#cusTable').bootstrapTable('getAllSelections'), function (row) {
+                    $("#uid").val(row.uid);
+                    $("#codeid").val(row.codeid);
+                    $("#labelname").val(row.labelname);
+                    $("#reqNum").val(row.labelnum);
                 });
+
                 $('#newDict').modal('show');
             }
         }else{
@@ -293,27 +253,19 @@
     }
     //提交更新
     function updateDict(){
-        var uid=$("#uid").val();
-        var groupname=$("#groupname").val();
-        var keyname=$("#keyname").val();
-        var keyvalue=$("#keyvalue").val();
-        var parentid=$("#saveparentid").val();
-        var remarket=$("#remarket").val();
+
         $.ajax({
             type:"POST",
-            url:"<%=basePath%>/dictionaries/updateDict.do",
+            url:"<%=basePath%>/worksLabelMgr/updateLabel.do",
             data:{
-                uid:uid,
-                groupname:groupname,
-                keyname:keyname,
-                keyvalue:keyvalue,
-                parentid:parentid,
-                remarket:remarket
+                uid:$("#uid").val(),
+                codeid:$("#codeid").val(),
+                labelname:$("#labelname").val(),
+                labelnum:$("#reqNum").val()
             },
             success:function(data){
                 if(data!=="failed"){
                     successInfo("修改成功!");
-                    $.fn.zTree.init($("#DictTree"), setting);//页面树初始化
                     $('#cusTable').bootstrapTable('refresh');//初始化数据
                     $('#dictForm').data('bootstrapValidator').resetForm(true);
                 }else{
@@ -346,7 +298,7 @@
         var ids = getIdSelections();
         $.ajax({
             type: "POST",
-            url: "<%=basePath%>/dictionaries/delDictById.do",
+            url: "<%=basePath%>/worksLabelMgr/delLabelList.do",
             data: {
                 ids:getCheckUid()
             },
@@ -361,7 +313,7 @@
                 hideWait();
                 if(data!=="failed"){
                     $('#cusTable').bootstrapTable('remove', {
-                        field: 'uid',
+                        field: 'ffid',
                         values: ids
                     });
                     successInfo("删除成功!")
@@ -376,14 +328,17 @@
     //取表格行数用于表格行的移除
     function getIdSelections() {
         return $.map($('#cusTable').bootstrapTable('getAllSelections'), function (row) {
-            return row.uid;
+            return row.ffid;
         });
     }
     //获取UID用于后台操作
     function getCheckUid(){
         var uids="";
-        $('#cusTable').find('input[name="btSelectItem"]:checked').each(function(){
-            uids += $(this).val();
+//        $('#cusTable').find('input[name="btSelectItem"]:checked').each(function(){
+//            uids += $(this).val();
+//        });
+        $.map($('#cusTable').bootstrapTable('getAllSelections'), function (row) {
+            uids += row.uid;
         });
         return uids;
     }
@@ -396,7 +351,11 @@
 <div style="padding:0 10px;float: left;width:180px;height:100%;">
     <div class="panel panel-primary" style="margin-top: 10px;">
         <div class="panel-heading">作品分类</div>
-        <ul style="background: none;border: none;" id="DictTree" class="ztree"></ul>
+
+        <div style="width: 100%;height: 600px;overflow-y: auto;">
+            <ul style="background: none;border: none;" id="DictTree" class="ztree"></ul>
+        </div>
+        <%--<ul style="background: none;border: none;" id="DictTree" class="ztree"></ul>--%>
     </div>
 
 </div>
@@ -415,10 +374,10 @@
     <table id="cusTable" class="table">
         <thead>
         <tr>
-            <th data-field="uid" data-checkbox="true" align="center"></th>
-            <th data-field="groupname" data-editable="false"  align="center">作品类别</th>
-            <th data-field="keyname" data-editable="false" align="center">标签名称</th>
-            <th data-field="keyvalue" data-editable="false" align="center">标签引用数量</th>
+            <th data-field="ffid" data-checkbox="true" align="center"></th>
+            <th data-field="codename" data-editable="false"  align="center">作品类别</th>
+            <th data-field="labelname" data-editable="false" align="center">标签名称</th>
+            <th data-field="labelnum" data-editable="false" align="center">标签引用数量</th>
         </tr>
         </thead>
     </table>
@@ -436,6 +395,7 @@
                     <div id="dictForm" method="post">
                         <div class="col-md-6">
                             <input class="form-control" id="uid"  type="hidden">
+                            <input class="form-control" id="codeid"  type="hidden">
                             <div class="form-group">
                                 <label>标签名称</label>
                                 <input class="form-control" id="labelname" name="labelname"  type="text">
@@ -447,7 +407,7 @@
 
                             <div class="form-group">
                                 <label>标签引用次数</label>
-                                <input class="form-control" value="0" id="reqNum" type="text" readonly>
+                                <input class="form-control" value="0" id="reqNum" name="reqNum"  type="text" readonly>
                             </div>
                         </div>
                     </div>

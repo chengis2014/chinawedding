@@ -61,21 +61,22 @@ public class WorksLabelController extends  BaseController{
     public String addLabel(HttpServletRequest request, HttpServletResponse response, Model model){
         //获取提交参数
         logger.info("addLabel");
-        String jsonTxt = request.getParameter("jsontxt") == null ? "" : request.getParameter("jsontxt");
-        if(jsonTxt.equals("")){
-            ResultUtils.writeFailed(response);
-        }
-        JSONObject jsonObj = JSON.parseObject(jsonTxt );
+        String labelname = request.getParameter("labelname") == null ? "" : request.getParameter("labelname");
+        String labelnum = request.getParameter("labelnum") == null ? "" : request.getParameter("labelnum");
+        String codeid = request.getParameter("codeid") == null ? "" : request.getParameter("codeid");
+
         //转换为Model
         PageData trainPageData = new PageData();
         trainPageData.put("uid", UUID.randomUUID().toString());
-        trainPageData.put("labelname",jsonObj.getString("labelname"));//标签名称
-        trainPageData.put("labelnum",jsonObj.getString("labelnum"));//标签被使用次数
-        trainPageData.put("codeid",jsonObj.getString("codeid"));//所属作品分类ID
+        trainPageData.put("labelname",labelname);//标签名称
+        trainPageData.put("labelnum",labelnum);//标签被使用次数
+        trainPageData.put("codeid",codeid);//所属作品分类ID
         //插入数据库
         try{
-            labelService.addWorklabel(trainPageData);
+            if(labelService.addWorklabel(trainPageData)>0)
             ResultUtils.writeSuccess(response);
+            else
+            ResultUtils.writeFailed(response);
         } catch (Exception e) {
             logger.error("addLabel e="+e.getMessage());
             ResultUtils.writeFailed(response);
@@ -106,23 +107,25 @@ public class WorksLabelController extends  BaseController{
     public String updateLabel(HttpServletRequest request, HttpServletResponse response){
         //获取提交参数
         logger.info("updateLabel");
-        String jsonTxt = request.getParameter("jsontxt") == null ? "" : request.getParameter("jsontxt");
-        if(jsonTxt.equals("")){
-            ResultUtils.writeFailed(response);
-        }
 
-        JSONObject jsonObj = JSON.parseObject(jsonTxt );
+        String strUid = request.getParameter("uid") == null ? "" : request.getParameter("uid");
+        String labelname = request.getParameter("labelname") == null ? "" : request.getParameter("labelname");
+        String labelnum = request.getParameter("labelnum") == null ? "" : request.getParameter("labelnum");
+        String codeid = request.getParameter("codeid") == null ? "" : request.getParameter("codeid");
+
 
         //转换为作品Model
         PageData trainPageData = new PageData();
-        trainPageData.put("uid", UUID.randomUUID().toString());
-        trainPageData.put("labelname",jsonObj.getString("labelname"));//标签名称
-        trainPageData.put("labelnum",jsonObj.getString("labelnum"));//标签被使用次数
-        trainPageData.put("codeid",jsonObj.getString("codeid"));//所属作品分类ID
+        trainPageData.put("uid", strUid);
+        trainPageData.put("labelname",labelname);//标签名称
+        trainPageData.put("labelnum",labelnum);//标签被使用次数
+        trainPageData.put("codeid",codeid);//所属作品分类ID
         //插入数据库
         try{
-            labelService.updateWorklabel(trainPageData);
+            if(labelService.updateWorklabel(trainPageData)>0)
             ResultUtils.writeSuccess(response);
+            else
+                ResultUtils.writeFailed(response);
         } catch (Exception e) {
             logger.error("updateLabel e="+e.getMessage());
             ResultUtils.writeFailed(response);

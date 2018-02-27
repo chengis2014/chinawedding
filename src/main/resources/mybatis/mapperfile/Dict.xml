@@ -59,4 +59,13 @@
   <delete id="delChildByFid">
     delete from tb_dict where parentid = #{parentid,jdbcType=VARCHAR}
   </delete>
+  <!--获取指定节点-->
+  <select id="getDictForKeys" resultMap="BaseResultMap">
+    select * from tb_dict where locate(keyvalue,CONCAT('%',CONCAT(#{keyvalue,jdbcType=VARCHAR},'%')))
+    <!--<if test="labels != null and labels != ''">-->
+      <!--<foreach collection="labels" index="index" item="label" open=" (" separator=" OR " close=")">-->
+        <!--(worklabel LIKE CONCAT('%', CONCAT(#{label}, '%')))-->
+      <!--</foreach>-->
+    <!--</if>-->
+  </select>
 </mapper>
