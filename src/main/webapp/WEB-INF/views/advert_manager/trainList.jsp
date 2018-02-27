@@ -175,8 +175,9 @@
     function newModule(){
         $("#myModalLabel").html("新建名师信息");
         $('#newModal').modal('show');
+        $('#fid').val('');
         resetForm();
-    }   //显示新建窗口
+    }
     function editModule(){
         var arr = $('#cusTable').bootstrapTable('getSelections');
         if(arr.length>0){

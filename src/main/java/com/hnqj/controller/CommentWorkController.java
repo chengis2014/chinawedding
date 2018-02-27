@@ -49,7 +49,8 @@ public class CommentWorkController extends  BaseController{
         pageData.put("offset",currentPage);
         pageData.put("limit",showCount);
         List<Comment> list=commentService.getAllComment(pageData);
-        List<Comment> listCount=commentService.selectCommentList();
+        pageData.put("limit",0);
+        List<Comment> listCount=commentService.getAllComment(pageData);
         tablereturn.setTotal(listCount.size());
         tablereturn.setRows(list);
         ResultUtils.write(response,toJson(tablereturn));

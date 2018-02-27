@@ -15,8 +15,7 @@
     String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path;
 
     Date dNow = new Date( );
-    SimpleDateFormat ft =
-            new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss");
+    SimpleDateFormat ft = new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss");
     String strCurrent=ft.format(dNow);
 
 %>
@@ -141,32 +140,127 @@
     $(document).ready(function () {
         //调用函数，初始化表格
         initTable();
-
+        initValidate();
         $("button[title='刷新']").hide();
         $("#defaultForm").submit(function(ev){ev.preventDefault();});
-
-        $('#Modal').modal('show');
+        $('#validateBtn').click(function() {
+            var bootstrapValidator = $("#defaultForm").data('bootstrapValidator');//必须
+            bootstrapValidator.validate();
+            if(bootstrapValidator.isValid()) {
+                //  saveModule();
+                submit();
+            }else{
+                alert("请按照要求填写");
+                return;
+            }
+        });
+        //$('#Modal').modal('show');
         $('.form_datetime').datetimepicker({
+            format: "yyyy-mm-dd",
             language:  'zh-CN',
             weekStart: 1,
-            todayBtn:  1,
-            autoclose: 1,
-            todayHighlight: 1,
+//            todayBtn:  1,
+//            autoclose: 1,
+//            todayHighlight: 1,
             startView: 2,
-            forceParse: 0,
+            minView:2,maxView:2,
+            pickerPosition: "top-left",
             showMeridian: 1
         });
         //newModule();
+        //初始广告位置列表
+        $.ajax({
+            type:"post",
+            url: "<%=basePath%>/advert_pos/getAdPositionList.do",
+            data:{limit:0},
+            success: function(data){
+                if(data!=="failed"){
+                    var obj = eval('(' + data + ')');
+                    $('#sel_adpos').append("<option value=''></option>");
+                    if(obj.rows!==undefined){
+                        for(var i=0;i<obj.rows.length;i++){
+                            $('#sel_adpos').append("<option value=\'"+obj.rows[i].uid+"\'>"+obj.rows[i].adposition+"</option>");
+                        }
+                    }
+                }
+            }
+        });
+        //初始客户信息列表
+        $.ajax({
+            type:"post",
+            url: "<%=basePath%>/adClientMgr/getClientList.do",
+            data:{limit:0},
+            success: function(data){
+                if(data!=="failed"){
+                    var obj = eval('(' + data + ')');
+                    $('#sel_adclient').append("<option value=''></option>");
+                    if(obj.rows!==undefined){
+                        for(var i=0;i<obj.rows.length;i++){
+                            $('#sel_adclient').append("<option value=\'"+obj.rows[i].clintuid+"\'>"+obj.rows[i].clientname+"</option>");
+                        }
+                    }
+                }
+            }
+        });
 
     });
 
+    //添加和编辑提交按钮
+    function submit(){
+
+        saveModule();
+    }
     //显示新建窗口
     function newModule(){
-        /* $('#roleName').val("");
-         $('#roleDescription').val("");
-         $('#roleCreator').val("");*/
+
+        $('#fid').val('');
+        $('#txt_adprice').val('');
+        $('#txt_url').val('');
+        $('#txt_adurl').val('');
+        $("#sel_adpos").find("option[value='']").attr("selected",true);
+        $("#sel_adclient").find("option[value='']").attr("selected",true);
+        $("#sel_adtype").find("option[value='']").attr("selected",true);
+        document.getElementById('up_imgfile').files=null;
+        $('[data-link-field="dt_etime"]').find(".form-control").val('');
+        $('[data-link-field="dt_stime"]').find(".form-control").val('');
+
+        $('#dt_etime').val('');
+        $('#dt_stime').val('');
         $("#myModalLabel").html("发布广告");
         $('#newModal').modal('show');
+        resetForm();
+    }
+    function editModule(){
+        var arr = $('#cusTable').bootstrapTable('getSelections');
+        if(arr.length>0){
+            var fid = getIdSelections();
+            if(fid.length>1){
+                warningInfo("请选择一条记录");
+            }else {
+                resetForm();
+                $("#myModalLabel").html("编辑广告信息");
+                $('#newModal').modal('show');
+                resetForm();
+                $.map($('#cusTable').bootstrapTable('getAllSelections'), function (row) {
+                    $('#fid').val(row.aduid);
+                    $('#txt_adprice').val(row.adprice);
+                    $('#txt_url').val(row.imgurl);
+                    $('#txt_adurl').val(row.adurl);
+                    $("#sel_adpos").find("option[value='"+row.adpositionid+"']").attr("selected",true);
+                    $("#sel_adclient").find("option[value='"+row.clientuid+"']").attr("selected",true);
+                    $("#sel_adtype").find("option[value='"+row.adtype+"']").attr("selected",true);
+
+                    $('[data-link-field="dt_etime"]').find(".form-control").val(row.adendtime.substring(0,10));
+                    $('[data-link-field="dt_stime"]').find(".form-control").val(row.adstarttime.substring(0,10));
+                    $('#dt_etime').val(row.adendtime);
+                    $('#dt_stime').val(row.adstarttime);
+                });
+
+            }
+        } else{
+            warningInfo("请选择要修改的记录");
+        }
+
     }
     function initValidate(){
         $('#defaultForm').bootstrapValidator({
@@ -203,27 +297,101 @@
     }
     //提交保存
     function saveModule(){
-        var opurl=$('#fid').val()==""?"<%=basePath%>/role/addRole.do":"<%=basePath%>/role/updateRole.do";
+        var files =document.getElementById('up_imgfile').files;
+        if(files.length==0&&$('#txt_url').val()=='')
+        {
+            alert("请选择上传图片或输入图片路径!!");
+            return;
+        }
+
+        var opurl=$('#fid').val()==""?"<%=basePath%>/advertInfoMgr/addAdvertInfo.do":"<%=basePath%>/advertInfoMgr/updateAdvertInfo.do";
+        if(window.FormData) {
+            var formData = new FormData();
+            // 建立一个upload表单项，值为上传的文件
+            formData.append('upload', document.getElementById('up_imgfile').files[0]);
+            formData.append('uid', $('#fid').val());
+            formData.append('imgurl', $('#txt_url').val());
+            formData.append('adpositionid', $('#sel_adpos').val());//.find("option:selected").text()
+            formData.append('adprice',  $('#txt_adprice').val());
+            formData.append('adurl',$('#txt_adurl').val());
+            formData.append('clientuid', $('#sel_adclient').val());
+            formData.append('adtype', $('#sel_adtype').val());
+            formData.append('adstarttime', $('#dt_stime').val());
+            formData.append('adendtime', $('#dt_etime').val());
+            formData.append('delflag', $("input[name='isstart']:checked").val());
+            $.ajax({
+                type: "POST",
+                url: opurl,
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function (data) {
+                    hideWait();
+                    if(data!=="failed"){
+                        successInfo("保存成功!")
+                        $('#defaultForm').data('bootstrapValidator').resetForm(true);
+                        $('#cusTable').bootstrapTable('refresh');//初始化数据
+                    }else{
+                        errorInfo("保存失败");
+                        $('#cusTable').bootstrapTable('refresh');//初始化数据
+                    }
+                }
+            });
+            return;
+        }
+        else
+            alert("请更换浏览器，当前浏览器不支持文件上传!!");
+
+        $('#newModal').modal('hide');
+    }
+
+    function getCheckUid(){
+        var uids="";
+        $.map($('#cusTable').bootstrapTable('getAllSelections'), function (row) {
+            uids += row.aduid+',';
+        });
+        return uids;
+    }
+    function delRow(){
+        var arr = $('#cusTable').bootstrapTable('getSelections');
+        if(arr.length>0){
+            (confirmInfo("确认删除当前记录?")).then(function (status) {
+                if (status==true) {
+                    deleteModule();
+                }
+            });
+        } else{
+            warningInfo("请选择要删除的记录");
+        }
+    }
+    //删除
+    function deleteModule(){
+        console.info("deleteModule");
+        var delids = getIdSelections();
         $.ajax({
-            type:"post",
-            url: opurl,
-            data:{
-                fid:$('#fid').val(),
-                roleName:$('#roleName').val(),
-                roleDescription: $('#roleDescription').val(),
-                roleCreator:  $('#roleCreator').val(),
-                roleCtime:$('#roleCtime').val(),
-                roleEnabled: $('#roleEnabled').val(),
+            type: "POST",
+            url: "<%=basePath%>/advertInfoMgr/delAdvertInfoList.do",
+            data: {
+                ids:getCheckUid()
+            },
+            beforeSend : function() {
+                submitWait();
+            },
+            error : function() {
+                hideWait();
+                errorInfo("删除记录失败");
             },
             success: function(data){
                 hideWait();
                 if(data!=="failed"){
-                    successInfo("保存成功!")
-                    $('#defaultForm').data('bootstrapValidator').resetForm(true);
+                    $('#cusTable').bootstrapTable('remove', {
+                        field: 'uid',
+                        values: delids
+                    });
+                    successInfo("删除成功!")
                     $('#cusTable').bootstrapTable('refresh');//初始化数据
                 }else{
-                    errorInfo("保存失败");
-                    $('#defaultForm').data('bootstrapValidator').resetForm(true);
+                    errorInfo("删除记录失败");
                     $('#cusTable').bootstrapTable('refresh');//初始化数据
                 }
             }
@@ -231,6 +399,16 @@
         $('#newModal').modal('hide');
     }
 
+    //取表格行数用于表格行的移除
+    function getIdSelections() {
+        return $.map($('#cusTable').bootstrapTable('getAllSelections'), function (row) {
+            return row.uid;
+        });
+    }
+
+    function resetForm(){
+        $('#defaultForm').data('bootstrapValidator').resetForm(true);
+    }
 
 </script>
 <body id="loading" class="style_body">
@@ -246,9 +424,9 @@
             <button id="remove" class="btn btn-info" onclick="delRow()">
                 <i class="glyphicon glyphicon-remove"></i> 删除
             </button>
-            <button id="view" class="btn btn-info" onclick="viewImage()">
-                <i class="glyphicon glyphicon-remove"></i> 预览
-            </button>
+            <%--<button id="view" class="btn btn-info" onclick="viewImage()">--%>
+                <%--<i class="glyphicon glyphicon-remove"></i> 预览--%>
+            <%--</button>--%>
             <button id="refresh" class="btn btn-info" name="refresh" >
                 <i class="glyphicon glyphicon-refresh"></i> 刷新
             </button>
@@ -257,14 +435,14 @@
             <thead>
             <tr>
                 <th data-field="uid" data-checkbox="true" align="center"></th>
-                <th data-field="adposition" data-editable="false"  align="center" >广告位名称</th>
-                <th data-field="imgurl" data-editable="false"  align="center" >缩略图</th>
+                <th data-field="adposname" data-editable="false"  align="center" >广告位名称</th>
+                <%--<th data-field="imgurl" data-editable="false"  align="center" >缩略图</th>--%>
                 <th data-field="adtype" data-editable="false"  align="center" >广告类型</th>
+                <th data-field="adclientname" data-editable="false"  align="center" >所属客户</th>
                 <th data-field="adprice" data-editable="false"  align="center" >发布价格</th>
                 <th data-field="starttime" data-editable="false"  align="center" >开始时间</th>
                 <th data-field="endtime" data-editable="false"  align="center" >结束时间</th>
                 <th data-field="clickcount" data-editable="false"  align="center" >点击量</th>
-                <th data-field="clientname" data-editable="false"  align="center" >广告客户</th>
                 <th data-field="creator" data-editable="false"  align="center" >发布人</th>
                 <th data-field="createtime" data-editable="false"  align="center" >发布时间</th>
             </tr>
@@ -286,18 +464,14 @@
                             <div class="form-group">
                                 <label>广告位置</label>
                                 <select class="form-control" id="sel_adpos"  name="sel_adpos" >
-                                <option value="1"> 夺夺</option>
-                                <option value="2">夺一上地 </option>
-                                <option value="3">3</option>
-                                <option value="4">4</option>
-                                <option value="5">5</option>
-                            </select>
+
+                                </select>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>广告价格</label>
-                                <input class="form-control" id="txt_adprice"  name="coursename" placeholder="广告价格" type="text">
+                                <input class="form-control" id="txt_adprice"  name="txt_adprice" placeholder="广告价格" type="text">
                             </div>
                         </div>
                     </div>
@@ -307,11 +481,10 @@
                                 <label>广告类型</label>
 
                                 <select class="form-control" id="sel_adtype"  name="sel_adtype" >
-                                    <option value="1"> 夺夺</option>
-                                    <option value="2">夺一上地 </option>
-                                    <option value="3">3</option>
-                                    <option value="4">4</option>
-                                    <option value="5">5</option>
+                                    <option value="图片">图片</option>
+                                    <option value="视频">视频</option>
+                                    <option value="链接">链接</option>
+                                    <option value="其他">其他</option>
                                 </select>
                             </div>
                         </div>
@@ -328,7 +501,7 @@
                                 <label>开始时间</label>
                                 <!--指定 date标记-->
                                 <div class="input-group date form_datetime" data-date="<%=strCurrent%>"
-                                     data-date-format="yyyy-mm-dd hh:ii" data-link-field="dt_stime">
+                                     data-date-format="yyyy-mm-dd" data-link-field="dt_stime">
                                     <input class="form-control" size="16" type="text" value="" readonly>
                                     <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
                                     <span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
@@ -341,7 +514,7 @@
                                 <label>结束时间</label>
                                 <!--指定 date标记-->
                                 <div class="input-group date form_datetime" data-date="<%=strCurrent%>"
-                                     data-date-format="yyyy-mm-dd hh:ii" data-link-field="dt_etime">
+                                     data-date-format="yyyy-mm-dd " data-link-field="dt_etime">
                                     <input class="form-control" size="16" type="text" value="" readonly>
                                     <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
                                     <span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
@@ -371,11 +544,7 @@
                             <div class="form-group">
                                 <label>广告联系人</label>
                                 <select class="form-control" id="sel_adclient"  name="sel_adclient" >
-                                    <option value="1"> 夺夺</option>
-                                    <option value="2">夺一上地 </option>
-                                    <option value="3">3</option>
-                                    <option value="4">4</option>
-                                    <option value="5">5</option>
+
                                 </select>
                             </div>
                         </div>

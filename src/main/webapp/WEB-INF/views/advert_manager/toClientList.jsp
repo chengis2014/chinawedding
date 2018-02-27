@@ -121,11 +121,7 @@
             var bootstrapValidator = $("#defaultForm").data('bootstrapValidator');//必须
             bootstrapValidator.validate();
             if(bootstrapValidator.isValid()) {
-                var val=$("input[name='mdName']").val();
-                var val=$("input[name='mdCode']").val();
-                var val=$("input[name='mdOrdernum']").val();
-                var val=$("input[name='mdAddress']").val();
-                var val=$("input[name='mdImg']").val();
+
                 //  saveModule();
                 submit();
             }else{
@@ -136,55 +132,13 @@
 
     });
 
-
     //显示新建窗口
     function newModule(){
         initNewModule();
         $('#newModal').modal('show');
         $("#myModalLabel").html("新建客户");
-        $.ajax({
-            type: "post",
-            url: "<%=basePath%>/module/getParentModule.do",
-            data: {},
-            success: function (data) {
-                $("#pmId").find("option").remove();
-                if(data!=="failed"){
-                    var msg = eval("(" + data + ")");
-                    $.each(msg, function(name, value) {
-                        var varItem2 = new Option(value.mdName,value.uid);
-                        $("#pmId").append(varItem2);
-                    });
-                }else{
-                    errorInfo("保存失败");
-                    $('#cusTable').bootstrapTable('refresh');//初始化数据
-                }
-            }
-        });
-    }
-    //初始化父菜单
-    function initParentModule(pm_id){
-        $.ajax({
-            type: "post",
-            url: "<%=basePath%>/module/getParentModule.do",
-            data: {},
-            success: function (data) {
-                $("#pmId").find("option").remove();
-                if(data!=="failed"){
-                    var msg = eval("(" + data + ")");
-                    $.each(msg, function(name, value) {
-                        var varItem2 = new Option(value.mdName,value.uid);
-                        if(pm_id==value.fid){
-                            $(varItem2).attr("selected","selected");
-                        }
-                        $("#pmId").append(varItem2);
-                    });
-                }else{
-                    errorInfo("保存失败");
-                    $('#cusTable').bootstrapTable('refresh');//初始化数据
-                }
-            }
-        });
-    }
+   }
+
     //添加和编辑提交按钮
     function submit(){
         var UserLabel=$("#myModalLabel").text();//添加编辑用户窗口
@@ -197,13 +151,10 @@
     //初始化新建菜单表单
     function initNewModule(){
         $('#fid').val("");
-        $('#mdName').val("");
-        $('#mdCode').val("");
-        $('#mdOrdernum').val("");
-        $('#mdAddress').val("");
-        $('#mdImg').val("");
-        $('#mdMethod').val("");
-        $('#mdIschild').val("");
+        $('#clientname').val("");
+        $('#address').val("");
+        $('#email').val("");
+        $('#phone').val("");
     }
 
     function initValidate(){
@@ -215,76 +166,48 @@
                 validating: 'glyphicon glyphicon-refresh'
             },
             fields: {
-                mdName: {
+                clientname: {
                     validators: {
                         notEmpty: {
-                            message: '菜单名称不能为空'
+                            message: '客户名称不能为空'
                         }
                     }
                 },
-                mdCode: {
+                phone: {
                     validators: {
                         notEmpty: {
-                            message: '模块代码不能为空'
+                            message: '联系电话不能为空'
                         }
                     }
                 },
-                mdOrdernum: {
+                address: {
                     validators: {
                         notEmpty: {
-                            message: '显示顺序不能为空'
+                            message: '联系地址不能为空'
                         }
                     }
                 },
-                mdAddress: {
+                email: {
                     validators: {
                         notEmpty: {
-                            message: '模块地址不能为空'
-                        }
-                    }
-                },
-                mdImg: {
-                    validators: {
-                        notEmpty: {
-                            message: '图标不能为空'
+                            message: '电子邮箱不能为空'
                         }
                     }
                 }
             }
         });
     }
-    /*
-     * 是否有子节点
-     * */
-    function ischecked(obj){
 
-    }
     //提交保存
     function saveModule(){
-        var obj =document.getElementById("mdIschild");
-        var pmId="";
-        if(obj.checked){
-            $('#mdIschild').val(true);
-            pmId=$("#pmId").val();
-        }else{
-            $('#mdIschild').val(false);
-            pmId=0;
-        }
-
-        // var opurl=$('#fid').val()==""?"/module/addModule.do":"/module/updateModule.do";
         $.ajax({
             type:"post",
-            url: "<%=basePath%>/module/addModule.do",
+            url: "<%=basePath%>/adClientMgr/addClient.do",
             data:{
-                fid:$('#fid').val(),
-                mdName:$('#mdName').val(),
-                mdCode: $('#mdCode').val(),
-                pmId:  pmId,
-                mdOrdernum:$('#mdOrdernum').val(),
-                mdAddress: $('#mdAddress').val(),
-                mdImg: $('#mdImg').val(),
-                mdMethod: $('#mdMethod').val(),
-                mdIschild: $('#mdIschild').val()
+                clientname:$('#clientname').val(),
+                address: $('#address').val(),
+                phone:$('#phone').val(),
+                email: $('#email').val()
             },
             success: function(data){
                 hideWait();
@@ -308,29 +231,17 @@
             if(fid.length>1){
                 warningInfo("请选择一条记录");
             }else {
-                $.ajax({
-                    type: "post",
-                    url: "<%=basePath%>/module/findModuleByFid.do",
-                    data: {fid: getCheckFid()},
-                    success: function (data) {
-                        if (data !== "failed") {
-                            $('#newModal').modal('show');
-                            $("#myModalLabel").html("修改菜单");
-                            var msg = eval("(" + data + ")");
-                            $('#fid').val(msg.uid);
-                            $('#mdName').val(msg.mdName);
-                            $('#mdCode').val(msg.mdCode);
-                            initParentModule(msg.pmId);
-                            $('#mdOrdernum').val(msg.mdOrdernum);
-                            $('#mdAddress').val(msg.mdAddress);
-                            $('#mdImg').val(msg.mdImg);
-                            $('#mdMethod').val(msg.mdMethod);
-                            if (msg.mdIschild == "true") {
-                                $('#mdIschild').attr("checked", "checked");
-                            }
-                        }
-                    }
-                })
+
+                $.map($('#cusTable').bootstrapTable('getAllSelections'), function (row) {
+                    $('#fid').val(row.clintuid);
+                    $('#clientname').val(row.clientname);
+                    $('#address').val(row.address);
+                    $('#phone').val(row.phone);
+                    $('#email').val(row.email);
+                });
+
+                $('#newModal').modal('show');
+                $("#myModalLabel").html("修改客户信息");
             }
         } else{
             warningInfo("请选择要修改的记录");
@@ -338,28 +249,16 @@
     }
     //更新
     function updateModule(){
-        var obj =document.getElementById("mdIschild");
-        var pmId="";
-        if(obj.checked){
-            $('#mdIschild').val(true);
-            pmId=$("#pmId").val();
-        }else{
-            $('#mdIschild').val(false);
-            pmId=0;
-        }
+
         $.ajax({
             type:"post",
-            url:  "<%=basePath%>/module/updateModule.do",
+            url:  "<%=basePath%>/adClientMgr/updateClient.do",
             data:{
-                fid:$('#fid').val(),
-                mdName:$('#mdName').val(),
-                mdCode: $('#mdCode').val(),
-                pmId:  pmId,
-                mdOrdernum:$('#mdOrdernum').val(),
-                mdAddress: $('#mdAddress').val(),
-                mdImg: $('#mdImg').val(),
-                mdMethod: $('#mdMethod').val(),
-                mdIschild: $('#mdIschild').val()
+                uid:$('#fid').val(),
+                clientname:$('#clientname').val(),
+                address: $('#address').val(),
+                phone:$('#phone').val(),
+                email: $('#email').val()
             },
             success: function(data){
                 hideWait();
@@ -392,11 +291,12 @@
     function deleteModule(){
         console.info("deleteModule");
         var ids = getIdSelections();
+         var idss =getCheckFid();
         $.ajax({
             type: "POST",
-            url: "<%=basePath%>/module/delModulefIds.do",
+            url: "<%=basePath%>/adClientMgr/delClientList.do",
             data: {
-                ids:getCheckFid()
+                ids:idss
             },
             beforeSend : function() {
                 submitWait();
@@ -432,8 +332,11 @@
     //获取FID用于后台操作
     function getCheckFid(){
         var fids="";
-        $('#cusTable').find('input[name="btSelectItem"]:checked').each(function(){
-            fids += $(this).val()+',';
+//        $('#cusTable').find('input[name="btSelectItem"]:checked').each(function(){
+//            fids += $(this).val()+',';
+//        });
+        $.map($('#cusTable').bootstrapTable('getAllSelections'), function (row) {
+            fids += row.clintuid+',';
         });
         return fids;
     }
@@ -462,7 +365,7 @@
         <table id="cusTable" class="table" >
             <thead>
             <tr>
-                <th data-field="clintuid" data-checkbox="true" align="center"></th>
+                <th data-field="uid" data-checkbox="true" align="center"></th>
                 <th data-field="clientname" data-editable="false"  align="center" >客户名称</th>
                 <th data-field="phone"  data-editable="false" align="center">联系电话</th>
                 <th data-field="address"  data-editable="false" align="center">联系地址</th>
@@ -489,12 +392,12 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label>客户名称</label>
-                            <input class="form-control" id="mdName" name="mdName" placeholder="客户名称" type="text">
+                            <input class="form-control" id="clientname" name="clientname" placeholder="客户名称" type="text">
                         </div>
                         <!-- /.form-group -->
                         <div class="form-group">
                             <label>联系地址</label>
-                            <input class="form-control" id="mdCode"  name="mdCode" placeholder="联系地址"  type="text">
+                            <input class="form-control" id="address"  name="address" placeholder="联系地址"  type="text">
                         </div>
                         <!-- /.form-group -->
                     </div>
@@ -502,12 +405,12 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label>联系电话</label>
-                            <input class="form-control" id="mdAddress"  name="mdAddress" placeholder="联系电话" type="text">
+                            <input class="form-control" id="phone"  name="phone" placeholder="联系电话" type="text">
                         </div>
                         <!-- /.form-group -->
                         <div class="form-group">
                             <label>电子邮箱</label>
-                            <input class="form-control" id="mdImg"  name="mdImg" placeholder="电子邮箱" type="text">
+                            <input class="form-control" id="email"  name="email" placeholder="电子邮箱" type="text">
                         </div>
                         <!-- /.form-group -->
                     </div>

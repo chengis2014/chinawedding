@@ -74,15 +74,15 @@ protected final Log logger = LogFactory.getLog(getClass());
 	}
 	 return clientList; 
 	}
-	public List<Client> selectClientList() {
-	 logger.info("查询所有Client");
-	List<Client>	clientList=null;
-	 try { 
-		clientList = (List<Client>) daoSupport.findForList("ClientMapper.selectClientList",null);
-	 }catch (Exception e){ 
-	 e.printStackTrace(); 
-	 clientList=null; 
-	}
-	 return clientList; 
-	}
+//	public List<Client> selectClientList() {
+//	 logger.info("查询所有Client");
+//	List<Client>	clientList=null;
+//	 try {
+//		clientList = (List<Client>) daoSupport.findForList("ClientMapper.selectClientList",null);
+//	 }catch (Exception e){
+//	 e.printStackTrace();
+//	 clientList=null;
+//	}
+//	 return clientList;
+//	}
 }
