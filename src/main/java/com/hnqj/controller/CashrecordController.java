@@ -38,17 +38,45 @@ public class CashrecordController extends  BaseController{
     @RequestMapping("/getCashList.do")
     public String getCashList(HttpServletRequest request, HttpServletResponse response){
         logger.info("getCashList");
+        String cashState = request.getParameter("cashstate") == null ? "" : request.getParameter("cashstate");
         int currentPage = request.getParameter("offset") == null ? 0 : Integer.parseInt(request.getParameter("offset"));
-        int showCount = request.getParameter("limit") == null ? 50 : Integer.parseInt(request.getParameter("limit"));
+        int showCount = request.getParameter("limit") == null ? 20 : Integer.parseInt(request.getParameter("limit"));
         TableReturn tablereturn =new TableReturn();
         PageData pageData = new PageData();
         pageData.put("offset",currentPage);
         pageData.put("limit",showCount);
+        pageData.put("cashstate",cashState);
         List<Cashrecord> list=dealService.getAllCashrecord(pageData);
-        List<Cashrecord> listCount=dealService.selectCashrecordList();
+        pageData.put("limit",0);
+        List<Cashrecord> listCount=dealService.getAllCashrecord(pageData);
         tablereturn.setTotal(listCount.size());
         tablereturn.setRows(list);
         ResultUtils.write(response,toJson(tablereturn));
+        return null;
+    }
+    //更新审核结果
+    @RequestMapping("/checkCash.do")
+    public String checkCash(HttpServletRequest request, HttpServletResponse response){
+        logger.info("checkCash");
+        String cashuid = request.getParameter("cashuid") == null ? "" : request.getParameter("cashuid");
+        String cashstate = request.getParameter("cashstate") == null ? "0" : request.getParameter("cashstate");
+        try {
+            PageData pageData = new PageData();
+            pageData.put("cashuid", cashuid);
+            pageData.put("cashstate", cashstate);
+            pageData.put("checkpeople", getUser().getUid());
+            pageData.put("checktime", getCurrentTime());
+
+            if(dealService.updateCashrecord(pageData)>0)
+                ResultUtils.writeSuccess(response);
+            else
+                ResultUtils.writeFailed(response);
+
+        }
+        catch (Exception ee)
+        {
+            ResultUtils.writeFailed(response);
+        }
         return null;
     }
 }

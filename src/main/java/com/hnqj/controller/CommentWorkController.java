@@ -42,12 +42,14 @@ public class CommentWorkController extends  BaseController{
     @RequestMapping("/getCommentList.do")
     public String getCommentList(HttpServletRequest request, HttpServletResponse response){
         logger.info("getCommentList");
+        String delflag = request.getParameter("delflg") == null ? "" : request.getParameter("delflg");
         int currentPage = request.getParameter("offset") == null ? 0 : Integer.parseInt(request.getParameter("offset"));
         int showCount = request.getParameter("limit") == null ? 50 : Integer.parseInt(request.getParameter("limit"));
         TableReturn tablereturn =new TableReturn();
         PageData pageData = new PageData();
         pageData.put("offset",currentPage);
         pageData.put("limit",showCount);
+        pageData.put("delflg",delflag);
         List<Comment> list=commentService.getAllComment(pageData);
         pageData.put("limit",0);
         List<Comment> listCount=commentService.getAllComment(pageData);
@@ -108,32 +110,25 @@ public class CommentWorkController extends  BaseController{
         return "";
     }
     //修改更新一条记录
-    @RequestMapping("/updateComment.do")
-    public String updateComment(HttpServletRequest request, HttpServletResponse response){
+    @RequestMapping("/checkComment.do")
+    public String checkComment(HttpServletRequest request, HttpServletResponse response){
         //获取提交参数
-        logger.info("updateComment");
-        String jsonTxt = request.getParameter("jsontxt") == null ? "" : request.getParameter("jsontxt");
-        if(jsonTxt.equals("")){
-            ResultUtils.writeFailed(response);
-        }
-        JSONObject jsonObj = JSON.parseObject(jsonTxt );
+        logger.info("checkComment");
+        String struid = request.getParameter("uid") == null ? "" : request.getParameter("uid");
+        String delflag = request.getParameter("delflag") == null ? "" : request.getParameter("delflag");
 
         //转换为作品Model
         PageData trainPageData = new PageData();
-        trainPageData.put("uid", jsonObj.getString("uid"));
-        trainPageData.put("worksid",jsonObj.getString("worksid"));//作品id
-        trainPageData.put("commentuserid",jsonObj.getString("commentuserid"));//评论人id
-        trainPageData.put("commenttime",jsonObj.getString("commenttime"));//评论时间
-        trainPageData.put("commentinfo",jsonObj.getString("commentinfo"));//评论内容
-        trainPageData.put("parentid",jsonObj.getString("parentid"));//父级评论id
-        trainPageData.put("okNums",jsonObj.getString("okNums"));//评论点赞数
-        trainPageData.put("delflag",0);//删除标志 默认0
+        trainPageData.put("uid", struid);
+        trainPageData.put("delflg",delflag);//删除标志 默认0
         //插入数据库
         try{
-            commentService.updateComment(trainPageData);
+            if(commentService.updateComment(trainPageData)>0)
             ResultUtils.writeSuccess(response);
+            else
+                ResultUtils.writeFailed(response);
         } catch (Exception e) {
-            logger.error("updateComment e="+e.getMessage());
+            logger.error("checkComment e="+e.getMessage());
             ResultUtils.writeFailed(response);
         }
         return "";

@@ -92,7 +92,7 @@
             exportDataType : "all",
             clickToSelect:true,
             //search:true,
-            idField:"uid",
+            idField:"uuid",
             //showFooter:true,
             sidePagination: "server", //表示服务端请求
             //设置为undefined可以获取pageNumber，pageSize，searchText，sortName，sortOrder
@@ -101,7 +101,7 @@
             queryParams: function queryParams(params) {   //设置查询参数
                 var param = {
                     limit: params.limit,
-                    offset: params.offset
+                    offset: params.offset,delflg:'0'
                 };
                 return param;
             },
@@ -115,8 +115,6 @@
 
 
     }
-    var $table = $('#cusTable');
-
     /**
      * 初始化
      */
@@ -125,47 +123,38 @@
         initTable();
 
         $("button[title='刷新']").hide();
-//        $("#defaultForm").submit(function(ev){ev.preventDefault();});
     });
-    function cxExit() {
-        $('#modal').modal('hide');
-    }
-    function cxGo() {
-        $('#modal').modal('hide');
-    }
+
     //显示新建窗口
     function newModule(){
-        //$("#myModalLabel").html("审核");
-        $('#modal').modal('show');
-    }
+        var arr = $('#cusTable').bootstrapTable('getSelections');
+        if(arr.length===1){
+            (confirmInfo("确认用户评论无问题?")).then(function (status) {
+                if (status==true) {
 
-    //提交保存
-    function saveModule(){
-        var opurl=$('#fid').val()==""?"<%=basePath%>/role/addRole.do":"<%=basePath%>/role/updateRole.do";
-        $.ajax({
-            type:"post",
-            url: opurl,
-            data:{
-                fid:$('#fid').val(),
-                roleName:$('#roleName').val()
-            },
-            success: function(data){
-                hideWait();
-                if(data!=="failed"){
-                    successInfo("保存成功!")
-                    $('#defaultForm').data('bootstrapValidator').resetForm(true);
-                    $('#cusTable').bootstrapTable('refresh');//初始化数据
-                }else{
-                    errorInfo("保存失败");
-                    $('#defaultForm').data('bootstrapValidator').resetForm(true);
-                    $('#cusTable').bootstrapTable('refresh');//初始化数据
+                    $.ajax({
+                        type: "post",
+                        url: "<%=basePath%>/worksCommentMgr/checkComment.do",
+                        data: {
+                            uid:arr[0].uid,
+                            delflag:'1'
+                        },
+                        success: function (data) {
+
+                            if(data!=="failed"){
+                                successInfo("保存成功!");
+                            }else{
+                                errorInfo("保存失败");
+                            }
+                            $('#cusTable').bootstrapTable('refresh');
+                        }
+                    });
                 }
-            }
-        });
-        $('#newModal').modal('hide');
+            });
+        } else{
+            warningInfo("请选择一条要审核的记录");
+        }
     }
-
-
 </script>
 <body id="loading" class="style_body">
 <div class="style_border">
@@ -187,7 +176,7 @@
         <table id="cusTable" class="table" >
             <thead>
             <tr>
-                <th data-field="uid" data-checkbox="true" align="center"></th>
+                <th data-field="uuid" data-checkbox="true" align="center"></th>
                 <th data-field="worksid" data-editable="false"  align="center" >评论作品</th>
                 <th data-field="commentuserid" data-editable="false"  align="center" >评论人</th>
                 <th data-field="commenttime" data-editable="false"  align="center" >评论时间</th>
@@ -199,33 +188,10 @@
         </table>
     </div>
 
-    <div class="modal fade" id="Modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title" id="roleUserModalLabel">评论审核</h4>
-                </div>
-                <div class="modal-body">
-                    评论是否符合要求?
-                </div>
-                <input type="hidden" name="roleId" id="roleId"/>
-                <input type="hidden" name="user_id" id="user_id"/>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default"  onclick="cxExit()">退回</button>
-                    <button type="button" class="btn btn-primary" onclick="cxGo()">通过</button>
-                </div>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal -->
-    </div>
+
 </div>
 <script src="<%=basePath%>/static/bootstrap/js/bootstrap.min.js"></script>
 <%--模态弹窗引用jquery-ui设置可拖动--%>
 <script src="<%=basePath%>/static/js/jquery-ui.min.js"></script>
-<script>
-    $(document).ready(function(){
-        $(".modal-content").draggable({ cursor: "move" });//为模态对话框添加拖拽
-    })
-</script>
 </body>
 

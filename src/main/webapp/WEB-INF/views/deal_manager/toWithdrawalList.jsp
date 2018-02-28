@@ -93,7 +93,8 @@
             queryParams: function queryParams(params) {   //设置查询参数
                 var param = {
                     limit: params.limit,
-                    offset: params.offset
+                    offset: params.offset,
+                    cashstate:'0'//待审核
                 };
                 return param;
             },
@@ -114,332 +115,43 @@
 
         //调用函数，初始化表格
         initTable();
-        initValidate();
+        //initValidate();
         $("button[title='刷新']").hide();
-        $("#defaultForm").submit(function(ev){ev.preventDefault();});
-        $('#validateBtn').click(function() {
-            var bootstrapValidator = $("#defaultForm").data('bootstrapValidator');//必须
-            bootstrapValidator.validate();
-            if(bootstrapValidator.isValid()) {
-                var val=$("input[name='mdName']").val();
-                var val=$("input[name='mdCode']").val();
-                var val=$("input[name='mdOrdernum']").val();
-                var val=$("input[name='mdAddress']").val();
-                var val=$("input[name='mdImg']").val();
-                //  saveModule();
-                submit();
-            }else{
-                alert("请按照要求填写");
-                return;
-            }
-        });
 
     });
 
 
     //显示新建窗口
     function newModule(){
-        initNewModule();
-        $('#newModal').modal('show');
-        $("#myModalLabel").html("查看申请详情");
-        $.ajax({
-            type: "post",
-            url: "<%=basePath%>/module/getParentModule.do",
-            data: {},
-            success: function (data) {
-                $("#pmId").find("option").remove();
-                if(data!=="failed"){
-                    var msg = eval("(" + data + ")");
-                    $.each(msg, function(name, value) {
-                        var varItem2 = new Option(value.mdName,value.uid);
-                        $("#pmId").append(varItem2);
-                    });
-                }else{
-                    errorInfo("保存失败");
-                    $('#cusTable').bootstrapTable('refresh');//初始化数据
-                }
-            }
-        });
-    }
-    //初始化父菜单
-    function initParentModule(pm_id){
-        $.ajax({
-            type: "post",
-            url: "<%=basePath%>/module/getParentModule.do",
-            data: {},
-            success: function (data) {
-                $("#pmId").find("option").remove();
-                if(data!=="failed"){
-                    var msg = eval("(" + data + ")");
-                    $.each(msg, function(name, value) {
-                        var varItem2 = new Option(value.mdName,value.uid);
-                        if(pm_id==value.fid){
-                            $(varItem2).attr("selected","selected");
-                        }
-                        $("#pmId").append(varItem2);
-                    });
-                }else{
-                    errorInfo("保存失败");
-                    $('#cusTable').bootstrapTable('refresh');//初始化数据
-                }
-            }
-        });
-    }
-    //添加和编辑提交按钮
-    function submit(){
-        var UserLabel=$("#myModalLabel").text();//添加编辑用户窗口
-        if(UserLabel.indexOf("新建") !=-1){
-            saveModule();//添加提交
-        } else{
-            updateModule();//修改提交
-        }
-    }
-    //初始化新建菜单表单
-    function initNewModule(){
-        $('#fid').val("");
-        $('#mdName').val("");
-        $('#mdCode').val("");
-        $('#mdOrdernum').val("");
-        $('#mdAddress').val("");
-        $('#mdImg').val("");
-        $('#mdMethod').val("");
-        $('#mdIschild').val("");
-    }
-
-    function initValidate(){
-        $('#defaultForm').bootstrapValidator({
-            message: '值不能为空',
-            feedbackIcons: {
-                valid: 'glyphicon glyphicon-ok',
-                invalid: 'glyphicon glyphicon-remove',
-                validating: 'glyphicon glyphicon-refresh'
-            },
-            fields: {
-                mdName: {
-                    validators: {
-                        notEmpty: {
-                            message: '菜单名称不能为空'
-                        }
-                    }
-                },
-                mdCode: {
-                    validators: {
-                        notEmpty: {
-                            message: '模块代码不能为空'
-                        }
-                    }
-                },
-                mdOrdernum: {
-                    validators: {
-                        notEmpty: {
-                            message: '显示顺序不能为空'
-                        }
-                    }
-                },
-                mdAddress: {
-                    validators: {
-                        notEmpty: {
-                            message: '模块地址不能为空'
-                        }
-                    }
-                },
-                mdImg: {
-                    validators: {
-                        notEmpty: {
-                            message: '图标不能为空'
-                        }
-                    }
-                }
-            }
-        });
-    }
-    /*
-     * 是否有子节点
-     * */
-    function ischecked(obj){
-
-    }
-    //提交保存
-    function saveModule(){
-        var obj =document.getElementById("mdIschild");
-        var pmId="";
-        if(obj.checked){
-            $('#mdIschild').val(true);
-            pmId=$("#pmId").val();
-        }else{
-            $('#mdIschild').val(false);
-            pmId=0;
-        }
-
-        // var opurl=$('#fid').val()==""?"/module/addModule.do":"/module/updateModule.do";
-        $.ajax({
-            type:"post",
-            url: "<%=basePath%>/module/addModule.do",
-            data:{
-                fid:$('#fid').val(),
-                mdName:$('#mdName').val(),
-                mdCode: $('#mdCode').val(),
-                pmId:  pmId,
-                mdOrdernum:$('#mdOrdernum').val(),
-                mdAddress: $('#mdAddress').val(),
-                mdImg: $('#mdImg').val(),
-                mdMethod: $('#mdMethod').val(),
-                mdIschild: $('#mdIschild').val()
-            },
-            success: function(data){
-                hideWait();
-                if(data!=="failed"){
-                    successInfo("保存成功!")
-                    $('#defaultForm').data('bootstrapValidator').resetForm(true);
-                    $('#cusTable').bootstrapTable('refresh');//初始化数据
-                }else{
-                    errorInfo("保存失败");
-                    $('#cusTable').bootstrapTable('refresh');//初始化数据
-                }
-            }
-        });
-        $('#newModal').modal('hide');
-    }
-    //编辑
-    function editModule(){
         var arr = $('#cusTable').bootstrapTable('getSelections');
-        if(arr.length>0){
-            var fid = getIdSelections();
-            if(fid.length>1){
-                warningInfo("请选择一条记录");
-            }else {
-                $.ajax({
-                    type: "post",
-                    url: "<%=basePath%>/module/findModuleByFid.do",
-                    data: {fid: getCheckFid()},
-                    success: function (data) {
-                        if (data !== "failed") {
-                            $('#newModal').modal('show');
-                            $("#myModalLabel").html("修改菜单");
-                            var msg = eval("(" + data + ")");
-                            $('#fid').val(msg.uid);
-                            $('#mdName').val(msg.mdName);
-                            $('#mdCode').val(msg.mdCode);
-                            initParentModule(msg.pmId);
-                            $('#mdOrdernum').val(msg.mdOrdernum);
-                            $('#mdAddress').val(msg.mdAddress);
-                            $('#mdImg').val(msg.mdImg);
-                            $('#mdMethod').val(msg.mdMethod);
-                            if (msg.mdIschild == "true") {
-                                $('#mdIschild').attr("checked", "checked");
-                            }
-                        }
-                    }
-                })
-            }
-        } else{
-            warningInfo("请选择要修改的记录");
-        }
-    }
-    //更新
-    function updateModule(){
-        var obj =document.getElementById("mdIschild");
-        var pmId="";
-        if(obj.checked){
-            $('#mdIschild').val(true);
-            pmId=$("#pmId").val();
-        }else{
-            $('#mdIschild').val(false);
-            pmId=0;
-        }
-        $.ajax({
-            type:"post",
-            url:  "<%=basePath%>/module/updateModule.do",
-            data:{
-                fid:$('#fid').val(),
-                mdName:$('#mdName').val(),
-                mdCode: $('#mdCode').val(),
-                pmId:  pmId,
-                mdOrdernum:$('#mdOrdernum').val(),
-                mdAddress: $('#mdAddress').val(),
-                mdImg: $('#mdImg').val(),
-                mdMethod: $('#mdMethod').val(),
-                mdIschild: $('#mdIschild').val()
-            },
-            success: function(data){
-                hideWait();
-                if(data!=="failed"){
-                    successInfo("保存成功!")
-                    $('#defaultForm').data('bootstrapValidator').resetForm(true);
-                    $('#cusTable').bootstrapTable('refresh');//初始化数据
-                }else{
-                    errorInfo("保存失败");
-                    $('#cusTable').bootstrapTable('refresh');//初始化数据
-                }
-            }
-        });
-        $('#newModal').modal('hide');
-    }
-
-    function delRow(){
-        var arr = $('#cusTable').bootstrapTable('getSelections');
-        if(arr.length>0){
-            (confirmInfo("确认终止当前记录?")).then(function (status) {
+        if(arr.length===1){
+            (confirmInfo("确认同意用户的提现申请?")).then(function (status) {
                 if (status==true) {
-                    deleteModule();
+
+                    $.ajax({
+                        type: "post",
+                        url: "<%=basePath%>/cashMgr/checkCash.do",
+                        data: {
+                            cashuid:arr[0].cashuid,
+                            cashstate:'1'
+                        },
+                        success: function (data) {
+
+                            if(data!=="failed"){
+                                successInfo("保存成功!");
+                            }else{
+                                errorInfo("保存失败");
+                            }
+                            $('#cusTable').bootstrapTable('refresh');
+                        }
+                    });
                 }
             });
         } else{
-            warningInfo("请选择要终止的记录");
+            warningInfo("请选择一条要审核的记录");
         }
     }
-    //删除
-    function deleteModule(){
-        console.info("deleteModule");
-        var ids = getIdSelections();
-        $.ajax({
-            type: "POST",
-            url: "<%=basePath%>/module/delModulefIds.do",
-            data: {
-                ids:getCheckFid()
-            },
-            beforeSend : function() {
-                submitWait();
-            },
-            error : function() {
-                hideWait();
-                errorInfo("删除记录失败");
-            },
-            success: function(data){
-                hideWait();
-                if(data!=="failed"){
-                    $('#cusTable').bootstrapTable('remove', {
-                        field: 'uid',
-                        values: ids
-                    });
-                    successInfo("删除成功!")
-                    $('#cusTable').bootstrapTable('refresh');//初始化数据
-                }else{
-                    errorInfo("删除记录失败");
-                    $('#cusTable').bootstrapTable('refresh');//初始化数据
-                }
-            }
-        });
-        $('#newModal').modal('hide');
-    }
 
-    //取表格行数用于表格行的移除
-    function getIdSelections() {
-        return $.map($('#cusTable').bootstrapTable('getAllSelections'), function (row) {
-            return row.uid;
-        });
-    }
-    //获取FID用于后台操作
-    function getCheckFid(){
-        var fids="";
-        $('#cusTable').find('input[name="btSelectItem"]:checked').each(function(){
-            fids += $(this).val()+',';
-        });
-        return fids;
-    }
-    function resetForm(){
-        $('#defaultForm').data('bootstrapValidator').resetForm(true);
-    }
 
 </script>
 <body id="loading" class="style_body">
@@ -449,9 +161,9 @@
             <button id="add" class="btn btn-info" onclick="newModule()">
                 <i class="glyphicon glyphicon-expand"></i> 审核
             </button>
-            <button id="remove" class="btn btn-info" onclick="delRow()">
-                <i class="glyphicon glyphicon-remove"></i> 查看
-            </button>
+            <%--<button id="remove" class="btn btn-info" onclick="delRow()">--%>
+                <%--<i class="glyphicon glyphicon-remove"></i> 查看--%>
+            <%--</button>--%>
             <button id="refresh" class="btn btn-info" name="refresh" >
                 <i class="glyphicon glyphicon-refresh"></i> 刷新
             </button>
@@ -459,14 +171,15 @@
         <table id="cusTable" class="table" >
             <thead>
             <tr>
-                <th data-field="dealuid" data-checkbox="true" align="center">订单号</th>
-                <th data-field="businesid"  data-editable="false" align="center">申请人</th>
-                <th data-field="dealtime"  data-editable="false" align="center">申请时间</th>
-                <th data-field="dealprice"  data-editable="false" align="center">申请金额</th>
-                <th data-field="dealtype" data-editable="false"  align="center" >提现账户</th>
-                <th data-field="dealstate"  data-editable="false" align="center">申请状态</th>
-                <th data-field="dealstate"  data-editable="false" align="center">审核人</th>
-                <th data-field="dealstate"  data-editable="false" align="center">审核时间</th>
+                <th data-field="uid" data-checkbox="true" align="center"></th>
+                <th data-field="applypeople"  data-editable="false" align="center">申请人</th>
+                <th data-field="applytime"  data-editable="false" align="center">申请时间</th>
+                <th data-field="applynum"  data-editable="false" align="center">申请金额</th>
+                <th data-field="cashtype" data-editable="false"  align="center" >提现类型</th>
+                <th data-field="cashaccount" data-editable="false"  align="center" >提现账户</th>
+                <th data-field="cashstate"  data-editable="false" align="center">申请状态</th>
+                <th data-field="checkpeoplename"  data-editable="false" align="center">审核人</th>
+                <th data-field="checktime"  data-editable="false" align="center">审核时间</th>
                 <%--<th data-field="creator"  data-editable="false" align="center">创建人</th>--%>
             </tr>
             </thead>
@@ -475,30 +188,9 @@
 
 </div>
 
-<div class="modal fade" id="newModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title" id="myModalLabel">新建</h4>
-            </div>
-            <div class="modal-body" id="defaultForm" method="post">
-
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" onclick="resetForm()" data-dismiss="modal">关闭</button>
-                <%--<button type="button" class="btn btn-primary" id="validateBtn" >提交</button>--%>
-            </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal -->
-</div>
 
 <script src="<%=basePath%>/static/bootstrap/js/bootstrap.min.js"></script>
 <%--模态弹窗引用jquery-ui设置可拖动--%>
 <script src="<%=basePath%>/static/js/jquery-ui.min.js"></script>
-<script>
-    $(document).ready(function(){
-        $(".modal-content").draggable({ cursor: "move" });//为模态对话框添加拖拽
-    })
-</script>
+
 </body>

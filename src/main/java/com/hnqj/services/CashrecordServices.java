@@ -74,15 +74,15 @@ protected final Log logger = LogFactory.getLog(getClass());
 	}
 	 return cashrecordList; 
 	}
-	public List<Cashrecord> selectCashrecordList() {
-	 logger.info("查询所有Cashrecord");
-	List<Cashrecord>	cashrecordList=null;
-	 try { 
-		cashrecordList = (List<Cashrecord>) daoSupport.findForList("CashrecordMapper.selectCashrecordList",null);
-	 }catch (Exception e){ 
-	 e.printStackTrace(); 
-	 cashrecordList=null; 
-	}
-	 return cashrecordList; 
-	}
+//	public List<Cashrecord> selectCashrecordList() {
+//	 logger.info("查询所有Cashrecord");
+//	List<Cashrecord>	cashrecordList=null;
+//	 try {
+//		cashrecordList = (List<Cashrecord>) daoSupport.findForList("CashrecordMapper.selectCashrecordList",null);
+//	 }catch (Exception e){
+//	 e.printStackTrace();
+//	 cashrecordList=null;
+//	}
+//	 return cashrecordList;
+//	}
 }
